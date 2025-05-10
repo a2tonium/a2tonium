@@ -7,7 +7,8 @@ module.exports = {
     		fontFamily: {
     			sans: [
     				'Open Sans'
-    			]
+    			],
+                sora: ["Sora", "sans-serif"],
     		},
     		screen: {
     			mob: '1000px'

@@ -21,7 +21,6 @@ export const Header: React.FC<HeaderProps> = ({ className }) => {
     const { network } = useTonConnect();
     // TESTNET = -3, MAINNET = -239
 
-
     return (
         <header
             className={`
@@ -33,21 +32,23 @@ export const Header: React.FC<HeaderProps> = ({ className }) => {
         `}
         >
             <div className="max-w-screen-xl flex justify-between items-center px-5 mx-auto">
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-3 py-2">
                     {/* Logo */}
-                    <Link to="/catalog">
-                        <div className="flex items-center space-x-2 py-2">
-                            <img
-                                src="/images/logo.png"
-                                alt="Logo"
-                                className="w-10 h-10"
-                            />
-                            {/* Hide DLMS Platform text when the width is less than 1024px */}
-                            <span className="text-lg font-bold hidden lg:flex">
-                                {t("logo-name")}
-                            </span>
-                        </div>
-                    </Link>
+                    <div>
+                        <Link to="/catalog">
+                            <div className="flex items-center space-x-2 group">
+                                <img
+                                    src="/images/logo/logo(blue_back_circle).png"
+                                    alt="Logo"
+                                    className="w-10 h-10 transition-transform duration-300 group-hover:rotate-6"
+                                />
+                                <span className="hidden font-sora lg:flex text-xl font-extrabold tracking-tight group-hover:text-goluboy transition-colors duration-300">
+                                    A2<span className="text-goluboy">TON</span>
+                                    IUM
+                                </span>
+                            </div>
+                        </Link>
+                    </div>
                     {/* Navigation */}
                     <NavigationMenu className="hidden md:flex text-base">
                         <NavigationMenuList>
@@ -55,7 +56,7 @@ export const Header: React.FC<HeaderProps> = ({ className }) => {
                                 <NavigationMenuLink asChild>
                                     <Link
                                         to="/catalog"
-                                        className="text-gray-700 hover:text-blue-500 transition duration-200 p-2 m-0"
+                                        className="text-gray-700 hover:text-goluboy transition duration-200 p-2 m-0"
                                     >
                                         {t("catalog")}
                                     </Link>
@@ -65,7 +66,7 @@ export const Header: React.FC<HeaderProps> = ({ className }) => {
                                 <NavigationMenuLink asChild>
                                     <Link
                                         to="/learn"
-                                        className="text-gray-700 hover:text-blue-500 transition duration-200 p-2 m-0"
+                                        className="text-gray-700 hover:text-goluboy transition duration-200 p-2 m-0"
                                     >
                                         {t("learning")}
                                     </Link>
@@ -75,7 +76,7 @@ export const Header: React.FC<HeaderProps> = ({ className }) => {
                                 <NavigationMenuLink asChild>
                                     <Link
                                         to="/teach"
-                                        className="text-gray-700 hover:text-blue-500 transition duration-200 p-2 m-0"
+                                        className="text-gray-700 hover:text-goluboy transition duration-200 p-2 m-0"
                                     >
                                         {t("teaching")}
                                     </Link>
@@ -98,7 +99,10 @@ export const Header: React.FC<HeaderProps> = ({ className }) => {
                 {/* Right Block (Ton Connect and Wallet) */}
                 <div className="flex items-center space-x-1 sm:space-x-3">
                     <SearchBar className="" />
-                    <TonConnectButton style={{ boxShadow: "none" }} className="p-0 m-0 !shadow-none" />
+                    <TonConnectButton
+                        style={{ boxShadow: "none" }}
+                        className="p-0 m-0 !shadow-none"
+                    />
                     <SettingsPopover />
                 </div>
             </div>

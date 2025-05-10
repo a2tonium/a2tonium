@@ -18,6 +18,6 @@ export default defineConfig(({ command }) => ({
     },
   },
   define: {
-    global: "globalThis", // helps some packages expecting 'global'
+    global: "globalThis",
   },
 }));

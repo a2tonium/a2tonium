@@ -35,7 +35,7 @@ export const SettingsPopover: React.FC = () => {
         <Popover>
             <PopoverTrigger>
                 <div className="cursor-pointer">
-                    <Bolt className="hover:text-blue-500 transition duration-200" />
+                    <Bolt className="hover:text-goluboy transition duration-200" />
                 </div>
             </PopoverTrigger>
             <PopoverContent
@@ -52,7 +52,7 @@ export const SettingsPopover: React.FC = () => {
                                 <div>
                                     <Link
                                         to={profileLink}
-                                        className="flex items-center space-x-2 text-center text-base p-2 block w-full text-gray-900 hover:text-blue-500 hover:bg-gray-100 rounded-md transition duration-200"
+                                        className="flex items-center space-x-2 text-center text-base p-2 block w-full text-gray-900 hover:text-goluboy hover:bg-gray-100 rounded-md transition duration-200"
                                     >
                                         <span>{t("profile")}</span>
                                     </Link>
@@ -62,19 +62,19 @@ export const SettingsPopover: React.FC = () => {
                             <div className="md:hidden">
                                 <Link
                                     to="/catalog"
-                                    className="flex items-center space-x-2 text-center text-base p-2 block w-full text-gray-900 hover:text-blue-500 hover:bg-gray-100 rounded-md transition duration-200"
+                                    className="flex items-center space-x-2 text-center text-base p-2 block w-full text-gray-900 hover:text-goluboy hover:bg-gray-100 rounded-md transition duration-200"
                                 >
                                     <span>{t("catalog")}</span>
                                 </Link>
                                 <Link
                                     to="/learn"
-                                    className="flex items-center space-x-2 text-center text-base p-2 block w-full text-gray-900 hover:text-blue-500 hover:bg-gray-100 rounded-md transition duration-200"
+                                    className="flex items-center space-x-2 text-center text-base p-2 block w-full text-gray-900 hover:text-goluboy hover:bg-gray-100 rounded-md transition duration-200"
                                 >
                                     <span>{t("learning")}</span>
                                 </Link>
                                 <Link
                                     to="/teach"
-                                    className="flex items-center space-x-2 text-center text-base p-2 block w-full text-gray-900 hover:text-blue-500 hover:bg-gray-100 rounded-md transition duration-200"
+                                    className="flex items-center space-x-2 text-center text-base p-2 block w-full text-gray-900 hover:text-goluboy hover:bg-gray-100 rounded-md transition duration-200"
                                 >
                                     <span>{t("teaching")}</span>
                                 </Link>
@@ -88,7 +88,7 @@ export const SettingsPopover: React.FC = () => {
                             <button
                                 className={`flex items-center justify-between w-full px-3 py-2 text-sm rounded-md ${
                                     theme === "system"
-                                        ? "bg-gray-100 text-blue-500"
+                                        ? "bg-gray-100 text-goluboy"
                                         : "hover:bg-gray-100"
                                 }`}
                                 onClick={() => changeTheme("system")}
@@ -104,7 +104,7 @@ export const SettingsPopover: React.FC = () => {
                             <button
                                 className={`flex items-center justify-between w-full px-3 py-2 text-sm rounded-md ${
                                     theme === "dark"
-                                        ? "bg-gray-100 text-blue-500"
+                                        ? "bg-gray-100 text-goluboy"
                                         : "hover:bg-gray-100"
                                 }`}
                                 onClick={() => changeTheme("dark")}
@@ -120,7 +120,7 @@ export const SettingsPopover: React.FC = () => {
                             <button
                                 className={`flex items-center justify-between w-full px-3 py-2 text-sm rounded-md ${
                                     theme === "light"
-                                        ? "bg-gray-100 text-blue-500"
+                                        ? "bg-gray-100 text-goluboy"
                                         : "hover:bg-gray-100"
                                 }`}
                                 onClick={() => changeTheme("light")}
