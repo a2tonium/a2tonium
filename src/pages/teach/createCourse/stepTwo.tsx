@@ -172,7 +172,7 @@ export function StepTwo({
                     title: `Module ${prev.modules.length + 1}`,
                     lessons: [{ id: "", title: "", videoId: "" }],
                     quiz: {
-                        correct_answers: "",
+                        correct_answers: "aaaaa",
                         questions: Array(5)
                             .fill(null)
                             .map(() => ({
