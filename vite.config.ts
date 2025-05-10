@@ -7,17 +7,17 @@ import { dirname, resolve } from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export default defineConfig(({ command }) => ({
-  plugins: [react(), nodePolyfills()],
-  base: command === "serve" ? "/" : "/a2tonium/",
-  resolve: {
-    alias: {
-      "@": resolve(__dirname, "src"),
-      buffer: "buffer",
-      process: "process/browser",
+export default defineConfig({
+    plugins: [react(), nodePolyfills()],
+    base: "/",
+    resolve: {
+        alias: {
+            "@": resolve(__dirname, "src"),
+            buffer: "buffer",
+            process: "process/browser",
+        },
     },
-  },
-  define: {
-    global: "globalThis",
-  },
-}));
+    define: {
+        global: "globalThis",
+    },
+});
