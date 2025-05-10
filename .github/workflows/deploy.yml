@@ -20,6 +20,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+      
+      - name: Install polyfills
+        run: npm install buffer process
 
       - name: Build Vite app
         run: npm run build

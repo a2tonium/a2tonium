@@ -1,3 +1,5 @@
+import { Buffer } from "buffer";
+
 export function getEventsUrl(
     contractAddress: string,
     limit: number = 100
