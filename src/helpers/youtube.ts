@@ -1,7 +1,6 @@
 export function extractYoutubeVideoId(url: string): string | null {
     try {
         const parsed = new URL(url);
-
         if (parsed.hostname === "youtu.be") {
             return parsed.pathname.slice(1);
         }

@@ -109,7 +109,10 @@ export type VideoCheckState = Record<
 
 export interface CourseDataInterfaceNew extends Omit<CourseDataInterface, "modules"> {
     modules: ModuleInterfaceNew[];
-    quiz_answers: string;
+    quiz_answers: {
+        encrypted_answers: string;
+        sender_public_key: string;
+    };
 }
 
 export interface ModuleInterfaceNew {

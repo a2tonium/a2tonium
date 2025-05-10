@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
-import { checkPinataConnection } from "@/lib/pinata";
+import { checkPinataConnection } from "@/lib/pinata/pinataClient";
 import { CourseDataInterface } from "@/types/courseData";
-import { extractYoutubeVideoId } from "@/components/createCourse/youtubeIdExtract";
+import { extractYoutubeVideoId } from "@/helpers/youtube";
 import { Spinner } from "@/components/ui/kibo-ui/spinner";
 
 interface StepFiveProps {

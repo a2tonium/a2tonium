@@ -20,6 +20,10 @@
         "gains": "Strong foundational knowledge in building dynamic web \n      applications, an understanding of code organization, best practices, \n      and real-world experience with toolchains.",
         "requirements": "1. Basic understanding of programming concepts\n  2. Familiarity with JavaScript recommended\n  3. No prior web development experience required\n  4. Desire to build real projects from scratch\n  "
     },
+    "quiz_answers": {
+        "encrypted_answers": "asjfiehkldjfhg",
+        "sender_public_key": "0x1234567890abcdef1234567890abcdef12345678"
+    },
     "modules": [
         {
             "id": "1",

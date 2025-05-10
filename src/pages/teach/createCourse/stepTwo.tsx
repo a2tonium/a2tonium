@@ -7,10 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, CirclePlus, Check, Search } from "lucide-react";
 import { CourseDataInterface, VideoCheckState } from "@/types/courseData";
-import {
-    checkYouTubeVideo,
-    extractYoutubeVideoId,
-} from "@/components/createCourse/videoExistsLogic";
+import { checkYouTubeVideo } from "@/lib/youtubeService";
+import { extractYoutubeVideoId } from "@/helpers/youtube";
 import { Spinner } from "@/components/ui/kibo-ui/spinner";
 import { VideoPreviewDialog } from "@/components/createCourse/videoPreviewDialog";
 
@@ -71,7 +69,7 @@ export function StepTwo({
     activeModuleIndex,
     setActiveModuleIndex,
     videoCheckState,
-    setVideoCheckState
+    setVideoCheckState,
 }: StepTwoProps) {
     // Ошибки вида errors[moduleIndex][lessonIndex] = { title?: string; videoUrl?: string }
     const [errors, setErrors] = useState<

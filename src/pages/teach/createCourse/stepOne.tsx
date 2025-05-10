@@ -13,7 +13,7 @@ import {
 import { CourseDataInterface } from "@/types/courseData";
 import { CategorySelect } from "@/components/createCourse/categorySelect";
 import { ImageDropzone } from "@/components/createCourse/imageDropzone";
-import { checkYouTubeVideo } from "@/components/createCourse/videoExistsLogic";
+import { checkYouTubeVideo } from "@/lib/youtubeService";
 
 interface StepOneProps {
     courseData: CourseDataInterface;

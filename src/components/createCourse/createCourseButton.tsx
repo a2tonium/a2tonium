@@ -14,7 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { CourseDataInterface } from "@/types/courseData";
 import { useToast } from "@/hooks/use-toast";
 import { Link} from "react-router-dom";
-import { sendCourseToPinata } from "@/lib/pinata";
+import { sendCourseToPinata } from "@/services/courseService";
 import { useTonConnect } from "@/hooks/useTonConnect";
 
 interface CreateCourseLogicProps {
