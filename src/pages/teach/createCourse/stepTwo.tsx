@@ -314,7 +314,7 @@ export function StepTwo({
                 <TabsList className="py-4 bg-white w-full flex justify-start">
                     <ScrollArea>
                         <div className="flex space-x-0">
-                            {courseData.modules.map((mod, index) => {
+                            {courseData.modules.map((_, index) => {
                                 const moduleHasError = !!errors[index];
 
                                 return (

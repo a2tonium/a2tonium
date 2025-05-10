@@ -31,7 +31,7 @@ export function UserProfile() {
     } = useEnrolledCourses();
 
     const {
-        data: nftList,
+        // data: nftList,
         error: nftError,
         isLoading: isNFTLoading,
     } = useUserNFTs(walletAddr);
