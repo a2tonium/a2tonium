@@ -7,9 +7,9 @@ import { dirname, resolve } from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export default defineConfig(() => ({
+export default defineConfig(({ command }) => ({
   plugins: [react(), nodePolyfills()],
-  base: '/a2tonium/',
+  base: command === "serve" ? "/" : "/a2tonium/",
   resolve: {
     alias: {
       "@": resolve(__dirname, "src"),
