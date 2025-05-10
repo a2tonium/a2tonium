@@ -11,19 +11,7 @@ import {
     CourseDataInterface,
     CourseDataInterfaceNew,
 } from "@/types/courseData";
-import { decryptMessage, encryptCourseAnswers } from "@/helpers/crypt";
-import { mnemonicToPrivateKey } from '@ton/crypto';
-
-const mnemonic = [
-  'proud', 'key', 'taste', 'ceiling', 'become', 'alley',
-  'diary', 'imitate', 'wage', 'strike', 'skill', 'fame',
-  'grape', 'weird', 'shell', 'angle', 'chuckle', 'filter',
-  'banner', 'glide', 'melt', 'usual', 'flush', 'very'
-];
-
-const keyPair = await mnemonicToPrivateKey(mnemonic);
-console.log('Private Key:', keyPair.secretKey.toString('hex'));
-console.log('Public Key:', keyPair.publicKey.toString('hex'));
+import { encryptCourseAnswers } from "@/helpers/crypt";
 
 export async function sendCourseToPinata(
     course: CourseDataInterface,
@@ -112,14 +100,6 @@ export async function reformatCourseData(
     const { encryptedMessage, senderPublicKey } = await encryptCourseAnswers(
         allAnswers.join(","),
         walletPublicKey
-    );
-    console.log(
-        "decripted message",
-        decryptMessage(
-            new Uint8Array(Buffer.from(encryptedMessage, "base64")),
-            new Uint8Array(Buffer.from(senderPublicKey, "base64")),
-            keyPair.secretKey,
-        )
     );
     formatted.quiz_answers.encrypted_answers = encryptedMessage;
     formatted.quiz_answers.sender_public_key = senderPublicKey;
