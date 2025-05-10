@@ -1,0 +1,555 @@
+{
+    "name": "Firefighter Training and Safety Course",
+    "description": "The Firefighter Course prepares students with the skills and knowledge required to become professional firefighters. The training covers fire suppression, rescue techniques, emergency medical care, hazardous materials handling, and firefighter safety. Students will learn to operate firefighting tools, perform rescues, provide basic first aid, and safely respond to emergencies.",
+    "image": "ipfs://bafkreihz2eaebj3lbknvwgt62ybnu4hjad754q42y44zlhsp3isidwxhie",
+    "cover_image": "ipfs://bafkreiho5l5bjosknu536l4sfg33xvrt6u5ukewzf5s4nar6uhxte2r7fy",
+    "video": "mphHFk5IXsQ",
+    "social_links": [
+        "https://t.me/Zooom_15"
+    ],
+    "attributes": {
+        "category": "Firefighting, Emergency Services",
+        "duration": "10 weeks",
+        "level": "Beginner to Advanced",
+        "lessons": 25,
+        "language": "en",
+        "summary": "This course will teach you the basics of front-end and back-end \n      web development, covering HTML, CSS, JavaScript, Node.js and more.",
+        "workload": "4-5 hours per week",
+        "learn": "You'll gain the core skills needed to build and deploy \n      modern web applications from scratch.",
+        "about": "In this course, we dive into the essential technologies used in \n      full-stack web development. From structuring your project to deploying on a \n      cloud platform, each step is covered in a practical manner.",
+        "gains": "Strong foundational knowledge in building dynamic web \n      applications, an understanding of code organization, best practices, \n      and real-world experience with toolchains.",
+        "requirements": "1. Basic understanding of programming concepts\n  2. Familiarity with JavaScript recommended\n  3. No prior web development experience required\n  4. Desire to build real projects from scratch\n  "
+    },
+    "modules": [
+        {
+            "id": "1",
+            "title": "Making Project: Tic-Tac-Toe",
+            "lessons": [
+                {
+                    "id": "m1-l1",
+                    "title": "Introduction to Web Development",
+                    "videoId": "v2A-aM-qICA"
+                },
+                {
+                    "id": "m1-l2",
+                    "title": "HTML Basics",
+                    "videoId": "dQw4w9WgXcQ"
+                },
+                {
+                    "id": "m1-l3",
+                    "title": "CSS Fundamentals",
+                    "videoId": "tgbNymZ7vqY"
+                },
+                {
+                    "id": "m1-l4",
+                    "title": "JavaScript Basics",
+                    "videoId": "3JluqTojuME"
+                },
+                {
+                    "id": "m1-l5",
+                    "title": "React for Beginners",
+                    "videoId": "Ke90Tje7VS0"
+                },
+                {
+                    "id": "m1-l6",
+                    "title": "Introduction to Web Development",
+                    "videoId": "v2A-aM-qICA"
+                },
+                {
+                    "id": "m1-l7",
+                    "title": "HTML Basics",
+                    "videoId": "dQw4w9WgXcQ"
+                },
+                {
+                    "id": "m1-l8",
+                    "title": "CSS Fundamentals",
+                    "videoId": "tgbNymZ7vqY"
+                },
+                {
+                    "id": "m1-l9",
+                    "title": "JavaScript Basics",
+                    "videoId": "3JluqTojuME"
+                },
+                {
+                    "id": "m1-l10",
+                    "title": "React for Beginners",
+                    "videoId": "Ke90Tje7VS0"
+                }
+            ],
+            "quiz": {
+                "correct_answers": "asjfiehkldjfhg",
+                "questions": [
+                    {
+                        "id": 1,
+                        "text": "Which sentence is correct? Select the correct option.",
+                        "options": [
+                            "They is students.",
+                            "We is students.",
+                            "They are students.",
+                            "Are they students?"
+                        ]
+                    },
+                    {
+                        "id": 2,
+                        "text": "Which sentence is correct? Select the correct option.",
+                        "options": [
+                            "She are happy.",
+                            "She is happy.",
+                            "She am happy.",
+                            "Are she happy?"
+                        ]
+                    },
+                    {
+                        "id": 3,
+                        "text": "Which sentence is correct? Select the correct option.",
+                        "options": [
+                            "She are happy.",
+                            "She is happy.",
+                            "She am happy.",
+                            "Are she happy?"
+                        ]
+                    },
+                    {
+                        "id": 4,
+                        "text": "Next.js Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals",
+                        "options": [
+                            "She are happy. Next.js Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals",
+                            "She is happy. Next.js Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals Fundamentals",
+                            "She am happy.",
+                            "Are she happy?"
+                        ]
+                    },
+                    {
+                        "id": 5,
+                        "text": "Which sentence is correct? Select the correct option.",
+                        "options": [
+                            "She are happy.",
+                            "She is happy.",
+                            "She am happy.",
+                            "Are she happy?"
+                        ]
+                    },
+                    {
+                        "id": 6,
+                        "text": "Which sentence is correct? Select the correct option.",
+                        "options": [
+                            "She are happy.",
+                            "She is happy.",
+                            "She am happy.",
+                            "Are she happy?"
+                        ]
+                    },
+                    {
+                        "id": 7,
+                        "text": "Which sentence is correct? Select the correct option.",
+                        "options": [
+                            "She are happy.",
+                            "She is happy.",
+                            "She am happy.",
+                            "Are she happy?"
+                        ]
+                    },
+                    {
+                        "id": 8,
+                        "text": "Which sentence is correct? Select the correct option.",
+                        "options": [
+                            "She are happy.",
+                            "She is happy.",
+                            "She am happy.",
+                            "Are she happy?"
+                        ]
+                    },
+                    {
+                        "id": 9,
+                        "text": "Which sentence is correct? Select the correct option.",
+                        "options": [
+                            "She are happy.",
+                            "She is happy.",
+                            "She am happy.",
+                            "Are she happy?"
+                        ]
+                    },
+                    {
+                        "id": 10,
+                        "text": "Which sentence is correct? Select the correct option.",
+                        "options": [
+                            "She are happy.",
+                            "She is happy.",
+                            "She am happy.",
+                            "Are she happy?"
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "title": "Working with FastApi",
+            "id": "2",
+            "lessons": [
+                {
+                    "id": "m2-l1",
+                    "title": "Introduction to Web Development",
+                    "videoId": "v2A-aM-qICA"
+                },
+                {
+                    "id": "m2-l2",
+                    "title": "HTML Basics",
+                    "videoId": "dQw4w9WgXcQ"
+                },
+                {
+                    "id": "m2-l3",
+                    "title": "CSS Fundamentals",
+                    "videoId": "tgbNymZ7vqY"
+                },
+                {
+                    "id": "m2-l4",
+                    "title": "JavaScript Basics",
+                    "videoId": "3JluqTojuME"
+                },
+                {
+                    "id": "m2-l5",
+                    "title": "React for Beginners",
+                    "videoId": "Ke90Tje7VS0"
+                },
+                {
+                    "id": "m2-l6",
+                    "title": "Introduction to Web Development",
+                    "videoId": "v2A-aM-qICA"
+                },
+                {
+                    "id": "m2-l7",
+                    "title": "HTML Basics",
+                    "videoId": "dQw4w9WgXcQ"
+                },
+                {
+                    "id": "m2-l8",
+                    "title": "CSS Fundamentals",
+                    "videoId": "tgbNymZ7vqY"
+                },
+                {
+                    "id": "m2-l9",
+                    "title": "JavaScript Basics",
+                    "videoId": "3JluqTojuME"
+                },
+                {
+                    "id": "m2-l10",
+                    "title": "React for Beginners",
+                    "videoId": "Ke90Tje7VS0"
+                }
+            ],
+            "quiz": {
+                "correct_answers": "asjfiehkldjfhg",
+                "questions": [
+                    {
+                        "id": 1,
+                        "text": "Which sentence is correct? Select the correct option.",
+                        "options": [
+                            "They is students.",
+                            "We is students.",
+                            "They are students.",
+                            "Are they students?"
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "title": "CSS Fundamentals",
+            "id": "3",
+            "lessons": [
+                {
+                    "id": "m3-l1",
+                    "title": "Introduction to Web Development",
+                    "videoId": "v2A-aM-qICA"
+                },
+                {
+                    "id": "m3-l2",
+                    "title": "HTML Basics",
+                    "videoId": "dQw4w9WgXcQ"
+                },
+                {
+                    "id": "m3-l3",
+                    "title": "CSS Fundamentals",
+                    "videoId": "tgbNymZ7vqY"
+                },
+                {
+                    "id": "m3-l4",
+                    "title": "JavaScript Basics",
+                    "videoId": "3JluqTojuME"
+                },
+                {
+                    "id": "m3-l5",
+                    "title": "React for Beginners",
+                    "videoId": "Ke90Tje7VS0"
+                },
+                {
+                    "id": "m3-l6",
+                    "title": "Introduction to Web Development",
+                    "videoId": "v2A-aM-qICA"
+                },
+                {
+                    "id": "m3-l7",
+                    "title": "HTML Basics",
+                    "videoId": "dQw4w9WgXcQ"
+                },
+                {
+                    "id": "m3-l8",
+                    "title": "CSS Fundamentals",
+                    "videoId": "tgbNymZ7vqY"
+                },
+                {
+                    "id": "m3-l9",
+                    "title": "JavaScript Basics",
+                    "videoId": "3JluqTojuME"
+                },
+                {
+                    "id": "m3-l10",
+                    "title": "React for Beginners",
+                    "videoId": "Ke90Tje7VS0"
+                }
+            ],
+            "quiz": {
+                "correct_answers": "asjfiehkldjfhg",
+                "questions": [
+                    {
+                        "id": 1,
+                        "text": "Which sentence is correct? Select the correct option.",
+                        "options": [
+                            "They is students.",
+                            "We is students.",
+                            "They are students.",
+                            "Are they students?"
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "title": "React for Beginners",
+            "id": "4",
+            "lessons": [
+                {
+                    "id": "m4-l1",
+                    "title": "Introduction to Web Development",
+                    "videoId": "v2A-aM-qICA"
+                },
+                {
+                    "id": "m4-l2",
+                    "title": "HTML Basics",
+                    "videoId": "dQw4w9WgXcQ"
+                },
+                {
+                    "id": "m4-l3",
+                    "title": "CSS Fundamentals",
+                    "videoId": "tgbNymZ7vqY"
+                },
+                {
+                    "id": "m4-l4",
+                    "title": "JavaScript Basics",
+                    "videoId": "3JluqTojuME"
+                },
+                {
+                    "id": "m4-l5",
+                    "title": "React for Beginners",
+                    "videoId": "Ke90Tje7VS0"
+                },
+                {
+                    "id": "m4-l6",
+                    "title": "Introduction to Web Development",
+                    "videoId": "v2A-aM-qICA"
+                },
+                {
+                    "id": "m4-l7",
+                    "title": "HTML Basics",
+                    "videoId": "dQw4w9WgXcQ"
+                },
+                {
+                    "id": "m4-l8",
+                    "title": "CSS Fundamentals",
+                    "videoId": "tgbNymZ7vqY"
+                },
+                {
+                    "id": "m4-l9",
+                    "title": "JavaScript Basics",
+                    "videoId": "3JluqTojuME"
+                },
+                {
+                    "id": "m4-l10",
+                    "title": "React for Beginners",
+                    "videoId": "Ke90Tje7VS0"
+                }
+            ],
+            "quiz": {
+                "correct_answers": "asjfiehkldjfhg",
+                "questions": [
+                    {
+                        "id": 1,
+                        "text": "Which sentence is correct? Select the correct option.",
+                        "options": [
+                            "They is students.",
+                            "We is students.",
+                            "They are students.",
+                            "Are they students?"
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "title": "JavaScript Basics",
+            "id": "5",
+            "lessons": [
+                {
+                    "id": "m5-l1",
+                    "title": "Introduction to Web Development",
+                    "videoId": "v2A-aM-qICA"
+                },
+                {
+                    "id": "m5-l2",
+                    "title": "HTML Basics",
+                    "videoId": "dQw4w9WgXcQ"
+                },
+                {
+                    "id": "m5-l3",
+                    "title": "CSS Fundamentals",
+                    "videoId": "tgbNymZ7vqY"
+                },
+                {
+                    "id": "m5-l4",
+                    "title": "JavaScript Basics",
+                    "videoId": "3JluqTojuME"
+                },
+                {
+                    "id": "m5-l5",
+                    "title": "React for Beginners",
+                    "videoId": "Ke90Tje7VS0"
+                },
+                {
+                    "id": "m5-l6",
+                    "title": "Introduction to Web Development",
+                    "videoId": "v2A-aM-qICA"
+                },
+                {
+                    "id": "m5-l7",
+                    "title": "HTML Basics",
+                    "videoId": "dQw4w9WgXcQ"
+                },
+                {
+                    "id": "m5-l8",
+                    "title": "CSS Fundamentals",
+                    "videoId": "tgbNymZ7vqY"
+                },
+                {
+                    "id": "m5-l9",
+                    "title": "JavaScript Basics",
+                    "videoId": "3JluqTojuME"
+                },
+                {
+                    "id": "m5-l10",
+                    "title": "React for Beginners",
+                    "videoId": "Ke90Tje7VS0"
+                }
+            ],
+            "quiz": {
+                "correct_answers": "asjfiehkldjfhg",
+                "questions": [
+                    {
+                        "id": 1,
+                        "text": "Which sentence is correct? Select the correct option.",
+                        "options": [
+                            "They is students.",
+                            "We is students.",
+                            "They are students.",
+                            "Are they students?"
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "title": "JavaScript Basics awdawd wad awda wd adw awd awd awd aw",
+            "id": "5",
+            "lessons": [
+                {
+                    "id": "m6-l1",
+                    "title": "Introduction to Web Development",
+                    "videoId": "v2A-aM-qICA"
+                },
+                {
+                    "id": "m6-l2",
+                    "title": "HTML Basics",
+                    "videoId": "dQw4w9WgXcQ"
+                },
+                {
+                    "id": "m6-l3",
+                    "title": "CSS Fundamentals",
+                    "videoId": "tgbNymZ7vqY"
+                },
+                {
+                    "id": "m6-l4",
+                    "title": "JavaScript Basics",
+                    "videoId": "3JluqTojuME"
+                },
+                {
+                    "id": "m6-l5",
+                    "title": "React for Beginners",
+                    "videoId": "Ke90Tje7VS0"
+                },
+                {
+                    "id": "m6-l6",
+                    "title": "Introduction to Web Development",
+                    "videoId": "v2A-aM-qICA"
+                },
+                {
+                    "id": "m6-l7",
+                    "title": "HTML Basics",
+                    "videoId": "dQw4w9WgXcQ"
+                },
+                {
+                    "id": "m6-l8",
+                    "title": "CSS Fundamentals",
+                    "videoId": "tgbNymZ7vqY"
+                },
+                {
+                    "id": "m6-l9",
+                    "title": "JavaScript Basics",
+                    "videoId": "3JluqTojuME"
+                },
+                {
+                    "id": "m6-l10",
+                    "title": "React for Beginners",
+                    "videoId": "Ke90Tje7VS0"
+                }
+            ],
+            "quiz": {
+                "correct_answers": "asjfiehkldjfhg",
+                "questions": [
+                    {
+                        "id": 1,
+                        "text": "Which sentence is correct? Select the correct option.",
+                        "options": [
+                            "They is students.",
+                            "We is students.",
+                            "They are students.",
+                            "Are they students?"
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "courseCompletion": [
+        {
+            "gradeHighThan": "50",
+            "certificate": "https://t4.ftcdn.net/jpg/10/07/38/53/240_F_1007385303_rZNGpolrG6mUhKJL8t3yJGEcS0C1GhTX.jpg"
+        },
+        {
+            "gradeHighThan": "70",
+            "certificate": "https://t3.ftcdn.net/jpg/01/27/90/68/240_F_127906890_yED6EjWNrSS0cQb2OJsNgXTJQ9ahW5gL.jpg"
+        },
+        {
+            "gradeHighThan": "90",
+            "certificate": "https://t3.ftcdn.net/jpg/01/27/90/68/240_F_127906890_yED6EjWNrSS0cQb2OJsNgXTJQ9ahW5gL.jpg"
+        }
+    ]
+}
