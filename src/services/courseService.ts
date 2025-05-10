@@ -13,7 +13,6 @@ import {
 } from "@/types/courseData";
 import { decryptMessage, encryptCourseAnswers } from "@/helpers/crypt";
 import { mnemonicToPrivateKey } from '@ton/crypto';
-import { hexToUint8Array } from "@/helpers/file";
 
 const mnemonic = [
   'proud', 'key', 'taste', 'ceiling', 'become', 'alley',
