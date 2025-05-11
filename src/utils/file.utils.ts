@@ -24,7 +24,7 @@ export function base64ToFile(base64: string, filename: string): File {
     return new File([array], `${filename}.${ext}`, { type: mime });
 }
 
-export function formatCourseFilename(courseName: string): string {
+export function formatFilename(courseName: string): string {
     return courseName
         .trim()
         .slice(0, 20)

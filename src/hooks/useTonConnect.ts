@@ -59,6 +59,7 @@ export function useTonConnect(): {
         address: address,
         rawAddress: rawAddress,
         network: wallet?.account.chain || null,
+        
         ready,
         isConnected,
         publicKey: wallet?.account.publicKey || ""

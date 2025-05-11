@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function WalletTableSkeleton() {
+export function ProfileTableSkeleton() {
     return (
         <div className="rounded-3xl py-4 px-8 bg-white md:border-[6px] border-gray-200">
                 <div className="space-y-4 pt-3 pb-4">

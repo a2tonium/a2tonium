@@ -2,20 +2,21 @@ import { PinataSDK } from "pinata";
 import { CourseDataInterfaceNew } from "@/types/courseData";
 import {
     base64ToFile,
-    formatCourseFilename,
+    formatFilename,
     getBase64FromImageURL,
 } from "@/utils/file.utils";
+import { ProfileDataInterface } from "@/types/profileData";
 
 export async function uploadImageToPinata(
     type: string,
-    courseName: string,
+    fileName: string,
     base64: string,
     pinata: PinataSDK
 ): Promise<string> {
     try {
-        const baseFilename = `${type}_${formatCourseFilename(courseName)}`;
+        const baseFilename = `a2tonium-${type}-${formatFilename(fileName)}`;
         let file;
-        if (type == "certificate" && base64 == "/images/cards/1.png") {
+        if (type == "course-certificate" && base64 == "/images/cards/1.png") {
             const fullBase64 = await getBase64FromImageURL(base64);
 
             file = base64ToFile(fullBase64, baseFilename);
@@ -39,7 +40,7 @@ export async function uploadImagesToPinata(
     courseName: string
 ): Promise<[string, string, string]> {
     const imageUrl = await uploadImageToPinata(
-        "logo",
+        "course-logo",
         courseName,
         image,
         pinata
@@ -47,14 +48,14 @@ export async function uploadImagesToPinata(
     const coverImageUrl =
         cover_image !== ""
             ? await uploadImageToPinata(
-                  "cover",
+                  "course-cover",
                   courseName,
                   cover_image,
                   pinata
               )
             : "";
     const certificateUrl = await uploadImageToPinata(
-        "certificate",
+        "course-certificate",
         courseName,
         certificate,
         pinata
@@ -70,10 +71,25 @@ export async function uploadCourseDataToPinata(
     try {
         const result = await pinata.upload.public
             .json(course)
-            .name(`${formatCourseFilename(course.name)}.json`);
+            .name(`a2tonium-course-${formatFilename(course.name)}.json`);
         return `${result.cid}`;
     } catch (error) {
         console.error("Error uploading course data to Pinata:", error);
+        throw error;
+    }
+}
+
+export async function uploadProfileDataToPinata(
+    profile: ProfileDataInterface,
+    pinata: PinataSDK
+): Promise<string> {
+    try {
+        const result = await pinata.upload.public
+            .json(profile)
+            .name(`a2tonium-profile-${formatFilename(profile.name)}.json`);
+        return `${result.cid}`;
+    } catch (error) {
+        console.error("Error uploading profile data to Pinata:", error);
         throw error;
     }
 }

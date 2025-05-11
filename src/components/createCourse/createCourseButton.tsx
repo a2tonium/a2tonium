@@ -14,7 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { CourseDataInterface } from "@/types/courseData";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
-import { sendCourseToPinata } from "@/services/courseCreation.service";
+import { createCourse } from "@/services/courseCreation.service";
 import { useTonConnect } from "@/hooks/useTonConnect";
 import { Check } from "lucide-react";
 import { Spinner } from "@/components/ui/kibo-ui/spinner";
@@ -62,7 +62,7 @@ export function CreateCourseButton({
         setIsSuccess(false);
 
         try {
-            const courseURL = await sendCourseToPinata(
+            const courseURL = await createCourse(
                 course,
                 jwt ?? "",
                 publicKey
@@ -73,7 +73,7 @@ export function CreateCourseButton({
             toast({
                 title: "Successful Course Creation",
                 description: `You've created the course: ${course.name}`,
-                className: "bg-green-500 text-white rounded-[2vw]",
+                className: "bg-green-500 text-white rounded-[2vw] border-none",
             });
         } catch (error) {
             console.error("Error creating course:", error);

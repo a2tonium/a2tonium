@@ -1,8 +1,8 @@
 import { useParams, useSearchParams } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ErrorPage } from "@/pages/error/error";
-import { WalletTable } from "@/components/profile/walletTable";
-import { WalletTableSkeleton } from "@/components/profile/walletTableSkeleton";
+import { ProfileTable } from "@/components/profile/profileTable";
+import { ProfileTableSkeleton } from "@/components/profile/profileTableSkeleton";
 import { CoursesSectionSkeleton } from "@/components/profile/coursesSectionSkeleton";
 import { CertificatesSectionSkeleton } from "@/components/profile/certificatesSectionSkeleton";
 import { useEnrolledCourses } from "@/hooks/useEnrolledCourseList";
@@ -12,16 +12,17 @@ import { useUserNFTs } from "@/hooks/useUserNFTs";
 import { CoursesSection } from "@/components/profile/coursesSection";
 import { CertificatesSection } from "@/components/profile/certificatesSection";
 import { CertificateInterface } from "@/types/courseData";
+import { useState } from "react";
 
 export function UserProfile() {
     const { walletAddr } = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
     const section = searchParams.get("section") ?? "courses";
-
+    const [isProfile, ] = useState(true);
     const {
         data: userData,
         error: userError,
-        isLoading: isWalletLoading,
+        isLoading: isProfileLoading,
     } = useWalletInfo(walletAddr);
 
     const {
@@ -80,7 +81,7 @@ export function UserProfile() {
 
     ]
 
-    const isLoading = isWalletLoading && isNFTLoading && isCoursesLoading;
+    const isLoading = isProfileLoading && isNFTLoading && isCoursesLoading;
     // Loading state
     if (isLoading) {
         return <ProfileSkeleton />;
@@ -98,7 +99,7 @@ export function UserProfile() {
     }
 
     // Null fallback (just in case)
-    if (!userData && !isWalletLoading) {
+    if (!userData && !isProfileLoading) {
         return (
             <ErrorPage
                 first={"Wallet doesn't exist"}
@@ -111,10 +112,10 @@ export function UserProfile() {
     // Rendered profile
     return (
         <div className="mt-8 mx-auto space-y-3 ">
-            {isWalletLoading ? (
-                <WalletTableSkeleton />
+            {isProfileLoading ? (
+                <ProfileTableSkeleton />
             ) : (
-                <WalletTable userData={userData} />
+                <ProfileTable userData={userData} isProfile={isProfile} />
             )}
 
             {/* Tabs Section */}

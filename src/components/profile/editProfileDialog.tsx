@@ -21,8 +21,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { checkPinataConnection } from "@/lib/pinata/pinataClient.lib";
-import { createProfile } from "../../services/profileCreation.service";
-import { ProfileDataInterface } from "../../types/profileData";
+import { updateProfile } from "@/services/profileCreation.service";
+import { ProfileWithWalletDataInterface } from "@/types/profileData";
 
 const SOCIAL_PREFIX_MAP: Record<string, string> = {
     Telegram: "t.me/",
@@ -64,26 +64,32 @@ const profileSchema = z.object({
     jwt: z.string().min(10, "JWT is too short"),
 });
 
-interface CreateProfileDialogProps {
+interface EditProfileDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    initialData: ProfileWithWalletDataInterface;
 }
 
-export function CreateProfileDialog({
+export function EditProfileDialog({
     open,
     onOpenChange,
-}: CreateProfileDialogProps) {
+    initialData,
+}: EditProfileDialogProps) {
     const { toast } = useToast();
     const [form, setForm] = useState({
-        image: "",
-        name: "",
-        description: "",
-        social_links: [{ type: "Telegram", value: "" }],
+        image: initialData.image || "",
+        name: initialData.name || "",
+        description: initialData.description || "",
+        social_links:
+            initialData.attributes?.map((a) => ({
+                type: a.trait_type,
+                value: a.value,
+            })) || [],
         jwt: "",
     });
     const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-    const [created, setCreated] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [updated, setUpdated] = useState(false);
 
     const handleChange = (field: string, value: string) => {
         setForm((prev) => ({ ...prev, [field]: value }));
@@ -93,7 +99,7 @@ export function CreateProfileDialog({
         setForm((prev) => ({ ...prev, social_links: links }));
     };
 
-    const handleCreate = async () => {
+    const handleUpdate = async () => {
         setIsLoading(true);
         setFormErrors({});
 
@@ -122,41 +128,37 @@ export function CreateProfileDialog({
 
         try {
             const { jwt, social_links, ...rest } = form;
-            social_links.map((link) => ({
-                ...link,
-                value:
-                    link.type.toLowerCase() === "email" ||
-                    link.value.startsWith("http")
-                        ? link.value
-                        : `https://${link.value}`,
-            }));
-
-            const profileData: ProfileDataInterface = {
+            const profileData = {
                 ...rest,
                 content_url: "",
                 attributes: social_links.map((link) => ({
                     trait_type: link.type,
-                    value: link.value,
+                    value:
+                        link.type.toLowerCase() === "email" ||
+                        link.value.startsWith("http")
+                            ? link.value
+                            : `https://${link.value}`,
                 })),
             };
-            const profileURL = await createProfile(profileData, jwt ?? "");
-            console.log(profileURL);
-            setCreated(true);
+
+            await updateProfile(profileData, jwt);
+            setUpdated(true);
+            toast({
+                title: "Profile Updated",
+                description: `Your profile was updated successfully`,
+                className: "bg-green-500 text-white border-none rounded-[2vw]",
+            });
+
             setTimeout(() => {
-                setCreated(false);
+                setUpdated(false);
                 onOpenChange(false);
                 setIsLoading(false);
             }, 1500);
-            toast({
-                title: "Profile Created",
-                description: `You've created the profile: ${form.name}`,
-                className: "bg-green-500 text-white rounded-[2vw] border-none",
-            });
         } catch (error) {
-            console.error("Error creating profile:", error);
+            console.error("Error updating profile:", error);
             toast({
                 title: "Error",
-                description: "Failed to create profile.",
+                description: "Failed to update profile.",
                 variant: "destructive",
             });
         } finally {
@@ -168,15 +170,33 @@ export function CreateProfileDialog({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle>Create Profile</DialogTitle>
+                    <DialogTitle>Edit Profile</DialogTitle>
                 </DialogHeader>
                 <ScrollArea className="h-[71vh] pr-4">
                     <div className="space-y-4 pb-4">
                         <div>
                             <Label>Avatar</Label>
                             <ImageDropzone
-                                value={form.image}
-                                onChange={(val) => handleChange("image", val)}
+                                value={
+                                    form.image.startsWith("data:image")
+                                        ? form.image // New image (base64)
+                                        : form.image
+                                        ? `https://ipfs.io/ipfs/${form.image}` // Old image (CID)
+                                        : ""
+                                }
+                                onChange={(val) => {
+                                    // Если пользователь загружает новое изображение (base64), просто сохраняем как есть.
+                                    // Если пользователь очищает, то `val` === "", сохраняем пустую строку.
+                                    handleChange(
+                                        "image",
+                                        val.startsWith("data:image")
+                                            ? val
+                                            : val.replace(
+                                                  "https://ipfs.io/ipfs/",
+                                                  ""
+                                              )
+                                    );
+                                }}
                             />
                             {formErrors.image && (
                                 <p className="text-red-500 text-xs mt-1">
@@ -251,19 +271,19 @@ export function CreateProfileDialog({
                 <Separator />
                 <DialogFooter className="pt-4">
                     <Button
-                        onClick={handleCreate}
+                        onClick={handleUpdate}
                         disabled={isLoading}
                         className="rounded-2xl bg-goluboy hover:bg-blue-500 text-white flex items-center gap-2"
                     >
-                        {created ? (
+                        {updated ? (
                             <>
                                 <Check className="w-4 h-4" />
-                                Created
+                                Updated
                             </>
                         ) : isLoading ? (
-                            "Creating..."
+                            "Saving..."
                         ) : (
-                            "Create"
+                            "Save"
                         )}
                     </Button>
                 </DialogFooter>

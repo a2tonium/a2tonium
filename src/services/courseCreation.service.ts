@@ -13,7 +13,7 @@ import {
 } from "@/types/courseData";
 import { encryptCourseAnswers } from "@/utils/crypt.utils";
 
-export async function sendCourseToPinata(
+export async function createCourse(
     course: CourseDataInterface,
     jwt: string,
     publicKey: string
@@ -61,10 +61,14 @@ export async function reformatCourseData(
                 certificate: certificateUrl,
             },
         ],
+        attributes: Object.entries(course.attributes).map(([key, value]) => ({
+            trait_type: key.charAt(0).toUpperCase() + key.slice(1),
+            value: String(value),
+        })),
         quiz_answers: {
             encrypted_answers: "",
             sender_public_key: "",
-        }, // will be set later
+        },
         modules: [],
     };
 
@@ -94,7 +98,11 @@ export async function reformatCourseData(
         };
     });
 
-    formatted.attributes.lessons = lessonCount;
+    formatted.attributes = formatted.attributes.map((attr) =>
+        attr.trait_type === "Lessons"
+            ? { ...attr, value: String(lessonCount) }
+            : attr
+    );
 
     // Encrypt all answers
     const { encryptedMessage, senderPublicKey } = await encryptCourseAnswers(

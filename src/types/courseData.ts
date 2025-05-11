@@ -107,8 +107,13 @@ export type VideoCheckState = Record<
     >
 >;
 
-export interface CourseDataInterfaceNew extends Omit<CourseDataInterface, "modules"> {
+export interface CourseDataInterfaceNew
+    extends Omit<CourseDataInterface, "modules" | "attributes"> {
     modules: ModuleInterfaceNew[];
+    attributes: {
+        trait_type: string;
+        value: string;
+    }[];
     quiz_answers: {
         encrypted_answers: string;
         sender_public_key: string;
