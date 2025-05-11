@@ -1,6 +1,6 @@
-import { extractYoutubeVideoId } from "@/helpers/youtube";
+import { extractYoutubeVideoId } from "@/utils/youtube.utils";
 
-export async function checkYouTubeVideo(url: string): Promise<boolean> {
+export async function isYouTubeVideoAccessible(url: string): Promise<boolean> {
     try {
         const videoId = extractYoutubeVideoId(url);
         if (!videoId) return false;

@@ -35,7 +35,6 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
     const [activeModuleIndex, setActiveModuleIndex] = useState(0);
     const [activeQuizIndex, setActiveQuizIndex] = useState(0);
 
-    
     const [videoCheckState, setVideoCheckState] = useState<VideoCheckState>({});
 
     // Единое состояние courseData
@@ -128,6 +127,20 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
         if (currentStep < totalSteps) setCurrentStep((prev) => prev + 1);
     };
 
+    const handleStepClick = (targetStep: number) => {
+        if (currentStep === 1 && !validationStatus.stepOne) {
+            setShowErrors((prev) => ({ ...prev, stepOne: true }));
+        }
+        if (currentStep === 2 && !validationStatus.stepTwo) {
+            setShowErrors((prev) => ({ ...prev, stepTwo: true }));
+        }
+        if (currentStep === 3 && !validationStatus.stepThree) {
+            setShowErrors((prev) => ({ ...prev, stepThree: true }));
+        }
+
+        setCurrentStep(targetStep);
+    };
+
     const handlePrevStep = () => {
         if (currentStep > 1) setCurrentStep((prev) => prev - 1);
     };
@@ -153,7 +166,7 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
             <StepSlider
                 currentStep={currentStep}
                 totalSteps={totalSteps}
-                setCurrentStep={setCurrentStep}
+                onStepClick={handleStepClick}
             />
             <Separator className="mt-3 mb-6" />
 

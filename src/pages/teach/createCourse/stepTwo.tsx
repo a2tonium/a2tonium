@@ -7,8 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, CirclePlus, Check, Search } from "lucide-react";
 import { CourseDataInterface, VideoCheckState } from "@/types/courseData";
-import { checkYouTubeVideo } from "@/lib/youtubeService";
-import { extractYoutubeVideoId } from "@/helpers/youtube";
+import { isYouTubeVideoAccessible } from "@/lib/youtube.lib";
+import { extractYoutubeVideoId } from "@/utils/youtube.utils";
 import { Spinner } from "@/components/ui/kibo-ui/spinner";
 import { VideoPreviewDialog } from "@/components/createCourse/videoPreviewDialog";
 
@@ -18,7 +18,7 @@ const lessonSchema = z.object({
     videoId: z
         .string()
         .url("Must be a valid YouTube link")
-        .refine(async (url) => await checkYouTubeVideo(url), {
+        .refine(async (url) => await isYouTubeVideoAccessible(url), {
             message: "YouTube video does not exist",
         }),
 });
@@ -251,7 +251,7 @@ export function StepTwo({
             }));
 
             // Проверка только одного видео
-            const isValid = await checkYouTubeVideo(value);
+            const isValid = await isYouTubeVideoAccessible(value);
             setVideoCheckState((prev) => ({
                 ...prev,
                 [moduleIndex]: {

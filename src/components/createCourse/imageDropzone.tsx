@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Image as ImageIcon } from "lucide-react";
+import { Image as ImageIcon, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import React, { useRef, useState } from "react";
 
@@ -68,10 +68,14 @@ export const ImageDropzone = ({
         reader.readAsDataURL(file);
     };
 
+    const handleRemoveImage = () => {
+        onChange("");
+    };
+
     return (
         <Card
             className={cn(
-                "cursor-pointer flex flex-col hover:border-blue-400 items-center justify-center border-dashed border-2 rounded-lg relative p-4 transition-all",
+                "cursor-pointer flex flex-col hover:border-blue-400 items-center justify-center border-dashed border-2 rounded-lg relative p-4 transition-all overflow-hidden",
                 hovered ? "border-blue-400 animate-pulse" : "border-gray-300"
             )}
             style={{ width: maxWidth, height: maxHeight }}
@@ -81,11 +85,23 @@ export const ImageDropzone = ({
             onDrop={handleDrop}
         >
             {value ? (
-                <img
-                    src={value}
-                    alt="Uploaded preview"
-                    className="w-full h-full object-cover rounded-lg"
-                />
+                <>
+                    <img
+                        src={value}
+                        alt="Uploaded preview"
+                        className="w-full h-full object-cover rounded-lg"
+                    />
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveImage();
+                        }}
+                        className="absolute top-1 right-1 bg-white/70 hover:bg-white rounded-full p-1 text-gray-600 z-20"
+                        type="button"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
+                </>
             ) : (
                 <div className="text-center">
                     <ImageIcon className="mx-auto text-gray-500" />

@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { fetchUserCourses } from "@/lib/userService";
+import { fetchUserCourses } from "@/services/user.service";
 
 export function useUserCourses(walletAddr?: string) {
     return useSWR(

@@ -558,6 +558,7 @@ export function StepThree({
                                                         type="radio"
                                                         name={`correct-answer-${qIndex}`}
                                                         checked={false}
+                                                        onChange={() => {}}
                                                         className="mr-1 ml-[0.1rem]"
                                                     />
                                                     <Button

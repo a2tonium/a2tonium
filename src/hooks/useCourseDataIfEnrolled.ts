@@ -1,6 +1,6 @@
 import useSWR from "swr";
 import { CourseDataInterface } from "@/types/courseData";
-import { fetchIfEnrolled } from "@/lib/tonService";
+import { fetchIfEnrolled } from "@/services/ton.service";
 import { useTonConnect } from "@/hooks/useTonConnect";
 
 /**

@@ -1,6 +1,6 @@
 import useSWR from "swr";
 import { useTonConnect } from "@/hooks/useTonConnect";
-import { listEnrolledCourses } from "@/lib/tonService";
+import { listEnrolledCourses } from "@/services/ton.service";
 import { EnrolledCoursePreview } from "@/types/courseData";
 
 /**

@@ -4,7 +4,7 @@ import { Plus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { TeachCardSkeleton } from "@/components/teachCard/teachCardSkeleton";
 import useSWR from "swr";
-import { fetchTeachCourses, TeachCourseInterface } from "@/lib/teachService";
+import { fetchTeachCourses, TeachCourseInterface } from "@/services/teach.service";
 import { ErrorPage } from "@/pages/error/error";
 
 export const Teach = () => {

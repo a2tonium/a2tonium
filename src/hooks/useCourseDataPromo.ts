@@ -1,6 +1,6 @@
 import useSWR from "swr";
 import { CourseDataInterface } from "@/types/courseData";
-import { fetchPromo } from "@/lib/tonService";
+import { fetchPromo } from "@/services/ton.service";
 
 export function useCourseDataPromo(contractAddress?: string) {
     const fetcher = async (): Promise<CourseDataInterface | null> => {

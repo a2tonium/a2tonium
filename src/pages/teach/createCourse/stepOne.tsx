@@ -13,7 +13,7 @@ import {
 import { CourseDataInterface } from "@/types/courseData";
 import { CategorySelect } from "@/components/createCourse/categorySelect";
 import { ImageDropzone } from "@/components/createCourse/imageDropzone";
-import { checkYouTubeVideo } from "@/lib/youtubeService";
+import { isYouTubeVideoAccessible } from "@/lib/youtube.lib";
 
 interface StepOneProps {
     courseData: CourseDataInterface;
@@ -44,7 +44,7 @@ const schema = z.object({
             .refine(
                 async (url) => {
                     if (!url) return true; // skip if undefined
-                    return await checkYouTubeVideo(url);
+                    return await isYouTubeVideoAccessible(url);
                 },
                 { message: "YouTube video does not exist" }
             )
@@ -143,7 +143,7 @@ export function StepOne({
             </h2>
             {/* Logo Upload */}
             <div>
-                <div className="flex items-center mb-4 gap-5">
+                <div className="flex sm:flex-row flex-col sm:items-center mb-4 gap-5">
                     <div>
                         <Label
                             htmlFor="title"

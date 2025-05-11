@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
-import { checkPinataConnection } from "@/lib/pinata/pinataClient";
+import { checkPinataConnection } from "@/lib/pinata/pinataClient.lib";
 import { CourseDataInterface } from "@/types/courseData";
-import { extractYoutubeVideoId } from "@/helpers/youtube";
+import { extractYoutubeVideoId } from "@/utils/youtube.utils";
 import { Spinner } from "@/components/ui/kibo-ui/spinner";
 
 interface StepFiveProps {
@@ -203,7 +203,7 @@ export function StepFive({
                                 <span className="m-0 p-0 font-semibold text-xs sm:text-sm flex items-center gap-2">
                                     Check JWT
                                     {isLoading ? (
-                                        <Spinner className="w-4 h-4 text-blue-500"/>
+                                        <Spinner className="w-4 h-4 text-blue-500" />
                                     ) : isValidJwt ? (
                                         <Check className="w-4 h-4 text-blue-500" />
                                     ) : (

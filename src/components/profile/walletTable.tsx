@@ -1,9 +1,11 @@
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, User } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState } from "react";
 
-import { UserDataInterface } from "@/lib/userService";
+import { UserDataInterface } from "@/services/user.service";
+import { CreateProfileDialog } from "@/components/profile/createProfileDialog";
+import { Button } from "@/components/ui/button";
 
 interface WalletTableProps {
     userData?: UserDataInterface;
@@ -12,6 +14,7 @@ interface WalletTableProps {
 export function WalletTable({ userData }: WalletTableProps) {
     const isMobile = useIsMobile();
     const [copied, setCopied] = useState(false);
+    const [openDialog, setOpenDialog] = useState(false);
 
     const truncateAddress = (address?: string) => {
         if ((address ?? "").length <= 16) return address;
@@ -70,6 +73,25 @@ export function WalletTable({ userData }: WalletTableProps) {
                             </TableRow>
                         </TableBody>
                     </Table>
+                    <div>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setOpenDialog(true)}
+                            className="p-2.5 mt-2 gap-1.5 flex items-center border-goluboy text-goluboy 
+        hover:border-blue-500 hover:text-blue-500 transition-colors duration-200 rounded-2xl"
+                        >
+                            <span className="m-0 p-0 font-semibold text-xs sm:text-sm flex items-center gap-2">
+                                <span>Create Profile</span>
+                                <User className="w-4 h-4" />
+                            </span>
+                        </Button>
+
+                        <CreateProfileDialog
+                            open={openDialog}
+                            onOpenChange={setOpenDialog}
+                        />
+                    </div>
                 </div>
             </div>
         </div>

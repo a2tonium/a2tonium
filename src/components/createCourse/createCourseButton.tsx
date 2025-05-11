@@ -13,9 +13,11 @@ import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { CourseDataInterface } from "@/types/courseData";
 import { useToast } from "@/hooks/use-toast";
-import { Link} from "react-router-dom";
-import { sendCourseToPinata } from "@/services/courseService";
+import { Link } from "react-router-dom";
+import { sendCourseToPinata } from "@/services/courseCreation.service";
 import { useTonConnect } from "@/hooks/useTonConnect";
+import { Check } from "lucide-react";
+import { Spinner } from "@/components/ui/kibo-ui/spinner";
 
 interface CreateCourseLogicProps {
     course: CourseDataInterface;
@@ -32,10 +34,15 @@ export function CreateCourseButton({
     course,
     open,
     onOpenChange,
-    jwt
-}: CreateCourseLogicProps & { open: boolean; onOpenChange: (open: boolean) => void }) {
+    jwt,
+}: CreateCourseLogicProps & {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+}) {
     const [accepted, setAccepted] = useState(false);
     const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
     const { toast } = useToast();
     const { publicKey } = useTonConnect();
     // const navigate = useNavigate();
@@ -51,28 +58,33 @@ export function CreateCourseButton({
         }
 
         setError("");
-        
-        const courseURL = await sendCourseToPinata(course, jwt ?? "", publicKey);
-        console.log(courseURL);
-        // const courseJSON = JSON.stringify(finalCourse);
+        setIsLoading(true);
+        setIsSuccess(false);
 
-        // Save the JSON file
-        // const blob = new Blob([courseJSON], { type: "application/json" });
-        // const url = URL.createObjectURL(blob);
-        // const link = document.createElement("a");
-        // link.href = url;
-        // link.download = `${course.name.replace(/\s+/g, "_")}_course.json`;
-        // document.body.appendChild(link);
-        // link.click();
-        // document.body.removeChild(link);
-        // URL.revokeObjectURL(url);
+        try {
+            const courseURL = await sendCourseToPinata(
+                course,
+                jwt ?? "",
+                publicKey
+            );
+            console.log(courseURL);
 
-        // show toast
-        toast({
-            title: "Successful Course Creation",
-            description: `You've created the course: ${course.name}`,
-            className: "bg-green-500 text-white rounded-[2vw]",
-        });
+            setIsSuccess(true);
+            toast({
+                title: "Successful Course Creation",
+                description: `You've created the course: ${course.name}`,
+                className: "bg-green-500 text-white rounded-[2vw]",
+            });
+        } catch (error) {
+            console.error("Error creating course:", error);
+            toast({
+                title: "Error",
+                description: "Failed to create course.",
+                variant: "destructive",
+            });
+        } finally {
+            setIsLoading(false);
+        }
         // navigate("/teach");
     };
 
@@ -125,9 +137,15 @@ export function CreateCourseButton({
                 <DialogFooter>
                     <Button
                         onClick={() => handleCreateCourse(publicKey)}
-                        className="font-semibold rounded-2xl bg-goluboy hover:bg-blue-500 text-white"
+                        className="font-semibold rounded-2xl bg-goluboy hover:bg-blue-500 text-white flex items-center gap-2"
+                        disabled={isLoading || !accepted}
                     >
                         Create Course
+                        {isLoading ? (
+                            <Spinner className="animate-spin w-4 h-4" />
+                        ) : isSuccess ? (
+                            <Check className="w-4 h-4" />
+                        ) : null}
                     </Button>
                 </DialogFooter>
             </DialogContent>

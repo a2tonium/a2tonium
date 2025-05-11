@@ -1,17 +1,17 @@
-import { extractYoutubeVideoId } from "@/helpers/youtube";
+import { extractYoutubeVideoId } from "@/utils/youtube.utils";
 import {
     createPinataInstance,
     findPinataGateway,
-} from "@/lib/pinata/pinataClient";
+} from "@/lib/pinata/pinataClient.lib";
 import {
     uploadCourseDataToPinata,
     uploadImagesToPinata,
-} from "@/lib/pinata/pinataUploader";
+} from "@/lib/pinata/pinataUploader.lib";
 import {
     CourseDataInterface,
     CourseDataInterfaceNew,
 } from "@/types/courseData";
-import { encryptCourseAnswers } from "@/helpers/crypt";
+import { encryptCourseAnswers } from "@/utils/crypt.utils";
 
 export async function sendCourseToPinata(
     course: CourseDataInterface,

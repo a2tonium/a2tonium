@@ -1,6 +1,6 @@
 import { Separator } from "@/components/ui/separator";
 import { CourseDataInterface } from "@/types/courseData";
-import { BuyLogic } from "@/components/coursePromo/buyLogic";
+import { BuyLogic } from "@/components/coursePromo/buyDialog";
 
 interface BuyPanelProps {
     course: CourseDataInterface;

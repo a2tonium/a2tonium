@@ -4,8 +4,7 @@ import {
     hexToUint8Array,
     stringToUint8Array,
     uint8ArrayToBase64,
-    uint8ArrayToString,
-} from "@/helpers/file";
+} from "@/utils/file.utils";
 
 export const encryptStudentAnswers = async (
     message: string,
@@ -88,52 +87,4 @@ const encryptMessage = async (
         Array.from(encryptedBytes)
     );
     return encryptedBytes;
-};
-
-// Decrypts the message using the recipient's private key and the sender's public key
-export const decryptMessage = async (
-    encryptedMessage: Uint8Array,
-    senderPublicKey: Uint8Array, // Public key of the sender
-    recipientPrivateKey: Uint8Array // Private key of the recipient
-): Promise<string> => {
-    // Extract the IV from the encrypted message
-    const iv = encryptedMessage.slice(0, 16); // Extract the IV (first 16 bytes)
-    const ciphertext = encryptedMessage.slice(16); // The rest is the encrypted message
-
-    console.log("Extracted IV:", iv);
-    console.log("Ciphertext:", Array.from(ciphertext));
-
-    // Generate the shared secret using the recipient's private key and the sender's public key
-    const sharedSecret = nacl.box.before(senderPublicKey, recipientPrivateKey);
-    console.log(
-        "Shared Secret (first 16 bytes for AES):",
-        sharedSecret.slice(0, 16)
-    );
-
-    // AES decryption setup (using the shared secret as the key)
-    const key = sharedSecret.slice(0, 16); // Take the first 16 bytes for AES-128
-
-    // Import the AES key into Web Crypto API
-    const cryptoKey = await crypto.subtle.importKey(
-        "raw",
-        key,
-        { name: "AES-CBC" },
-        false,
-        ["decrypt"]
-    );
-
-    try {
-        // Decrypt the message with AES-CBC
-        const decryptedMessage = await crypto.subtle.decrypt(
-            { name: "AES-CBC", iv },
-            cryptoKey,
-            ciphertext
-        );
-
-        // Convert the decrypted message back to a string
-        return uint8ArrayToString(new Uint8Array(decryptedMessage));
-    } catch (err) {
-        console.error("Decryption failed:", err);
-        throw new Error("Decryption failed: " + err);
-    }
 };

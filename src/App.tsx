@@ -29,7 +29,7 @@ export default function App() {
 
     return (
         <AnimatePresence mode="wait">
-            <TonConnectUIProvider manifestUrl="https://raw.githubusercontent.com/Qydnama/first_contract_front_end/refs/heads/main/public/tonconnect-manifest.json">
+            <TonConnectUIProvider manifestUrl="https://raw.githubusercontent.com/a2tonium/a2tonium/main/public/tonconnect-manifest.json">
                     <Routes location={location} key={location.pathname}>
                         <Route index element={<Navigate to="catalog" replace />} />
                         <Route path="catalog" element={ <MainLayout children={<Catalog />} />} />

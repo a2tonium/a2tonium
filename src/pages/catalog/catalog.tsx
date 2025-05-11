@@ -6,7 +6,7 @@ import { ErrorPage } from "@/pages/error/error";
 import { SortButton } from "@/components/catalog/sortButton";
 import { FilterCourses } from "@/components/catalog/filterCourses";
 import { FilterType } from "@/types/courseData";
-import { filterAndSortCourses } from "@/components/catalog/filterAndSortLogic";
+import { filterAndSortCourses } from "@/utils/catalog.utils";
 
 export function Catalog() {
     const { data: visibleCourses, isLoading, error } = useCatalogCourses();
