@@ -11,7 +11,6 @@ import { TonConnectButton } from "@tonconnect/ui-react";
 import { SearchBar } from "@/components/header/searchBar";
 import { SettingsPopover } from "@/components/header/settingsPopover";
 import { useTonConnect, CHAINNET } from "@/hooks/useTonConnect";
-import { useCourseContract } from "../../hooks/useCourseContract";
 
 interface HeaderProps {
     className?: string;

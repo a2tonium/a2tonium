@@ -20,7 +20,7 @@ import { Check } from "lucide-react";
 import { Spinner } from "@/components/ui/kibo-ui/spinner";
 import { useCourseContract } from "@/hooks/useCourseContract";
 import { toNano } from "@ton/core";
-import { encodeOffChainContent } from "@/utils/encodeOffChainContent.utils"
+import { encodeOffChainContent } from "@/utils/encodeOffChainContent.utils";
 
 interface CreateCourseLogicProps {
     course: CourseDataInterface;
@@ -42,6 +42,8 @@ export function CreateCourseButton({
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }) {
+    const { courseContract } = useCourseContract();
+    const { sender } = useTonConnect();
     const [accepted, setAccepted] = useState(false);
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -65,28 +67,22 @@ export function CreateCourseButton({
         setIsSuccess(false);
 
         try {
-            const courseURL = await createCourse(
-                course,
-                jwt ?? "",
-                publicKey
-            );
+            const courseURL = await createCourse(course, jwt ?? "", publicKey);
             console.log(courseURL);
-            const {courseContract} = useCourseContract();
-            const {sender} = useTonConnect();
+
             await courseContract!.send(
                 sender,
                 {
-                    value: toNano('0.03'),
+                    value: toNano("0.3"),
                 },
                 {
-                    $$type: 'UpdateCourse',
-                    
-                    content: encodeOffChainContent("ipfs://bafkreihjc4vo6objiqydzb7m2y7owx5672zralpdiezgvdhryjrl54w7du"),
-                    cost: toNano('3'),
-                },
+                    $$type: "UpdateCourse",
+
+                    content: encodeOffChainContent(`ipfs://${courseURL}`),
+                    cost: toNano("3"),
+                }
             );
 
-            `ipfs://${courseURL}`
             setIsSuccess(true);
             toast({
                 title: "Successful Course Creation",
