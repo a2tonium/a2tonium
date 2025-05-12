@@ -1,4 +1,4 @@
-import { TonClient } from "ton";
+import { TonClient } from "@ton/ton";
 import { useTonConnect } from "@/hooks/useTonConnect";
 import { useAsyncInitialize } from "@/hooks/useAsyncInitialize";
 import { CHAIN } from "@tonconnect/ui-react";

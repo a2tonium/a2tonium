@@ -7,25 +7,19 @@ import { Address, OpenedContract } from "@ton/core";
 export function useCourseContract() {
     const { client } = useTonClient();
     const { address } = useTonConnect();
-    console.log("client", client);
-    console.log("address", address);
     const courseContract = useAsyncInitialize(async () => {
         if (!client) return;
-        const i = 0n;
-        // for (i; ; i++) {
-            const contract = await Course.fromInit(Address.parse(address), i);
-            console.log("contract: ", contract.address.toString());
-            const course = client.open(
-                contract
-            ) as OpenedContract<Course>;
-
-
-            console.log("type: ", course);
-            console.log("i: ", i);
-        // }
-
-        // const contract = await Course.fromInit(Address.parse(address), i);
-        // return client.open(contract as Contract) as OpenedContract<Course>;
+        let i = 0n;
+        let course;
+        for (;i < 3n ; i++) {
+            course = client.open(await Course.fromInit(Address.parse(address), i)) as OpenedContract<Course>;
+                console.log("dsahfoihjioawjefoijoisaj");
+                const data = await client.open(course).getGetCourseData();
+                console.log(data);
+        }
+        console.log("CHetam1: ", (await Course.fromInit(Address.parse(address), i)).address.toString());
+        console.log("CHetam2: ", i, course!!.address.toString());
+        return course;
     }, [client]);
 
     return { courseContract };
