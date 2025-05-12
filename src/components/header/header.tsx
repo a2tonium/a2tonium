@@ -21,8 +21,6 @@ export const Header: React.FC<HeaderProps> = ({ className }) => {
     const { t } = useTranslation();
     const { network } = useTonConnect();
     // TESTNET = -3, MAINNET = -239
-    const {courseContract} = useCourseContract();
-    console.log("courseContract cjhetam", courseContract)
 
     return (
         <header

@@ -18,6 +18,9 @@ import { createCourse } from "@/services/courseCreation.service";
 import { useTonConnect } from "@/hooks/useTonConnect";
 import { Check } from "lucide-react";
 import { Spinner } from "@/components/ui/kibo-ui/spinner";
+import { useCourseContract } from "@/hooks/useCourseContract";
+import { toNano } from "@ton/core";
+import { encodeOffChainContent } from "@/utils/encodeOffChainContent.utils"
 
 interface CreateCourseLogicProps {
     course: CourseDataInterface;
@@ -68,7 +71,22 @@ export function CreateCourseButton({
                 publicKey
             );
             console.log(courseURL);
+            const {courseContract} = useCourseContract();
+            const {sender} = useTonConnect();
+            await courseContract!.send(
+                sender,
+                {
+                    value: toNano('0.03'),
+                },
+                {
+                    $$type: 'UpdateCourse',
+                    
+                    content: encodeOffChainContent("ipfs://bafkreihjc4vo6objiqydzb7m2y7owx5672zralpdiezgvdhryjrl54w7du"),
+                    cost: toNano('3'),
+                },
+            );
 
+            `ipfs://${courseURL}`
             setIsSuccess(true);
             toast({
                 title: "Successful Course Creation",

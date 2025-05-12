@@ -13,14 +13,12 @@ export function useCourseContract() {
         let course;
         for (;i < 3n ; i++) {
             course = client.open(await Course.fromInit(Address.parse(address), i)) as OpenedContract<Course>;
-                console.log("dsahfoihjioawjefoijoisaj");
-                const data = await client.open(course).getGetCourseData();
-                console.log(data);
-        }
-        console.log("CHetam1: ", (await Course.fromInit(Address.parse(address), i)).address.toString());
-        console.log("CHetam2: ", i, course!!.address.toString());
+            try {
+                await client.open(course).getGetCourseData();
+            } catch (e) { break }
+            }
         return course;
-    }, [client]);
+    }, []);
 
     return { courseContract };
 }

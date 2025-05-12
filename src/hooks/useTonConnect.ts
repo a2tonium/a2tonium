@@ -6,7 +6,7 @@ import {
     useTonWallet,
 } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
-import { Address, SenderArguments, Sender } from "ton-core";
+import { Address, SenderArguments, Sender } from "@ton/core";
 
 export const CHAINNET = {
     MAINNET: -239,
