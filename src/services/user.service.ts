@@ -18,7 +18,7 @@ export async function fetchTonWalletData(
         balance: (data.balance / 1e9).toFixed(4),
         description:
             "DESCRIPTION DESCRIPTION DESCRIPTION DESCRIPTION DESCRIPTION DESCRIPTION DESCRIPTION DESCRIPTION DESCRIPTION DESCRIPTION DESCRIPTION DESCRIPTION DESCRIPTION",
-        image: "bafybeih7cpuvthhm2ojq7gj4dx6asofoanh4kkuyh7hmehyixkpakea6pi",
+        image: "bafybeie74p4z242aeohi2i3cahrc2l7fsfyonxnujfnyvbpjvsnpmpqsgu",
         attributes: [
             {
                 trait_type: "Telegram",

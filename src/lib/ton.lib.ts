@@ -57,9 +57,9 @@ export async function getEnrolledCourseAddresses(
 const TON_API_BASE = "https://testnet.tonapi.io/v2";
 const API_KEY = import.meta.env.VITE_TONAPI;
 
-if (!API_KEY) {
-    throw new Error("TON API key is not defined in .env");
-}
+// if (!API_KEY) {
+//     throw new Error("TON API key is not defined in .env");
+// }
 
 export async function getTonWalletRawData(addr: string) {
     const res = await fetch(`${TON_API_BASE}/accounts/${addr}`, {

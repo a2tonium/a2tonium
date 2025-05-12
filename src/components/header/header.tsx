@@ -11,6 +11,7 @@ import { TonConnectButton } from "@tonconnect/ui-react";
 import { SearchBar } from "@/components/header/searchBar";
 import { SettingsPopover } from "@/components/header/settingsPopover";
 import { useTonConnect, CHAINNET } from "@/hooks/useTonConnect";
+import { useCourseContract } from "../../hooks/useCourseContract";
 
 interface HeaderProps {
     className?: string;
@@ -20,6 +21,8 @@ export const Header: React.FC<HeaderProps> = ({ className }) => {
     const { t } = useTranslation();
     const { network } = useTonConnect();
     // TESTNET = -3, MAINNET = -239
+    const {courseContract} = useCourseContract();
+    console.log("courseContract", courseContract)
 
     return (
         <header
