@@ -17,3 +17,11 @@ export interface Event {
 export interface ApiResponse {
     events: Event[];
 }
+
+import { Address, SenderArguments } from "@ton/core";
+import { SendTransactionResponse } from "@tonconnect/ui-react";
+
+export interface CustomSender {
+    send: (args: SenderArguments) => Promise<SendTransactionResponse | null>;
+    address?: Address;
+}

@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export const LearnCardSkeleton: React.FC = () => {
     return (
-        <Card className="h-auto xs:h-[200px] relative border-0 w-full max-w-4xl p-4 shadow-inner bg-gray-100">
+        <Card className="h-auto relative border-0 w-full max-w-4xl p-4 shadow-inner bg-gray-100">
             {/* Menu Skeleton */}
             <div className="absolute top-4 right-4">
                 <Skeleton className="w-5 h-5 rounded-full" />

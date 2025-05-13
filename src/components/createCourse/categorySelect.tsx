@@ -10,7 +10,7 @@ import {
     TagsValue,
 } from "@/components/ui/kibo-ui/tags";
 import { useState, useEffect } from "react";
-import { CheckIcon, PlusIcon, ChevronRight, ChevronDown } from "lucide-react";
+import { CheckIcon, ChevronRight, ChevronDown } from "lucide-react";
 import categoryData from "@/data/categories.json";
 import { useTranslation } from "react-i18next";
 
@@ -33,7 +33,7 @@ export const CategorySelect = ({
     const [newTag, setNewTag] = useState<string>("");
     const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>("");
-    const [flattenedTags, setFlattenedTags] = useState<
+    const [, setFlattenedTags] = useState<
         { id: string; label: string; path: string[] }[]
     >([]);
 
@@ -89,29 +89,6 @@ export const CategorySelect = ({
         setSelected([...selected, value]);
     };
 
-    const handleCreateTag = () => {
-        if (!newTag.trim()) return;
-
-        const newTagId = newTag.toLowerCase().replace(/\s+/g, "-");
-
-        // Check if tag already exists
-        if (flattenedTags.some((tag) => tag.id === newTagId)) {
-            return;
-        }
-
-        // Add to flattened tags
-        setFlattenedTags((prev) => [
-            ...prev,
-            {
-                id: newTagId,
-                label: newTag,
-                path: [newTag],
-            },
-        ]);
-
-        setSelected([...selected, newTagId]);
-        setNewTag("");
-    };
 
     const toggleExpand = (categoryId: string) => {
         setExpandedCategories((prev) =>
@@ -241,17 +218,7 @@ export const CategorySelect = ({
                 <TagsList>
                     <TagsEmpty>
                         {newTag.trim() && (
-                            <button
-                                type="button"
-                                className="flex items-center gap-2 cursor-pointer mx-auto"
-                                onClick={handleCreateTag}
-                            >
-                                <PlusIcon
-                                    size={14}
-                                    className="text-muted-foreground"
-                                />
-                                Create new tag: {newTag}
-                            </button>
+                            null
                         )}
                         {!newTag.trim() && "No categories found."}
                     </TagsEmpty>

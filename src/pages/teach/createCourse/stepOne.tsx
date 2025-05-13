@@ -13,7 +13,6 @@ import {
 import { CourseDataInterface } from "@/types/courseData";
 import { CategorySelect } from "@/components/createCourse/categorySelect";
 import { ImageDropzone } from "@/components/createCourse/imageDropzone";
-import { isYouTubeVideoAccessible } from "@/lib/youtube.lib";
 
 interface StepOneProps {
     courseData: CourseDataInterface;
@@ -27,29 +26,17 @@ interface StepOneProps {
         }>
     >;
     showErrors: boolean;
+    promoVideoValid: boolean;
 }
 
 const schema = z.object({
     image: z.string().min(1, "Logo is required"),
     name: z.string().min(5, "Title must be at least 5 characters"),
     description: z.string().min(5, "Description must be at least 5 characters"),
-    video: z.preprocess(
-        (val) => {
-            if (typeof val === "string" && val.trim() === "") return undefined;
-            return val;
-        },
-        z
-            .string()
-            .url("Must be a valid YouTube link")
-            .refine(
-                async (url) => {
-                    if (!url) return true; // skip if undefined
-                    return await isYouTubeVideoAccessible(url);
-                },
-                { message: "YouTube video does not exist" }
-            )
-            .optional()
-    ),
+    video: z.preprocess((val) => {
+        if (typeof val === "string" && val.trim() === "") return undefined;
+        return val;
+    }, z.string().url("Must be a valid YouTube link").optional()),
 
     attributes: z.object({
         workload: z.string().min(5, "Workload description required"),
@@ -90,6 +77,7 @@ export function StepOne({
     setCourseData,
     setValidationStatus,
     showErrors,
+    promoVideoValid,
 }: StepOneProps) {
     const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -111,16 +99,32 @@ export function StepOne({
                         errorMessages[issue.path[0]] = issue.message;
                     }
                 });
+                if (!promoVideoValid) {
+                    errorMessages.video =
+                        "Promo video URL must be a valid YouTube link";
+
+                }
 
                 setErrors(errorMessages);
                 setValidationStatus((prev) => ({ ...prev, stepOne: false }));
             } else {
-                setErrors({});
-                setValidationStatus((prev) => ({ ...prev, stepOne: true }));
+                if (!promoVideoValid) {
+                    const errorMessages: Record<string, string> = {};
+                    errorMessages.video =
+                        "Promo video URL must be a valid YouTube link";
+                    setErrors(errorMessages);
+                    setValidationStatus((prev) => ({
+                        ...prev,
+                        stepOne: false,
+                    }));
+                } else {
+                    setErrors({});
+                    setValidationStatus((prev) => ({ ...prev, stepOne: true }));
+                }
             }
         };
         validate();
-    }, [courseData, setValidationStatus]);
+    }, [courseData, promoVideoValid, setValidationStatus]);
 
     const handleInputChange = (field: string, value: string) => {
         setCourseData((prev) => ({ ...prev, [field]: value }));
@@ -178,7 +182,7 @@ export function StepOne({
                                 }))
                             }
                         />
-                        {showErrors && errors.image && (
+                        {showErrors && errors.cover_image && (
                             <p className="text-red-500 text-xs mt-1">
                                 {errors.cover_image}
                             </p>
@@ -253,12 +257,13 @@ export function StepOne({
             </div>
             <div>
                 <Label
-                    htmlFor="promo-video"
+                    htmlFor="promoVideo"
                     className="mb-2 block text-sm font-medium"
                 >
                     Promo Video URL(optional)
                 </Label>
                 <Input
+                    id="promoVideo"
                     value={courseData.video}
                     onChange={(e) => handleInputChange("video", e.target.value)}
                     placeholder="https://youtube.com/..."

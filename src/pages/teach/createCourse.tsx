@@ -11,6 +11,7 @@ import { StepFour } from "@/pages/teach/createCourse/stepFour";
 import { StepFive } from "@/pages/teach/createCourse/stepFive";
 import { CourseDataInterface, VideoCheckState } from "@/types/courseData";
 import { CreateCourseButton } from "@/components/createCourse/createCourseButton";
+import { isYouTubeVideoAccessible } from "@/lib/youtube.lib";
 
 export function CreateCourse({ children }: { children: React.ReactNode }) {
     const [isDirty, setIsDirty] = useState(false);
@@ -148,12 +149,29 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
     const [jwt, setJwt] = useState("");
     const [isValidJwt, setIsValidJwt] = useState(false);
 
+    const [promoVideoValid, setPromoVideoValid] = useState<boolean>(true);
+
+    useEffect(() => {
+        const check = async () => {
+            if (!courseData.video?.trim()) {
+                setPromoVideoValid(true); // optional field
+                return;
+            }
+
+            const isValid = await isYouTubeVideoAccessible(courseData.video);
+            setPromoVideoValid(isValid);
+        };
+
+        check();
+    }, [courseData.video]);
+
     const isFormValid =
         validationStatus.stepOne &&
         validationStatus.stepTwo &&
         validationStatus.stepThree &&
         validationStatus.stepFour &&
-        isValidJwt;
+        isValidJwt &&
+        promoVideoValid;
 
     const handleCreateCourse = () => {
         setShowDialog(true);
@@ -178,6 +196,7 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
                         setCourseData={setCourseData}
                         setValidationStatus={setValidationStatus}
                         showErrors={showErrors.stepOne}
+                        promoVideoValid={promoVideoValid}
                     />
                 )}
 

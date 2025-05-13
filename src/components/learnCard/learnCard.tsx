@@ -37,7 +37,7 @@ export const LearnCard: React.FC<LearnCardProps> = ({
 
     return (
         <Card
-            className="h-auto xs:h-[200px] bg-gray-100 cursor-pointer relative border-0 w-full rounded-xl max-w-4xl p-4 shadow-inner hover:shadow-hover-even transition-shadow duration-150"
+            className="h-auto bg-gray-100 cursor-pointer relative border-0 w-full rounded-xl max-w-4xl p-4 shadow-inner hover:shadow-hover-even transition-shadow duration-150"
             onClick={handleCardClick}
         >
             {/* Меню справа */}

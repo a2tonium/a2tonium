@@ -19,8 +19,6 @@ import { useTonConnect } from "@/hooks/useTonConnect";
 import { Check } from "lucide-react";
 import { Spinner } from "@/components/ui/kibo-ui/spinner";
 import { useCourseContract } from "@/hooks/useCourseContract";
-import { toNano } from "@ton/core";
-import { encodeOffChainContent } from "@/utils/encodeOffChainContent.utils";
 
 interface CreateCourseLogicProps {
     course: CourseDataInterface;
@@ -42,7 +40,7 @@ export function CreateCourseButton({
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }) {
-    const { courseContract } = useCourseContract();
+    const { createCourseContract } = useCourseContract();
     const { sender } = useTonConnect();
     const [accepted, setAccepted] = useState(false);
     const [error, setError] = useState("");
@@ -51,6 +49,8 @@ export function CreateCourseButton({
     const { toast } = useToast();
     const { publicKey } = useTonConnect();
     // const navigate = useNavigate();
+
+    
 
     const handleCreateCourse = async (publicKey: string) => {
         const result = buySchema.safeParse({ accepted });
@@ -61,34 +61,23 @@ export function CreateCourseButton({
             setError(firstError);
             return;
         }
-
+        
         setError("");
         setIsLoading(true);
         setIsSuccess(false);
 
         try {
             const courseURL = await createCourse(course, jwt ?? "", publicKey);
-            console.log(courseURL);
 
-            await courseContract!.send(
-                sender,
-                {
-                    value: toNano("0.3"),
-                },
-                {
-                    $$type: "UpdateCourse",
-
-                    content: encodeOffChainContent(`ipfs://${courseURL}`),
-                    cost: toNano("3"),
-                }
-            );
+            await createCourseContract(sender, courseURL);
 
             setIsSuccess(true);
-            toast({
-                title: "Successful Course Creation",
-                description: `You've created the course: ${course.name}`,
-                className: "bg-green-500 text-white rounded-[2vw] border-none",
-            });
+            onOpenChange(false);
+            // toast({
+            //     title: "Successful Course Creation",
+            //     description: `You've created the course: ${course.name}`,
+            //     className: "bg-green-500 text-white rounded-[2vw] border-none",
+            // });
         } catch (error) {
             console.error("Error creating course:", error);
             toast({

@@ -43,7 +43,7 @@ export function CoursePromo() {
     }
 
     return (
-        <div className="w-full bg-white sm:pt-4 md:pt-6 pb-10 rounded-[2vw] md:border-[6px] border-gray-200">
+        <div className="w-full bg-white sm:pt-4 md:pt-6 rounded-[2vw] md:border-[6px] border-gray-200">
             {/* 1. Background Image */}
             <div className="relative mx-auto h-[120px] sm:h-[160px] md:h-[200px] w-full sm:w-[96%] rounded-[2vw] overflow-hidden">
                 {course.cover_image ? (
@@ -143,7 +143,7 @@ export function CoursePromo() {
                             {/* Course Duration */}
                             {/* What You Will Learn */}
                             <div>
-                                <h2 className="text-2xl font-normal">
+                                <h2 className="text-2xl font-semibold">
                                     What you will learn
                                 </h2>
                                 <p className="mt-2 leading-relaxed whitespace-pre-wrap">
@@ -153,7 +153,7 @@ export function CoursePromo() {
 
                             {/* About this course */}
                             <div>
-                                <h2 className="text-2xl font-normal">
+                                <h2 className="text-2xl font-semibold">
                                     About this course
                                 </h2>
                                 <p className="mt-2 leading-relaxed whitespace-pre-wrap">
@@ -163,7 +163,7 @@ export function CoursePromo() {
 
                             {/* What You Will Gain */}
                             <div>
-                                <h2 className="text-2xl font-normal">
+                                <h2 className="text-2xl font-semibold">
                                     What You Will Gain
                                 </h2>
                                 <p className="mt-2 leading-relaxed whitespace-pre-wrap">
@@ -173,7 +173,7 @@ export function CoursePromo() {
 
                             {/* Initial requirements */}
                             <div>
-                                <h2 className="text-2xl font-normal">
+                                <h2 className="text-2xl font-semibold">
                                     Initial requirements
                                 </h2>
                                 <p className="mt-2 leading-relaxed whitespace-pre-wrap">
@@ -183,7 +183,7 @@ export function CoursePromo() {
 
                             {/* Course content */}
                             <div id="course-content">
-                                <h2 className="text-2xl font-normal">
+                                <h2 className="text-2xl font-semibold">
                                     Course content
                                 </h2>
                                 <Accordion

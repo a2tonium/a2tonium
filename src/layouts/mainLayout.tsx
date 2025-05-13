@@ -16,16 +16,16 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({
         return "max-w-screen-xl sm:px-4";
     };
 
-    const getCustomCSS = () => {
-        if (location.pathname.includes("/lesson/")) {
-            return "";
+    const getCustomCSSFooter = () => {
+        if (location.pathname.includes("/promo")) {
+            return "mb-[190px] md:mb-0";
         }
         return "";
     };
 
     return (
         <div
-            className={`flex flex-col min-h-screen bg-white ${getCustomCSS()}`}
+            className={`flex flex-col min-h-screen bg-white`}
         >
             {/* Header */}
             <Header className="w-full h-13 bg-white" />
@@ -39,7 +39,7 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({
             </main>
 
             {/* Footer */}
-            <Footer className="px-4 max-w-screen-xl" />
+            <Footer className={`px-4 max-w-screen-xl  ${getCustomCSSFooter()}`} />
         </div>
     );
 };

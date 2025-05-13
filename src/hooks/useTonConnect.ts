@@ -41,7 +41,7 @@ export function useTonConnect(): {
     return {
         sender: {
             send: async (args: SenderArguments) => {
-                tonConnectUI.sendTransaction({
+                await tonConnectUI.sendTransaction({
                     messages: [
                         {
                             address: args.to.toString(),
@@ -49,7 +49,7 @@ export function useTonConnect(): {
                             payload: args.body?.toBoc().toString("base64"),
                         },
                     ],
-                    validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes
+                    validUntil: Math.floor(Date.now() / 1000) + 300, // 5 минут
                 });
             },
             address: wallet?.account.address
@@ -59,9 +59,9 @@ export function useTonConnect(): {
         address: address,
         rawAddress: rawAddress,
         network: wallet?.account.chain || null,
-        
+
         ready,
         isConnected,
-        publicKey: wallet?.account.publicKey || ""
+        publicKey: wallet?.account.publicKey || "",
     };
 }

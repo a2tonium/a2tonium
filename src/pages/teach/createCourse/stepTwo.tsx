@@ -15,12 +15,7 @@ import { VideoPreviewDialog } from "@/components/createCourse/videoPreviewDialog
 // 1) Валидация урока
 const lessonSchema = z.object({
     title: z.string().min(5, "Lesson title must be at least 5 characters"),
-    videoId: z
-        .string()
-        .url("Must be a valid YouTube link")
-        .refine(async (url) => await isYouTubeVideoAccessible(url), {
-            message: "YouTube video does not exist",
-        }),
+    videoId: z.string().url("Must be a valid YouTube link"),
 });
 
 // 2) Валидация модуля
@@ -152,6 +147,42 @@ export function StepTwo({
             await validate();
         })();
     }, [courseData, setValidationStatus]);
+
+    useEffect(() => {
+        let allValid = true;
+
+        for (const [moduleIndex, module] of courseData.modules.entries()) {
+            for (const [lessonIndex] of module.lessons.entries()) {
+                const videoState =
+                    videoCheckState?.[moduleIndex]?.[lessonIndex];
+
+                // если видео невалидное или не проверено
+                if (!videoState?.isValid) {
+                    allValid = false;
+
+                    setErrors((prev) => ({
+                        ...prev,
+                        [moduleIndex]: {
+                            ...prev[moduleIndex],
+                            lessons: {
+                                ...prev[moduleIndex]?.lessons,
+                                [lessonIndex]: {
+                                    ...prev[moduleIndex]?.lessons?.[
+                                        lessonIndex
+                                    ],
+                                    videoUrl: "YouTube video does not exist",
+                                },
+                            },
+                        },
+                    }));
+                }
+            }
+        }
+
+        if (!allValid) {
+            setValidationStatus((prev) => ({ ...prev, stepTwo: false }));
+        }
+    }, [videoCheckState, courseData.modules]);
 
     const openDialogWithVideo = (videoId: string) => {
         const id = extractYoutubeVideoId(videoId);
