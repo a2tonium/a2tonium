@@ -15,5 +15,4 @@
         "resolveJsonModule": true,
         "esModuleInterop": true
     },
-    "exclude": ["src/wrappers"]
 }
