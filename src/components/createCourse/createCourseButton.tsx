@@ -122,7 +122,7 @@ export function CreateCourseButton({
                         </p>
                     </div>
                     <div className="text-2xl font-bold text-blue-600">
-                        100 TON
+                        {coursePrice} TON
                     </div>
                 </div>
                 <Separator />

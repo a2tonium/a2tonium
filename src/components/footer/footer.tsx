@@ -11,7 +11,7 @@ export const Footer: React.FC<FooterProps> = ({ className }) => {
 
     const socialLinks = [
         "https://www.linkedin.com/company/a2tonium/",
-        "https://t.me/toncoin",
+        "https://t.me/a2tonium",
         "https://github.com/a2tonium",
         "mailto:a2tonium@gmail.com",
     ];
