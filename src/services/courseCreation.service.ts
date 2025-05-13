@@ -8,13 +8,13 @@ import {
     uploadImagesToPinata,
 } from "@/lib/pinata/pinataUploader.lib";
 import {
-    CourseDataInterface,
-    CourseDataInterfaceNew,
+    CourseCreationInterface,
+    CourseDeployedInterface,
 } from "@/types/courseData";
 import { encryptCourseAnswers } from "@/utils/crypt.utils";
 
 export async function createCourse(
-    course: CourseDataInterface,
+    course: CourseCreationInterface,
     jwt: string,
     publicKey: string
 ): Promise<string> {
@@ -31,9 +31,9 @@ export async function createCourse(
 
     const cleaned = await reformatCourseData(
         course,
-        imageUrl,
-        coverImageUrl,
-        certificateUrl,
+        `ipfs://${imageUrl}`,
+        `ipfs://${coverImageUrl}`,
+        `ipfs://${certificateUrl}`,
         publicKey
     );
 
@@ -42,13 +42,13 @@ export async function createCourse(
 }
 
 export async function reformatCourseData(
-    course: CourseDataInterface,
+    course: CourseCreationInterface,
     imageUrl: string,
     coverImageUrl: string,
     certificateUrl: string,
     walletPublicKey: string // base64 string
-): Promise<CourseDataInterfaceNew> {
-    const formatted: CourseDataInterfaceNew = {
+): Promise<CourseDeployedInterface> {
+    const formatted: CourseDeployedInterface = {
         ...course,
         image: imageUrl,
         cover_image: coverImageUrl,

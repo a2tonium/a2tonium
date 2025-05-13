@@ -14,6 +14,7 @@ import { useCourseDataPromo } from "@/hooks/useCourseDataPromo";
 import { StatBadge } from "@/components/coursePromo/statBadge";
 import { useCategoryNames } from "@/hooks/useCategoryNames";
 import { LessonVideo } from "@/components/lessonVideo/lessonVideo";
+import { getAttribute } from "@/utils/courseAttributes";
 
 // Example course object with the required fields
 
@@ -24,7 +25,7 @@ export function CoursePromo() {
         error,
         isLoading,
     } = useCourseDataPromo(courseAddress);
-    const categoryNames = useCategoryNames(course?.attributes?.category ?? []);
+    const categoryNames = useCategoryNames(getAttribute(course, "category"));
 
     // 1) If error
     if (error) {
@@ -92,7 +93,7 @@ export function CoursePromo() {
                             </span>
                         </div>
                         <p className=" mt-4 leading-relaxed">
-                            {course.attributes.summary}
+                            {getAttribute(course, "description")}
                         </p>
 
                         {/* stats area */}
@@ -100,15 +101,15 @@ export function CoursePromo() {
                             <div className="flex flex-wrap gap-2">
                                 <StatBadge>
                                     <LevelIndicator
-                                        level={course.attributes.level}
+                                        level={getAttribute(course, "level")}
                                     />
                                 </StatBadge>
                                 <StatBadge>
-                                    Language: {course.attributes.language}
+                                    Language: {getAttribute(course, "language")}
                                 </StatBadge>
                                 <StatBadge>Rating: 4</StatBadge>
 
-                                <StatBadge>Students: 4566</StatBadge>
+                                <StatBadge>Students: {course.enrolledNumber}</StatBadge>
                             </div>
                             <div className="flex flex-wrap gap-2">
                                 {categoryNames.map((catName, index) => (
@@ -147,7 +148,7 @@ export function CoursePromo() {
                                     What you will learn
                                 </h2>
                                 <p className="mt-2 leading-relaxed whitespace-pre-wrap">
-                                    {course.attributes.learn}
+                                    {getAttribute(course, "learn")}
                                 </p>
                             </div>
 
@@ -157,7 +158,7 @@ export function CoursePromo() {
                                     About this course
                                 </h2>
                                 <p className="mt-2 leading-relaxed whitespace-pre-wrap">
-                                    {course.attributes.about}
+                                    {getAttribute(course, "about")}
                                 </p>
                             </div>
 
@@ -167,7 +168,7 @@ export function CoursePromo() {
                                     What You Will Gain
                                 </h2>
                                 <p className="mt-2 leading-relaxed whitespace-pre-wrap">
-                                    {course.attributes.gains}
+                                    {getAttribute(course, "gains")}
                                 </p>
                             </div>
 
@@ -177,7 +178,7 @@ export function CoursePromo() {
                                     Initial requirements
                                 </h2>
                                 <p className="mt-2 leading-relaxed whitespace-pre-wrap">
-                                    {course.attributes.requirements}
+                                    {getAttribute(course, "requirements")}
                                 </p>
                             </div>
 

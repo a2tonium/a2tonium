@@ -17,7 +17,7 @@ export function useTonClient() {
                     network: network === CHAIN.MAINNET ? "mainnet" : "testnet",
                 }),
             });
-            // console.log("tonClient", tonClient);
+            console.log("tonClient", tonClient);
             return tonClient;
         }, [network]),
     };

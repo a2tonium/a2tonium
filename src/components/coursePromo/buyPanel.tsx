@@ -1,9 +1,10 @@
 import { Separator } from "@/components/ui/separator";
-import { CourseDataInterface } from "@/types/courseData";
-import { BuyLogic } from "@/components/coursePromo/buyDialog";
+import { CoursePromoInterface } from "@/types/courseData";
+import { BuyDialog } from "@/components/coursePromo/buyDialog";
+import { getAttribute } from "@/utils/courseAttributes";
 
 interface BuyPanelProps {
-    course: CourseDataInterface;
+    course: CoursePromoInterface;
 }
 
 export function BuyPanel({ course }: BuyPanelProps) {
@@ -16,10 +17,9 @@ export function BuyPanel({ course }: BuyPanelProps) {
             <div className="w-[90%] sm:w-[60%] md:w-full mx-auto">
                 <div className="w-full">
                     <h3 className="text-xl font-bold text-gray-800">
-                        100 TON
-                        {/* {course.price} */}
+                        {course.cost} TON
                     </h3>
-                    <BuyLogic course={course} />
+                    <BuyDialog course={course} />
 
                     <Separator className="my-2 md:my-4" />
 
@@ -28,10 +28,10 @@ export function BuyPanel({ course }: BuyPanelProps) {
                             You can learn right away
                         </h3>
                         <p className="text-sm text-gray-800 underline">
-                            {course.attributes.workload}
+                            {getAttribute(course, "workload")}
                         </p>
                         <p className="text-sm text-gray-800 underline">
-                            {course.attributes.duration}
+                            {getAttribute(course, "duration")}
                         </p>
                         <Separator className="my-4" />
                     </div>
@@ -42,7 +42,7 @@ export function BuyPanel({ course }: BuyPanelProps) {
                             This course includes
                         </h4>
                         <p className="text-sm text-gray-700 mt-1">
-                            <strong>{course.attributes.lessons}</strong> lessons
+                            <strong>{getAttribute(course, "lessons")}</strong> lessons
                         </p>
                         <p className="text-sm text-gray-700">
                             <strong>{course.modules.length}</strong> modules and

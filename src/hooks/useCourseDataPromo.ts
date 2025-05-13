@@ -1,13 +1,13 @@
 import useSWR from "swr";
-import { CourseDataInterface } from "@/types/courseData";
+import { CoursePromoInterface } from "@/types/courseData";
 import { fetchPromo } from "@/services/ton.service";
 
 export function useCourseDataPromo(contractAddress?: string) {
-    const fetcher = async (): Promise<CourseDataInterface | null> => {
+    const fetcher = async (): Promise<CoursePromoInterface | null> => {
         if (!contractAddress) return null;
         return await fetchPromo(contractAddress);
     };
-    return useSWR<CourseDataInterface | null>(
+    return useSWR<CoursePromoInterface | null>(
         contractAddress ? ["course-promo", contractAddress] : null,
         fetcher,
         { shouldRetryOnError: false }

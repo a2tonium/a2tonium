@@ -2,7 +2,8 @@ import { ipfsToHttp } from "@/utils/ton.utils";
 
 import {
     CertificateCompletionInterface,
-    CourseDataInterface,
+    CourseCreationInterface,
+    CoursePromoInterface,
     EnrolledCoursePreview,
 } from "@/types/courseData";
 import { getEnrolledCourseAddresses, getCollectionData } from "@/lib/ton.lib";
@@ -10,7 +11,7 @@ import { getEnrolledCourseAddresses, getCollectionData } from "@/lib/ton.lib";
 export async function fetchIfEnrolled(
     userAddress: string,
     contractAddress: string
-): Promise<CourseDataInterface> {
+): Promise<CourseCreationInterface> {
     const enrolledCourses = await getEnrolledCourseAddresses(userAddress);
     if (!enrolledCourses.includes(contractAddress)) {
         throw new Error("Access denied");
@@ -18,16 +19,20 @@ export async function fetchIfEnrolled(
     const { collectionContent } = await getCollectionData(contractAddress);
     const data = await fetch(collectionContent).then((res) => res.json());
 
-    return data as CourseDataInterface;
+    return data as CourseCreationInterface;
 }
 
 export async function fetchPromo(
     contractAddress: string
-): Promise<CourseDataInterface> {
-    const { collectionContent } = await getCollectionData(contractAddress);
+): Promise< CoursePromoInterface > {
+    const { collectionContent, cost, enrolledNumber } = await getCollectionData(contractAddress);
     const data = await fetch(collectionContent).then((res) => res.json());
-
-    return data as CourseDataInterface;
+    const dataWithCost = {
+        ...data,
+        cost: cost,
+        enrolledNumber: enrolledNumber,
+    }
+    return dataWithCost;
 }
 
 export async function listEnrolledCourses(
@@ -51,7 +56,7 @@ export async function listEnrolledCourses(
                     );
                     return null;
                 }
-                const course: CourseDataInterface = await fetch(
+                const course: CourseCreationInterface = await fetch(
                     collectionContent
                 ).then((res) => res.json());
 

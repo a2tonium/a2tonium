@@ -14,12 +14,13 @@ import { z } from "zod";
 import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { BuyButton } from "@/components/coursePromo/buyButton";
-import { CourseDataInterface } from "@/types/courseData";
+import { CoursePromoInterface } from "@/types/courseData";
 import { useToast } from "@/hooks/use-toast";
 import { Link, useNavigate } from "react-router-dom";
+import { getAttribute } from "@/utils/courseAttributes";
 
 interface BuyLogicProps {
-    course: CourseDataInterface;
+    course: CoursePromoInterface;
 }
 
 const buySchema = z.object({
@@ -33,7 +34,7 @@ const buySchema = z.object({
     }),
 });
 
-export function BuyLogic({ course }: BuyLogicProps) {
+export function BuyDialog({ course }: BuyLogicProps) {
     const [email, setEmail] = useState("");
     const [iic, setIIC] = useState("");
     const [accepted, setAccepted] = useState(false);
@@ -79,7 +80,7 @@ export function BuyLogic({ course }: BuyLogicProps) {
                     <div className="text-sm text-gray-600">
                         <p>
                             <span className="font-medium">Language:</span>{" "}
-                            {course.attributes.language}
+                            {getAttribute(course, "language")}
                         </p>
                         <p>
                             <span className="font-medium">Modules:</span>{" "}
@@ -87,11 +88,11 @@ export function BuyLogic({ course }: BuyLogicProps) {
                         </p>
                         <p>
                             <span className="font-medium">Lessons:</span>{" "}
-                            {course.attributes.lessons}
+                            {getAttribute(course, "lessons")}
                         </p>
                     </div>
                     <div className="text-2xl font-bold text-blue-600">
-                        100 TON
+                        {course.cost} TON
                     </div>
                 </div>
                 <Separator />

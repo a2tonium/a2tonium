@@ -9,7 +9,7 @@ import { StepTwo } from "@/pages/teach/createCourse/stepTwo";
 import { StepThree } from "@/pages/teach/createCourse/stepThree";
 import { StepFour } from "@/pages/teach/createCourse/stepFour";
 import { StepFive } from "@/pages/teach/createCourse/stepFive";
-import { CourseDataInterface, VideoCheckState } from "@/types/courseData";
+import { CourseCreationInterface, VideoCheckState } from "@/types/courseData";
 import { CreateCourseButton } from "@/components/createCourse/createCourseButton";
 import { isYouTubeVideoAccessible } from "@/lib/youtube.lib";
 
@@ -40,7 +40,7 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
 
     // Единое состояние courseData
 
-    const [courseData, setCourseData] = useState<CourseDataInterface>({
+    const [courseData, setCourseData] = useState<CourseCreationInterface>({
         name: "",
         description: "",
         image: "",
@@ -300,6 +300,7 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
                 jwt={jwt}
                 open={showDialog}
                 onOpenChange={setShowDialog}
+                coursePrice={coursePrice.toString()}
             />
         </div>
     );

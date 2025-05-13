@@ -1,13 +1,15 @@
 import { useTranslation } from "react-i18next";
 
-export function useCategoryNames(
-    categoryIds: string[] | undefined | null
-): string[] {
+export function useCategoryNames(categoryValue: string | null | undefined): string[] {
     const { t } = useTranslation();
 
-    if (!Array.isArray(categoryIds)) {
+    if (!categoryValue || typeof categoryValue !== "string") {
         return [];
     }
 
-    return categoryIds.map((id) => t(`category.${id}`));
+    return categoryValue
+        .split(",")
+        .map((id) => id.trim())
+        .filter((id) => id.length > 0)
+        .map((id) => t(`category.${id}`));
 }

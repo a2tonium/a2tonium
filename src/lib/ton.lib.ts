@@ -1,10 +1,15 @@
-import { getLink, hexToUtf8, getEventsUrl } from "@/utils/ton.utils";
+import {
+    getLink,
+    hexToUtf8,
+    getEventsUrl,
+    hexToDecimalfromNano,
+} from "@/utils/ton.utils";
 import { ApiResponse } from "@/types/tonTypes";
 
 export async function getCollectionData(
     contractAddress: string
-): Promise<{ collectionContent: string; ownerAddress: string }> {
-    const url = `https://testnet.tonapi.io/v2/blockchain/accounts/${contractAddress}/methods/get_collection_data`;
+): Promise<{ collectionContent: string; ownerAddress: string; cost: string, enrolledNumber: string }> {
+    const url = `https://testnet.tonapi.io/v2/blockchain/accounts/${contractAddress}/methods/get_course_data`;
 
     try {
         const response = await fetch(url);
@@ -12,11 +17,12 @@ export async function getCollectionData(
 
         if (data.success) {
             // Extract collection data from the 'decoded' field
-            let collectionContent = data.decoded.collection_content;
-            const ownerAddress = data.decoded.owner_address;
+            const enrolledNumber = hexToDecimalfromNano(data.stack[1].num);
+            const collectionContent = getLink(hexToUtf8(data.stack[2].cell));
+            const ownerAddress = hexToUtf8(data.stack[3].cell);
+            const cost = hexToDecimalfromNano(data.stack[4].num);
 
-            collectionContent = getLink(hexToUtf8(collectionContent));
-            return { collectionContent, ownerAddress };
+            return { collectionContent, ownerAddress, cost, enrolledNumber };
         } else {
             throw new Error(
                 "Failed to fetch collection data: " + JSON.stringify(data)
@@ -27,6 +33,33 @@ export async function getCollectionData(
         throw error; // Re-throw error to be handled by the caller
     }
 }
+
+// export async function getCollectionData(
+//     contractAddress: string
+// ): Promise<{ collectionContent: string; ownerAddress: string }> {
+//     const url = `https://testnet.tonapi.io/v2/blockchain/accounts/${contractAddress}/methods/get_collection_data`;
+
+//     try {
+//         const response = await fetch(url);
+//         const data = await response.json();
+
+//         if (data.success) {
+//             // Extract collection data from the 'decoded' field
+//             let collectionContent = data.decoded.collection_content;
+//             const ownerAddress = data.decoded.owner_address;
+
+//             collectionContent = getLink(hexToUtf8(collectionContent));
+//             return { collectionContent, ownerAddress };
+//         } else {
+//             throw new Error(
+//                 "Failed to fetch collection data: " + JSON.stringify(data)
+//             );
+//         }
+//     } catch (error) {
+//         console.error("Error fetching collection data:", error);
+//         throw error; // Re-throw error to be handled by the caller
+//     }
+// }
 
 const ENROLLED_MESSAGE = "You have successfully enrolled to the course!";
 

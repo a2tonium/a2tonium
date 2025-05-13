@@ -1,3 +1,4 @@
+import { fromNano } from "@ton/core";
 import { Buffer } from "buffer";
 
 export function getEventsUrl(
@@ -16,6 +17,10 @@ export const ipfsToHttp = (uri: string) =>
 
 export function hexToUtf8(hex: string): string {
     return Buffer.from(hex, "hex").toString("utf-8");
+}
+
+export function hexToDecimalfromNano(hexString: string): string {
+    return fromNano(BigInt(hexString).toString());
 }
 
 export function getLink(utf8: string): string {

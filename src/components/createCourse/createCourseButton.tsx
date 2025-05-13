@@ -11,9 +11,9 @@ import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
-import { CourseDataInterface } from "@/types/courseData";
+import { CourseCreationInterface } from "@/types/courseData";
 import { useToast } from "@/hooks/use-toast";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createCourse } from "@/services/courseCreation.service";
 import { useTonConnect } from "@/hooks/useTonConnect";
 import { Check } from "lucide-react";
@@ -21,8 +21,9 @@ import { Spinner } from "@/components/ui/kibo-ui/spinner";
 import { useCourseContract } from "@/hooks/useCourseContract";
 
 interface CreateCourseLogicProps {
-    course: CourseDataInterface;
+    course: CourseCreationInterface;
     jwt: string | null;
+    coursePrice: string;
 }
 
 const buySchema = z.object({
@@ -36,21 +37,21 @@ export function CreateCourseButton({
     open,
     onOpenChange,
     jwt,
+    coursePrice,
 }: CreateCourseLogicProps & {
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }) {
     const { createCourseContract } = useCourseContract();
-    const { sender } = useTonConnect();
+    const { sender, publicKey } = useTonConnect();
+    const { toast } = useToast();
+
+    const navigate = useNavigate();
+    
     const [accepted, setAccepted] = useState(false);
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
-    const { toast } = useToast();
-    const { publicKey } = useTonConnect();
-    // const navigate = useNavigate();
-
-    
 
     const handleCreateCourse = async (publicKey: string) => {
         const result = buySchema.safeParse({ accepted });
@@ -61,7 +62,7 @@ export function CreateCourseButton({
             setError(firstError);
             return;
         }
-        
+
         setError("");
         setIsLoading(true);
         setIsSuccess(false);
@@ -69,15 +70,29 @@ export function CreateCourseButton({
         try {
             const courseURL = await createCourse(course, jwt ?? "", publicKey);
 
-            await createCourseContract(sender, courseURL);
+            const txResult = await createCourseContract(
+                sender,
+                courseURL,
+                coursePrice
+            );
 
-            setIsSuccess(true);
-            onOpenChange(false);
-            // toast({
-            //     title: "Successful Course Creation",
-            //     description: `You've created the course: ${course.name}`,
-            //     className: "bg-green-500 text-white rounded-[2vw] border-none",
-            // });
+            if (txResult?.boc) {
+                setIsSuccess(true);
+                onOpenChange(false);
+                navigate("/teach");
+                toast({
+                    title: "Successful Course Creation",
+                    description: `You've created the course: ${course.name}`,
+                    className:
+                        "bg-green-500 text-white rounded-[2vw] border-none",
+                });
+            } else {
+                toast({
+                    title: "Cancelled",
+                    description: "Transaction was rejected in Tonkeeper.",
+                    variant: "destructive",
+                });
+            }
         } catch (error) {
             console.error("Error creating course:", error);
             toast({
@@ -88,7 +103,6 @@ export function CreateCourseButton({
         } finally {
             setIsLoading(false);
         }
-        // navigate("/teach");
     };
 
     return (

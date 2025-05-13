@@ -45,7 +45,7 @@ export interface CourseAttributesInterface {
      3. Course root
      ──────────────────────────────── */
 
-export interface CourseDataInterface {
+export interface CourseCreationInterface {
     name: string;
     description: string;
     image: string;
@@ -107,8 +107,8 @@ export type VideoCheckState = Record<
     >
 >;
 
-export interface CourseDataInterfaceNew
-    extends Omit<CourseDataInterface, "modules" | "attributes"> {
+export interface CourseDeployedInterface
+    extends Omit<CourseCreationInterface, "modules" | "attributes"> {
     modules: ModuleInterfaceNew[];
     attributes: {
         trait_type: string;
@@ -127,4 +127,9 @@ export interface ModuleInterfaceNew {
     quiz: {
         questions: QuestionInterface[];
     };
+}
+
+export interface CoursePromoInterface extends CourseDeployedInterface {
+  cost: string;
+  enrolledNumber: string;
 }
