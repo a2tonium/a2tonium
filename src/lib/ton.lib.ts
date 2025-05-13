@@ -6,7 +6,7 @@ import {
 } from "@/utils/ton.utils";
 import { ApiResponse } from "@/types/tonTypes";
 
-export async function getCollectionData(
+export async function getCourseData(
     contractAddress: string
 ): Promise<{ collectionContent: string; ownerAddress: string; cost: string, enrolledNumber: string }> {
     const url = `https://testnet.tonapi.io/v2/blockchain/accounts/${contractAddress}/methods/get_course_data`;

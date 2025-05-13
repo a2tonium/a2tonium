@@ -5,12 +5,12 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { checkPinataConnection } from "@/lib/pinata/pinataClient.lib";
-import { CourseDataInterface } from "@/types/courseData";
+import { CourseCreationInterface } from "@/types/courseData";
 import { extractYoutubeVideoId } from "@/utils/youtube.utils";
 import { Spinner } from "@/components/ui/kibo-ui/spinner";
 
 interface StepFiveProps {
-    courseData: CourseDataInterface;
+    courseData: CourseCreationInterface;
     validationStatus: {
         stepOne: boolean;
         stepTwo: boolean;

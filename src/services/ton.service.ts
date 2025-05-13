@@ -3,29 +3,30 @@ import { ipfsToHttp } from "@/utils/ton.utils";
 import {
     CertificateCompletionInterface,
     CourseCreationInterface,
+    CourseDeployedInterface,
     CoursePromoInterface,
     EnrolledCoursePreview,
 } from "@/types/courseData";
-import { getEnrolledCourseAddresses, getCollectionData } from "@/lib/ton.lib";
+import { getEnrolledCourseAddresses, getCourseData } from "@/lib/ton.lib";
 
 export async function fetchIfEnrolled(
     userAddress: string,
     contractAddress: string
-): Promise<CourseCreationInterface> {
+): Promise<CourseDeployedInterface> {
     const enrolledCourses = await getEnrolledCourseAddresses(userAddress);
     if (!enrolledCourses.includes(contractAddress)) {
         throw new Error("Access denied");
     }
-    const { collectionContent } = await getCollectionData(contractAddress);
+    const { collectionContent } = await getCourseData(contractAddress);
     const data = await fetch(collectionContent).then((res) => res.json());
 
-    return data as CourseCreationInterface;
+    return data as CourseDeployedInterface;
 }
 
 export async function fetchPromo(
     contractAddress: string
 ): Promise< CoursePromoInterface > {
-    const { collectionContent, cost, enrolledNumber } = await getCollectionData(contractAddress);
+    const { collectionContent, cost, enrolledNumber } = await getCourseData(contractAddress);
     const data = await fetch(collectionContent).then((res) => res.json());
     const dataWithCost = {
         ...data,
@@ -43,7 +44,7 @@ export async function listEnrolledCourses(
     const previews = await Promise.all(
         courseAddrs.map(async (addr): Promise<EnrolledCoursePreview | null> => {
             try {
-                const { collectionContent } = await getCollectionData(addr);
+                const { collectionContent } = await getCourseData(addr);
                 if (
                     collectionContent == undefined ||
                     collectionContent == null ||

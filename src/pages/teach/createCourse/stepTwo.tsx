@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, CirclePlus, Check, Search } from "lucide-react";
-import { CourseDataInterface, VideoCheckState } from "@/types/courseData";
+import { CourseCreationInterface, VideoCheckState } from "@/types/courseData";
 import { isYouTubeVideoAccessible } from "@/lib/youtube.lib";
 import { extractYoutubeVideoId } from "@/utils/youtube.utils";
 import { Spinner } from "@/components/ui/kibo-ui/spinner";
@@ -37,8 +37,8 @@ const stepTwoSchema = z.object({
 
 // Типы пропсов
 interface StepTwoProps {
-    courseData: CourseDataInterface;
-    setCourseData: React.Dispatch<React.SetStateAction<CourseDataInterface>>;
+    courseData: CourseCreationInterface;
+    setCourseData: React.Dispatch<React.SetStateAction<CourseCreationInterface>>;
     setValidationStatus: React.Dispatch<
         React.SetStateAction<{
             stepOne: boolean;

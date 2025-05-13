@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { QuizSkeleton } from "@/components/quiz/quizSkeleton";
 import { useCourseDataIfEnrolled } from "@/hooks/useCourseDataIfEnrolled";
-import { ModuleInterface } from "@/types/courseData";
+import { ModuleInterfaceNew } from "@/types/courseData";
 import { ErrorPage } from "@/pages/error/error";
 
 export function Quiz() {
@@ -51,7 +51,7 @@ export function Quiz() {
         totalQuestions: number;
     };
 
-    const quizzes: QuizItem[] = course.modules.map((m: ModuleInterface) => ({
+    const quizzes: QuizItem[] = course.modules.map((m: ModuleInterfaceNew) => ({
         id: m.id,
         title: m.title,
         // completed: m.completed,

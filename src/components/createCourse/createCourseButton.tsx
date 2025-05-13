@@ -68,13 +68,8 @@ export function CreateCourseButton({
         setIsSuccess(false);
 
         try {
-            const courseURL = await createCourse(course, jwt ?? "", publicKey);
+            const txResult = await createCourse(course, jwt ?? "", publicKey, sender, coursePrice, createCourseContract);
 
-            const txResult = await createCourseContract(
-                sender,
-                courseURL,
-                coursePrice
-            );
 
             if (txResult?.boc) {
                 setIsSuccess(true);

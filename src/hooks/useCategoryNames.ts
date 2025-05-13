@@ -13,3 +13,15 @@ export function useCategoryNames(categoryValue: string | null | undefined): stri
         .filter((id) => id.length > 0)
         .map((id) => t(`category.${id}`));
 }
+
+export function useCategoryNamesSample(
+    categoryIds: string[] | undefined | null
+): string[] {
+    const { t } = useTranslation();
+
+    if (!Array.isArray(categoryIds)) {
+        return [];
+    }
+
+    return categoryIds.map((id) => t(`category.${id}`));
+}

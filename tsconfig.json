@@ -1,18 +1,19 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ],
-  "compilerOptions": {
-    "types": ["node"],
-    "moduleResolution": "node",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
+    "files": [],
+    "references": [
+        { "path": "./tsconfig.app.json" },
+        { "path": "./tsconfig.node.json" }
+    ],
+    "compilerOptions": {
+        "types": ["node"],
+        "moduleResolution": "node",
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./src/*"]
+        },
+        // For json to be imported, maybe delete this
+        "resolveJsonModule": true,
+        "esModuleInterop": true
     },
-    // For json to be imported, maybe delete this
-    "resolveJsonModule": true,
-    "esModuleInterop": true
-  },
+    "exclude": ["src/wrappers"]
 }

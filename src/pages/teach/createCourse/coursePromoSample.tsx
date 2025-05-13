@@ -7,12 +7,12 @@ import {
     AccordionTrigger,
     AccordionContent,
 } from "@/components/ui/accordion";
-import { CourseDataInterface } from "@/types/courseData";
+import { CourseCreationInterface } from "@/types/courseData";
 import { StatBadge } from "@/components/coursePromo/statBadge";
-import { useCategoryNames } from "@/hooks/useCategoryNames";
+import { useCategoryNamesSample } from "@/hooks/useCategoryNames";
 import { LessonVideo } from "@/components/lessonVideo/lessonVideo";
 
-let courseData: CourseDataInterface;
+let courseData: CourseCreationInterface;
 let coursePrice: number = 0;
 
 const dataString = sessionStorage.getItem("promoData");
@@ -100,7 +100,7 @@ export function CoursePromoSample() {
                                 </StatBadge>
                             </div>
                             <div className="flex flex-wrap gap-2">
-                                {useCategoryNames(
+                                {useCategoryNamesSample(
                                     courseData.attributes.category
                                 ).map((catName, index) => (
                                     <StatBadge key={index} filled>

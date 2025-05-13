@@ -12,12 +12,17 @@ import {
     CourseDeployedInterface,
 } from "@/types/courseData";
 import { encryptCourseAnswers } from "@/utils/crypt.utils";
+import { CustomSender } from "@/types/tonTypes";
+import { SendTransactionResponse } from "@tonconnect/ui-react";
 
 export async function createCourse(
     course: CourseCreationInterface,
     jwt: string,
-    publicKey: string
-): Promise<string> {
+    publicKey: string,
+    sender: CustomSender,
+    coursePrice: string,
+    createCourseContract: (sender: CustomSender, courseURL: string, coursePrice: string) => Promise<SendTransactionResponse | null>
+): Promise<SendTransactionResponse | null> {
     const gateway = await findPinataGateway(jwt);
     const pinata = createPinataInstance(jwt, gateway);
     const [imageUrl, coverImageUrl, certificateUrl] =
@@ -38,7 +43,8 @@ export async function createCourse(
     );
 
     console.log("cleaned", cleaned);
-    return await uploadCourseDataToPinata(cleaned, pinata);
+    const courseURL = await uploadCourseDataToPinata(cleaned, pinata);
+    return await createCourseContract(sender, courseURL, coursePrice);
 }
 
 export async function reformatCourseData(

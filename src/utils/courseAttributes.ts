@@ -1,6 +1,6 @@
 import {
-    CourseDataInterface,
-    CourseDataInterfaceNew,
+    CourseCreationInterface,
+    CourseDeployedInterface,
 } from "@/types/courseData";
 
 type CourseAttribute = {
@@ -9,7 +9,7 @@ type CourseAttribute = {
 };
 
 // Универсальный тип, объединяющий оба курса
-type AnyCourse = CourseDataInterface | CourseDataInterfaceNew | undefined | null;
+type AnyCourse = CourseCreationInterface | CourseDeployedInterface | undefined | null;
 
 export function getAttribute(course: AnyCourse, key: string): string {
     if (Array.isArray(course?.attributes)) {

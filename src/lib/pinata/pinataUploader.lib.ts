@@ -1,5 +1,5 @@
 import { PinataSDK } from "pinata";
-import { CourseDataInterfaceNew } from "@/types/courseData";
+import { CourseDeployedInterface } from "@/types/courseData";
 import {
     base64ToFile,
     formatFilename,
@@ -65,7 +65,7 @@ export async function uploadImagesToPinata(
 }
 
 export async function uploadCourseDataToPinata(
-    course: CourseDataInterfaceNew,
+    course: CourseDeployedInterface,
     pinata: PinataSDK
 ): Promise<string> {
     try {

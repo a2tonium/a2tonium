@@ -10,13 +10,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { CourseDataInterface } from "@/types/courseData";
+import { CourseCreationInterface } from "@/types/courseData";
 import { CategorySelect } from "@/components/createCourse/categorySelect";
 import { ImageDropzone } from "@/components/createCourse/imageDropzone";
 
 interface StepOneProps {
-    courseData: CourseDataInterface;
-    setCourseData: React.Dispatch<React.SetStateAction<CourseDataInterface>>;
+    courseData: CourseCreationInterface;
+    setCourseData: React.Dispatch<React.SetStateAction<CourseCreationInterface>>;
     setValidationStatus: React.Dispatch<
         React.SetStateAction<{
             stepOne: boolean;
