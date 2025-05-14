@@ -172,7 +172,7 @@ export function EditProfileDialog({
                                     form.image.startsWith("data:image")
                                         ? form.image // New image (base64)
                                         : form.image
-                                        ? `https://ipfs.io/ipfs/${form.image}` // Old image (CID)
+                                        ? `https://ipfs.io/ipfs/${form.image.substring(7)}` // Old image (CID)
                                         : ""
                                 }
                                 onChange={(val) => {
