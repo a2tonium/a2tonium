@@ -1,10 +1,10 @@
 import useSWR from "swr";
-import { fetchUserNFTs } from "@/services/profile.service";
+import { fetchTonWalletData } from "@/services/profile.service";
 
-export function useUserNFTs(walletAddr?: string) {
+export function useWalletData(walletAddr?: string) {
     return useSWR(
-        walletAddr ? ["nfts", walletAddr] : null,
-        ([, addr]) => fetchUserNFTs(addr),
+        walletAddr ? ["wallet", walletAddr] : null,
+        ([, addr]) => fetchTonWalletData(addr),
         {
             shouldRetryOnError: false,
             revalidateOnFocus: false,

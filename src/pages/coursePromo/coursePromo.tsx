@@ -25,7 +25,9 @@ export function CoursePromo() {
         error,
         isLoading,
     } = useCourseDataPromo(courseAddress);
-    const categoryNames = useCategoryNames(getAttribute(course, "category"));
+    const categoryNames = useCategoryNames(
+        getAttribute(course?.attributes, "category")
+    );
 
     // 1) If error
     if (error) {
@@ -50,13 +52,17 @@ export function CoursePromo() {
                 {course.cover_image ? (
                     <img
                         className="absolute top-1/2 left-1/2 w-full h-full object-cover transform -translate-x-1/2 -translate-y-1/2"
-                        src={`https://ipfs.io/ipfs/${course.cover_image.substring(7)}`}
+                        src={`https://ipfs.io/ipfs/${course.cover_image.substring(
+                            7
+                        )}`}
                         alt="Course Background"
                     />
                 ) : (
                     <img
                         className="absolute top-1/2 left-1/2 w-full h-full object-cover transform -translate-x-1/2 -translate-y-1/2 scale-125 blur-[10px]"
-                        src={`https://ipfs.io/ipfs/${course.image.substring(7)}`}
+                        src={`https://ipfs.io/ipfs/${course.image.substring(
+                            7
+                        )}`}
                         alt="Course Background"
                     />
                 )}
@@ -93,7 +99,7 @@ export function CoursePromo() {
                             </span>
                         </div>
                         <p className=" mt-4 leading-relaxed">
-                            {getAttribute(course, "description")}
+                            {getAttribute(course.attributes, "description")}
                         </p>
 
                         {/* stats area */}
@@ -101,15 +107,24 @@ export function CoursePromo() {
                             <div className="flex flex-wrap gap-2">
                                 <StatBadge>
                                     <LevelIndicator
-                                        level={getAttribute(course, "level")}
+                                        level={getAttribute(
+                                            course.attributes,
+                                            "level"
+                                        )}
                                     />
                                 </StatBadge>
                                 <StatBadge>
-                                    Language: {getAttribute(course, "language")}
+                                    Language:{" "}
+                                    {getAttribute(
+                                        course.attributes,
+                                        "language"
+                                    )}
                                 </StatBadge>
                                 <StatBadge>Rating: 4</StatBadge>
 
-                                <StatBadge>Students: {course.enrolledNumber}</StatBadge>
+                                <StatBadge>
+                                    Students: {course.enrolledNumber}
+                                </StatBadge>
                             </div>
                             <div className="flex flex-wrap gap-2">
                                 {categoryNames.map((catName, index) => (
@@ -148,7 +163,7 @@ export function CoursePromo() {
                                     What you will learn
                                 </h2>
                                 <p className="mt-2 leading-relaxed whitespace-pre-wrap">
-                                    {getAttribute(course, "learn")}
+                                    {getAttribute(course.attributes, "learn")}
                                 </p>
                             </div>
 
@@ -158,7 +173,7 @@ export function CoursePromo() {
                                     About this course
                                 </h2>
                                 <p className="mt-2 leading-relaxed whitespace-pre-wrap">
-                                    {getAttribute(course, "about")}
+                                    {getAttribute(course.attributes, "about")}
                                 </p>
                             </div>
 
@@ -168,7 +183,7 @@ export function CoursePromo() {
                                     What You Will Gain
                                 </h2>
                                 <p className="mt-2 leading-relaxed whitespace-pre-wrap">
-                                    {getAttribute(course, "gains")}
+                                    {getAttribute(course.attributes, "gains")}
                                 </p>
                             </div>
 
@@ -178,7 +193,10 @@ export function CoursePromo() {
                                     Initial requirements
                                 </h2>
                                 <p className="mt-2 leading-relaxed whitespace-pre-wrap">
-                                    {getAttribute(course, "requirements")}
+                                    {getAttribute(
+                                        course.attributes,
+                                        "requirements"
+                                    )}
                                 </p>
                             </div>
 
@@ -240,7 +258,10 @@ export function CoursePromo() {
                         </div>
 
                         {/* Right Panel */}
-                        <BuyPanel course={course} />
+                        <BuyPanel
+                            courseAddress={courseAddress}
+                            course={course}
+                        />
                     </div>
                 </div>
             </div>

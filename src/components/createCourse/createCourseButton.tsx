@@ -14,7 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { CourseCreationInterface } from "@/types/courseData";
 import { useToast } from "@/hooks/use-toast";
 import { Link, useNavigate } from "react-router-dom";
-import { createCourse } from "@/services/courseCreation.service";
+import { createCourse } from "@/services/course.service";
 import { useTonConnect } from "@/hooks/useTonConnect";
 import { Check } from "lucide-react";
 import { Spinner } from "@/components/ui/kibo-ui/spinner";
@@ -43,7 +43,7 @@ export function CreateCourseButton({
     onOpenChange: (open: boolean) => void;
 }) {
     const { createCourseContract } = useCourseContract();
-    const { sender, publicKey } = useTonConnect();
+    const { customSender, publicKey } = useTonConnect();
     const { toast } = useToast();
 
     const navigate = useNavigate();
@@ -68,7 +68,7 @@ export function CreateCourseButton({
         setIsSuccess(false);
 
         try {
-            const txResult = await createCourse(course, jwt ?? "", publicKey, sender, coursePrice, createCourseContract);
+            const txResult = await createCourse(course, jwt ?? "", publicKey, customSender, coursePrice, createCourseContract);
 
 
             if (txResult?.boc) {

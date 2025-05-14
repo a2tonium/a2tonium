@@ -5,31 +5,36 @@ import { ProfileTable } from "@/components/profile/profileTable";
 import { ProfileTableSkeleton } from "@/components/profile/profileTableSkeleton";
 import { CoursesSectionSkeleton } from "@/components/profile/coursesSectionSkeleton";
 import { CertificatesSectionSkeleton } from "@/components/profile/certificatesSectionSkeleton";
-import { useEnrolledCourses } from "@/hooks/useEnrolledCourseList";
 import { ProfileSkeleton } from "@/components/profile/profileSkeleton";
-import { useWalletInfo } from "@/hooks/useWalletInfo";
+import { useWalletData } from "@/hooks/useWalletData";
 import { useUserNFTs } from "@/hooks/useUserNFTs";
 import { CoursesSection } from "@/components/profile/coursesSection";
 import { CertificatesSection } from "@/components/profile/certificatesSection";
 import { CertificateInterface } from "@/types/courseData";
-import { useState } from "react";
+import { useOwnerCoursesList } from "@/hooks/useOwnerCoursesList";
+import { useProfileData } from "@/hooks/useProfileData";
 
 export function UserProfile() {
     const { walletAddr } = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
     const section = searchParams.get("section") ?? "courses";
-    const [isProfile, ] = useState(true);
     const {
-        data: userData,
-        error: userError,
+        data: walletData,
+        error: walletError,
+        isLoading: isWalletLoading,
+    } = useWalletData(walletAddr);
+
+    const {
+        data: profileData,
+        error: profileError,
         isLoading: isProfileLoading,
-    } = useWalletInfo(walletAddr);
+    } = useProfileData();
 
     const {
         data: courseList,
         error: courseError,
         isLoading: isCoursesLoading,
-    } = useEnrolledCourses();
+    } = useOwnerCoursesList(walletAddr);
 
     const {
         // data: nftList,
@@ -70,7 +75,7 @@ export function UserProfile() {
         },
         {
             certificateAddress: "1",
-            title: "Certificawdwad 1awdddddddawdawdawdwad awdawdawdawd wdadwawdawdawd awdadwawdadw awdawdawd", 
+            title: "Certificawdwad 1awdddddddawdawdawdwad awdawdawdawd wdadwawdawdawd awdadwawdadw awdawdawd",
             image: "/images/cards/1.png",
         },
         {
@@ -78,17 +83,16 @@ export function UserProfile() {
             title: "Certificate 1awdddddddawdawdawdwad",
             image: "/images/cards/1.png",
         },
+    ];
 
-    ]
-
-    const isLoading = isProfileLoading && isNFTLoading && isCoursesLoading;
+    const isLoading = isWalletLoading && isNFTLoading && isCoursesLoading;
     // Loading state
     if (isLoading) {
         return <ProfileSkeleton />;
     }
 
     // Error state
-    if (userError || nftError || courseError) {
+    if (walletError || nftError || courseError || profileError) {
         return (
             <ErrorPage
                 first={"Wallet Not Found"}
@@ -99,7 +103,7 @@ export function UserProfile() {
     }
 
     // Null fallback (just in case)
-    if (!userData && !isProfileLoading) {
+    if (!walletData && !isWalletLoading) {
         return (
             <ErrorPage
                 first={"Wallet doesn't exist"}
@@ -108,14 +112,14 @@ export function UserProfile() {
             />
         );
     }
-
+    
     // Rendered profile
     return (
         <div className="mt-8 mx-auto space-y-3 ">
-            {isProfileLoading ? (
+            {(isWalletLoading || isProfileLoading) ? (
                 <ProfileTableSkeleton />
             ) : (
-                <ProfileTable userData={userData} isProfile={isProfile} />
+                <ProfileTable walletData={walletData} profileData={profileData}/>
             )}
 
             {/* Tabs Section */}
@@ -131,7 +135,7 @@ export function UserProfile() {
                             value="courses"
                             className="text-md data-[state=active]:underline underline-offset-8 px-0 py-2"
                         >
-                            <span className="font-semibold">My Courses</span>
+                            <span className="font-semibold">Courses</span>
                         </TabsTrigger>
                         <TabsTrigger
                             value="certificates"
@@ -156,7 +160,9 @@ export function UserProfile() {
                             {isNFTLoading ? (
                                 <CertificatesSectionSkeleton />
                             ) : (
-                                <CertificatesSection certificates={nftList2 || []} />
+                                <CertificatesSection
+                                    certificates={nftList2 || []}
+                                />
                             )}
                         </div>
                     </TabsContent>

@@ -22,7 +22,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ className }) => {
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter" && searchQuery.trim()) {
-            navigate(`/users/${searchQuery.trim()}`);
+            navigate(`/user/${searchQuery.trim()}`);
         }
     };
 

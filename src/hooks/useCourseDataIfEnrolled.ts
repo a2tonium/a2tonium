@@ -1,6 +1,6 @@
 import useSWR from "swr";
 import { CourseDeployedInterface } from "@/types/courseData";
-import { fetchIfEnrolled } from "@/services/ton.service";
+import { fetchCourseIfEnrolled } from "@/services/course.service";
 import { useTonConnect } from "@/hooks/useTonConnect";
 
 /**
@@ -11,7 +11,7 @@ export function useCourseDataIfEnrolled(contractAddress?: string) {
 
     const fetcher = async (): Promise<CourseDeployedInterface | null> => {
         if (!userAddress || !contractAddress) return null;
-        return await fetchIfEnrolled(userAddress, contractAddress);
+        return await fetchCourseIfEnrolled(userAddress, contractAddress);
     };
     return useSWR<CourseDeployedInterface | null>(
         userAddress && contractAddress

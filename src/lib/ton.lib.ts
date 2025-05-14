@@ -2,14 +2,15 @@ import {
     getLink,
     hexToUtf8,
     getEventsUrl,
-    hexToDecimalfromNano,
+    hexToDecimal,
 } from "@/utils/ton.utils";
+import { Address, fromNano } from "@ton/core";
 import { ApiResponse } from "@/types/tonTypes";
 
 export async function getCourseData(
     contractAddress: string
 ): Promise<{ collectionContent: string; ownerAddress: string; cost: string, enrolledNumber: string }> {
-    const url = `https://testnet.tonapi.io/v2/blockchain/accounts/${contractAddress}/methods/get_course_data`;
+    const url = `https://testnet.tonapi.io/v2/blockchain/accounts/${Address.parse(contractAddress).toString()}/methods/get_course_data`;
 
     try {
         const response = await fetch(url);
@@ -17,10 +18,10 @@ export async function getCourseData(
 
         if (data.success) {
             // Extract collection data from the 'decoded' field
-            const enrolledNumber = hexToDecimalfromNano(data.stack[1].num);
+            const enrolledNumber = hexToDecimal(data.stack[1].num);
             const collectionContent = getLink(hexToUtf8(data.stack[2].cell));
             const ownerAddress = hexToUtf8(data.stack[3].cell);
-            const cost = hexToDecimalfromNano(data.stack[4].num);
+            const cost = fromNano(hexToDecimal(data.stack[4].num));
 
             return { collectionContent, ownerAddress, cost, enrolledNumber };
         } else {
@@ -61,7 +62,7 @@ export async function getCourseData(
 //     }
 // }
 
-const ENROLLED_MESSAGE = "You have successfully enrolled to the course!";
+const ENROLLED_MESSAGE = "You are successfully enrolled in the course!";
 
 export async function getEnrolledCourseAddresses(
     studentAddress: string
@@ -79,7 +80,7 @@ export async function getEnrolledCourseAddresses(
                 return;
             }
             if (a.TonTransfer.comment === ENROLLED_MESSAGE) {
-                enrolledCourses.push(a.TonTransfer.sender.address);
+                enrolledCourses.push(Address.parse(a.TonTransfer.sender.address).toString());
             }
         });
     });
@@ -94,7 +95,7 @@ const API_KEY = import.meta.env.VITE_TONAPI;
 //     throw new Error("TON API key is not defined in .env");
 // }
 
-export async function getTonWalletRawData(addr: string) {
+export async function getTonWalletData(addr: string) {
     const res = await fetch(`${TON_API_BASE}/accounts/${addr}`, {
         headers: { Authorization: `Bearer ${API_KEY}` },
     });

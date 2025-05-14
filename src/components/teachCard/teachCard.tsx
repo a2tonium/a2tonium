@@ -11,28 +11,28 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
 interface TeachCardProps {
-    courseId: string;
+    courseAddress: string;
     title: string;
     image: string;
 }
 
 export const TeachCard: React.FC<TeachCardProps> = ({
-    courseId,
+    courseAddress,
     title,
     image,
 }) => {
     const navigate = useNavigate();
 
     const handleCardClick = () => {
-        navigate(`/course/${courseId}`);
+        navigate(`/course/${courseAddress}`);
     };
     const handleInfoClick = (e: React.MouseEvent) => {
         e.stopPropagation();
-        navigate(`/course/${courseId}/information`);
+        navigate(`/course/${courseAddress}/information`);
     };
     const handleSyllabusClick = (e: React.MouseEvent) => {
         e.stopPropagation();
-        navigate(`/course/${courseId}/syllabus`);
+        navigate(`/course/${courseAddress}/syllabus`);
     };
 
     return (

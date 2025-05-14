@@ -7,7 +7,7 @@ import {
     useTonWallet,
 } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
-import { Address, SenderArguments, beginCell, storeStateInit } from "@ton/core";
+import { Address, Sender, SenderArguments, beginCell, storeStateInit } from "@ton/core";
 import { CustomSender } from "@/types/tonTypes";
 
 export const CHAINNET = {
@@ -16,7 +16,8 @@ export const CHAINNET = {
 } as const;
 
 export function useTonConnect(): {
-    sender: CustomSender;
+    sender: Sender;
+    customSender: CustomSender;
     isConnected: boolean;
     address: string;
     rawAddress: string;
@@ -41,9 +42,33 @@ export function useTonConnect(): {
     }, [wallet, isConnectionRestored]);
 
     return {
-        sender: {
+        customSender: {
             send: async (args: SenderArguments): Promise<SendTransactionResponse | null> => {
                 return await tonConnectUI.sendTransaction({
+                    messages: [
+                        {
+                            address: args.to.toString(),
+                            amount: args.value.toString(),
+                            payload: args.body?.toBoc().toString("base64"),
+                            stateInit: args.init
+                                ? beginCell()
+                                      .store(storeStateInit(args.init))
+                                      .endCell()
+                                      .toBoc()
+                                      .toString("base64")
+                                : undefined,
+                        },
+                    ],
+                    validUntil: Math.floor(Date.now() / 1000) + 300, // 5 минут
+                });
+            },
+            address: wallet?.account.address
+                ? Address.parse(wallet.account.address as string)
+                : undefined,
+        },
+        sender: {
+            send: async (args: SenderArguments) => {
+                await tonConnectUI.sendTransaction({
                     messages: [
                         {
                             address: args.to.toString(),

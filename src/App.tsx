@@ -16,7 +16,7 @@ import { Quiz } from "@/pages/quiz/quiz";
 import { QuizAttempt } from "@/pages/quiz/quizAttempt";
 import { QuizReview } from "@/pages/quiz/quizReview";
 import { CoursePromo } from "@/pages/coursePromo/coursePromo";
-import { UserProfile } from "@/pages/users/profile";
+import { UserProfile } from "@/pages/user/profile";
 import { CoursePromoSample } from "@/pages/teach/createCourse/coursePromoSample";
 
 import { PageNotFound } from "@/pages/error/pageNotFound";

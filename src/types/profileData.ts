@@ -22,3 +22,8 @@ export interface ProfileWithWalletDataInterface {
     }[];
     
 }
+
+export interface WalletDataInterface {
+    address: string;
+    balance: string;
+}

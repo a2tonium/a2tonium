@@ -4,10 +4,10 @@ import { LearnCardSkeleton } from "@/components/learnCard/learnCardSkeleton";
 // import { fetchLearnCourses, LearnCourseInterface } from "@/lib/learnService";
 import { ErrorPage } from "@/pages/error/error";
 import { Link } from "react-router-dom";
-import { useEnrolledCourses } from "@/hooks/useEnrolledCourseList";
+import { useEnrolledCoursesList } from "@/hooks/useEnrolledCourseList";
 
 export const Learn = () => {
-    const { data: courses, isLoading, error } = useEnrolledCourses();
+    const { data: courses, isLoading, error } = useEnrolledCoursesList();
     // const {
     //     data: courses,
     //     error,

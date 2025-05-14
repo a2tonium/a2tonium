@@ -18,9 +18,13 @@ import { CoursePromoInterface } from "@/types/courseData";
 import { useToast } from "@/hooks/use-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { getAttribute } from "@/utils/courseAttributes";
+import { courseEnroll } from "@/services/course.service";
+import { useTonConnect } from "@/hooks/useTonConnect";
+import { useCourseContract } from "@/hooks/useCourseContract";
 
 interface BuyLogicProps {
     course: CoursePromoInterface;
+    courseAddress: string | undefined;
 }
 
 const buySchema = z.object({
@@ -34,15 +38,18 @@ const buySchema = z.object({
     }),
 });
 
-export function BuyDialog({ course }: BuyLogicProps) {
+export function BuyDialog({ course, courseAddress }: BuyLogicProps) {
     const [email, setEmail] = useState("");
     const [iic, setIIC] = useState("");
     const [accepted, setAccepted] = useState(false);
     const [error, setError] = useState("");
+
     const { toast } = useToast();
+    const { sender } = useTonConnect();
+    const { enrollToCourseContract } = useCourseContract();
     const navigate = useNavigate();
 
-    const handleBuy = () => {
+    const handleBuy = async () => {
         const result = buySchema.safeParse({ iic, email, accepted });
 
         if (!result.success) {
@@ -54,13 +61,30 @@ export function BuyDialog({ course }: BuyLogicProps) {
 
         setError("");
 
-        // ✅ show toast
-        toast({
-            title: "Purchase successful",
-            description: `You've successfully bought the course: ${course.name}`,
-            className: "bg-green-500 text-white rounded-[2vw]",
-        });
-        navigate("/learn");
+        try {
+            await courseEnroll(
+                sender,
+                courseAddress!,
+                iic,
+                email,
+                course.cost,
+                enrollToCourseContract
+            );
+
+            navigate("/learn");
+            toast({
+                title: `You've successfully bought the course: ${course.name}!`,
+                description: `Please wait for couple of minutes.`,
+                className: "bg-green-500 text-white rounded-[2vw] border-none",
+            });
+        } catch (error) {
+            console.error("Error creating course:", error);
+            toast({
+                title: "Error",
+                description: "Failed to create course.",
+                variant: "destructive",
+            });
+        }
     };
 
     return (
@@ -80,7 +104,7 @@ export function BuyDialog({ course }: BuyLogicProps) {
                     <div className="text-sm text-gray-600">
                         <p>
                             <span className="font-medium">Language:</span>{" "}
-                            {getAttribute(course, "language")}
+                            {getAttribute(course.attributes, "language")}
                         </p>
                         <p>
                             <span className="font-medium">Modules:</span>{" "}
@@ -88,7 +112,7 @@ export function BuyDialog({ course }: BuyLogicProps) {
                         </p>
                         <p>
                             <span className="font-medium">Lessons:</span>{" "}
-                            {getAttribute(course, "lessons")}
+                            {getAttribute(course.attributes, "lessons")}
                         </p>
                     </div>
                     <div className="text-2xl font-bold text-blue-600">
@@ -113,9 +137,9 @@ export function BuyDialog({ course }: BuyLogicProps) {
                             onChange={(e) => {
                                 const value = e.target.value;
                                 if (/^\d*$/.test(value) && value.length <= 12) {
-                                  setIIC(value);
+                                    setIIC(value);
                                 }
-                              }}
+                            }}
                             className="rounded-2xl border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                         />
                     </div>

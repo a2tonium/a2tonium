@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { fetchMockCertificate } from "@/services/ton.service";
+import { fetchMockCertificate } from "@/services/certificate.service";
 import { CertificateCompletionInterface } from "@/types/courseData";
 
 export function useCertificate(certificateAddr?: string) {

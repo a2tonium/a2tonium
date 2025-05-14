@@ -5,9 +5,10 @@ import { getAttribute } from "@/utils/courseAttributes";
 
 interface BuyPanelProps {
     course: CoursePromoInterface;
+    courseAddress: string | undefined;
 }
 
-export function BuyPanel({ course }: BuyPanelProps) {
+export function BuyPanel({ course, courseAddress }: BuyPanelProps) {
     return (
         <div
             className="w-full md:w-[35%] md:sticky md:top-20 h-fit bg-white p-2 md:p-6 
@@ -19,7 +20,7 @@ export function BuyPanel({ course }: BuyPanelProps) {
                     <h3 className="text-xl font-bold text-gray-800">
                         {course.cost} TON
                     </h3>
-                    <BuyDialog course={course} />
+                    <BuyDialog courseAddress={courseAddress} course={course} />
 
                     <Separator className="my-2 md:my-4" />
 
@@ -28,10 +29,10 @@ export function BuyPanel({ course }: BuyPanelProps) {
                             You can learn right away
                         </h3>
                         <p className="text-sm text-gray-800 underline">
-                            {getAttribute(course, "workload")}
+                            {getAttribute(course.attributes, "workload")}
                         </p>
                         <p className="text-sm text-gray-800 underline">
-                            {getAttribute(course, "duration")}
+                            {getAttribute(course.attributes, "duration")}
                         </p>
                         <Separator className="my-4" />
                     </div>
@@ -42,7 +43,7 @@ export function BuyPanel({ course }: BuyPanelProps) {
                             This course includes
                         </h4>
                         <p className="text-sm text-gray-700 mt-1">
-                            <strong>{getAttribute(course, "lessons")}</strong> lessons
+                            <strong>{getAttribute(course.attributes, "lessons")}</strong> lessons
                         </p>
                         <p className="text-sm text-gray-700">
                             <strong>{course.modules.length}</strong> modules and

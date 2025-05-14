@@ -21,8 +21,10 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { checkPinataConnection } from "@/lib/pinata/pinataClient.lib";
-import { createProfile } from "../../services/profileCreation.service";
-import { ProfileDataInterface } from "../../types/profileData";
+import { createProfile } from "@/services/profile.service";
+import { ProfileDataInterface } from "@/types/profileData";
+import { useProfileContract } from "@/hooks/useProfileContract";
+import { useTonConnect } from "@/hooks/useTonConnect";
 
 const SOCIAL_PREFIX_MAP: Record<string, string> = {
     Telegram: "t.me/",
@@ -73,6 +75,8 @@ export function CreateProfileDialog({
     open,
     onOpenChange,
 }: CreateProfileDialogProps) {
+    const { enrollToProfileContract } = useProfileContract();
+    const { sender } = useTonConnect();
     const { toast } = useToast();
     const [form, setForm] = useState({
         image: "",
@@ -93,23 +97,30 @@ export function CreateProfileDialog({
         setForm((prev) => ({ ...prev, social_links: links }));
     };
 
+    const showErrors = (
+        result: z.SafeParseReturnType<
+            ProfileDataInterface,
+            ProfileDataInterface
+        >
+    ) => {
+        const errors: Record<string, string> = {};
+        result.error?.errors.forEach((e) => {
+            const field = e.path[0];
+            if (typeof field === "string") {
+                errors[field] = e.message;
+            }
+        });
+        setFormErrors(errors);
+        setIsLoading(false);
+        return;
+    };
+
     const handleCreate = async () => {
         setIsLoading(true);
         setFormErrors({});
 
         const result = profileSchema.safeParse(form);
-        if (!result.success) {
-            const errors: Record<string, string> = {};
-            result.error.errors.forEach((e) => {
-                const field = e.path[0];
-                if (typeof field === "string") {
-                    errors[field] = e.message;
-                }
-            });
-            setFormErrors(errors);
-            setIsLoading(false);
-            return;
-        }
+        if (!result.success) showErrors(result);
 
         const isJwtValid = await checkPinataConnection(form.jwt);
         if (!isJwtValid) {
@@ -121,31 +132,12 @@ export function CreateProfileDialog({
         }
 
         try {
-            const { jwt, social_links, ...rest } = form;
-            social_links.map((link) => ({
-                ...link,
-                value:
-                    link.type.toLowerCase() === "email" ||
-                    link.value.startsWith("http")
-                        ? link.value
-                        : `https://${link.value}`,
-            }));
-
-            const profileData: ProfileDataInterface = {
-                ...rest,
-                content_url: "",
-                attributes: social_links.map((link) => ({
-                    trait_type: link.type,
-                    value: link.value,
-                })),
-            };
-            const profileURL = await createProfile(profileData, jwt ?? "");
-            console.log(profileURL);
+            await createProfile(sender, form, enrollToProfileContract);
             setCreated(true);
             setTimeout(() => {
                 setCreated(false);
-                onOpenChange(false);
                 setIsLoading(false);
+                onOpenChange(false);
             }, 1500);
             toast({
                 title: "Profile Created",
@@ -251,6 +243,7 @@ export function CreateProfileDialog({
                 <Separator />
                 <DialogFooter className="pt-4">
                     <Button
+                        type="button"
                         onClick={handleCreate}
                         disabled={isLoading}
                         className="rounded-2xl bg-goluboy hover:bg-blue-500 text-white flex items-center gap-2"

@@ -21,8 +21,10 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { checkPinataConnection } from "@/lib/pinata/pinataClient.lib";
-import { updateProfile } from "@/services/profileCreation.service";
+import { updateProfile } from "@/services/profile.service";
 import { ProfileWithWalletDataInterface } from "@/types/profileData";
+import { useProfileContract } from "@/hooks/useProfileContract";
+import { useTonConnect } from "@/hooks/useTonConnect";
 
 const SOCIAL_PREFIX_MAP: Record<string, string> = {
     Telegram: "t.me/",
@@ -76,6 +78,8 @@ export function EditProfileDialog({
     initialData,
 }: EditProfileDialogProps) {
     const { toast } = useToast();
+    const { updateProfileContract } = useProfileContract();
+    const {sender} = useTonConnect();
     const [form, setForm] = useState({
         image: initialData.image || "",
         name: initialData.name || "",
@@ -127,33 +131,20 @@ export function EditProfileDialog({
         }
 
         try {
-            const { jwt, social_links, ...rest } = form;
-            const profileData = {
-                ...rest,
-                content_url: "",
-                attributes: social_links.map((link) => ({
-                    trait_type: link.type,
-                    value:
-                        link.type.toLowerCase() === "email" ||
-                        link.value.startsWith("http")
-                            ? link.value
-                            : `https://${link.value}`,
-                })),
-            };
 
-            await updateProfile(profileData, jwt);
+            await updateProfile(sender, form, updateProfileContract);
             setUpdated(true);
+            setTimeout(() => {
+                setUpdated(false);
+                onOpenChange(false);
+                setIsLoading(false);
+            }, 1500);
             toast({
                 title: "Profile Updated",
                 description: `Your profile was updated successfully`,
                 className: "bg-green-500 text-white border-none rounded-[2vw]",
             });
 
-            setTimeout(() => {
-                setUpdated(false);
-                onOpenChange(false);
-                setIsLoading(false);
-            }, 1500);
         } catch (error) {
             console.error("Error updating profile:", error);
             toast({

@@ -2,7 +2,11 @@ import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Copy, Check, User } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState } from "react";
-import { ProfileWithWalletDataInterface } from "@/types/profileData";
+import {
+    ProfileDataInterface,
+    ProfileWithWalletDataInterface,
+    WalletDataInterface,
+} from "@/types/profileData";
 import { CreateProfileDialog } from "@/components/profile/createProfileDialog";
 import { Button } from "@/components/ui/button";
 import { SocialLinksGroup } from "@/components/profile/socialLinksGroup";
@@ -10,17 +14,24 @@ import { Avatar } from "@/components/ui/avatar";
 import { EditProfileDialog } from "@/components/profile/editProfileDialog";
 
 interface ProfileTableProps {
-    userData?: ProfileWithWalletDataInterface;
     isProfile?: boolean;
+    walletData?: WalletDataInterface;
+    profileData?: ProfileDataInterface;
 }
 
-export function ProfileTable({
-    userData,
-    isProfile = false,
-}: ProfileTableProps) {
+export function ProfileTable({ walletData, profileData }: ProfileTableProps) {
     const isMobile = useIsMobile();
     const [copied, setCopied] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
+    const isProfile = !!profileData;
+    const userData: ProfileWithWalletDataInterface = {
+        name: profileData?.name || "Wallet",
+        description: profileData?.description || "",
+        image: profileData?.image || "",
+        address: walletData?.address || "",
+        balance: walletData?.balance || "",
+        attributes: profileData?.attributes || [],
+    };
 
     const truncateAddress = (address?: string) => {
         if ((address ?? "").length <= 16) return address;
@@ -105,7 +116,7 @@ export function ProfileTable({
                         <div className="w-full flex md:justify-end">
                             <Avatar className="w-[150px] h-[150px] rounded-2xl">
                                 <img
-                                    src={`https://ipfs.io/ipfs/${userData.image}`}
+                                    src={`https://ipfs.io/ipfs/${userData.image.substring(7)}`}
                                     alt="Profile avatar"
                                     className="w-full h-full object-cover rounded-2xl"
                                 />

@@ -64,6 +64,12 @@ export interface EnrolledCoursePreview {
     image: string;
 }
 
+export interface OwnerCoursePreview {
+    courseAddress: string;
+    title: string;
+    image: string;
+}
+
 export interface CertificateInterface {
     certificateAddress: string;
     title: string;
@@ -79,8 +85,16 @@ export interface CertificateCompletionInterface {
     courseTitle: string;
     courseAddress: string;
     ownerAddress: string;
-    attributes: Record<string, string>;
+    attributes: {
+        trait_type: string;
+        value: string;
+    }[];
 }
+
+export type CourseAttribute = {
+    trait_type: string;
+    value: string;
+}[];
 
 export interface CatalogCourseInterface {
     courseAddress: string;
@@ -130,6 +144,6 @@ export interface ModuleInterfaceNew {
 }
 
 export interface CoursePromoInterface extends CourseDeployedInterface {
-  cost: string;
-  enrolledNumber: string;
+    cost: string;
+    enrolledNumber: string;
 }
