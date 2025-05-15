@@ -7,6 +7,7 @@ import { MainLayout } from "@/layouts/mainLayout";
 import { Catalog } from "@/pages/catalog/catalog";
 import { Teach } from "@/pages/teach/teach";
 import { CreateCourse } from "@/pages/teach/createCourse";
+import { EditCourse } from "@/pages/teach/editCourse";
 
 import { Learn } from "@/pages/learn/learn";
 import { Syllabus } from "@/pages/learn/syllabus";
@@ -56,6 +57,7 @@ export default function App() {
                                 <Route path="attempt" element={<ProtectedRoute><AnimQuiz><QuizAttempt /></AnimQuiz></ProtectedRoute>} />
                                 <Route path="review" element={<ProtectedRoute><AnimQuiz><QuizReview /></AnimQuiz></ProtectedRoute>} />
                             </Route>
+                            <Route path="edit" element={<ProtectedRoute><MainLayout><EditCourse /></MainLayout></ProtectedRoute>} />
                         </Route>
 
                         <Route path="user/:walletAddr">

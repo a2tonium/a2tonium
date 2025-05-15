@@ -65,9 +65,9 @@ export interface EnrolledCoursePreview {
 }
 
 export interface OwnerCoursePreview {
+    course: CourseDeployedInterface;
     courseAddress: string;
-    title: string;
-    image: string;
+    cost: string;
 }
 
 export interface CertificateInterface {
@@ -132,6 +132,7 @@ export interface CourseDeployedInterface
         encrypted_answers: string;
         sender_public_key: string;
     };
+    limitedVideos: string[];
 }
 
 export interface ModuleInterfaceNew {

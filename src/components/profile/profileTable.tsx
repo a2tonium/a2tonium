@@ -17,9 +17,10 @@ interface ProfileTableProps {
     isProfile?: boolean;
     walletData?: WalletDataInterface;
     profileData?: ProfileDataInterface;
+    isOwnerAddress: boolean;
 }
 
-export function ProfileTable({ walletData, profileData }: ProfileTableProps) {
+export function ProfileTable({ walletData, profileData, isOwnerAddress }: ProfileTableProps) {
     const isMobile = useIsMobile();
     const [copied, setCopied] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
@@ -122,7 +123,8 @@ export function ProfileTable({ walletData, profileData }: ProfileTableProps) {
                                 />
                             </Avatar>
                         </div>
-                        {/* Create/Edit Profile Button */}
+                        {isOwnerAddress && (
+                        /* Edit Profile Button */
                         <div>
                             <Button
                                 type="button"
@@ -143,10 +145,12 @@ export function ProfileTable({ walletData, profileData }: ProfileTableProps) {
                                 initialData={userData}
                             />
                         </div>
+                        )}
                     </div>
                 )}
             </div>
-            {!isProfile ? (
+            {/* Create Profile Button */}
+            {isOwnerAddress && !isProfile ? (
                 <div>
                     <Button
                         type="button"

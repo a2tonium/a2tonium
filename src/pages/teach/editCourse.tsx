@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { StepSlider } from "@/components/createCourse/stepSlider";
 import { Button } from "@/components/ui/button";
@@ -10,10 +10,21 @@ import { StepThree } from "@/pages/teach/createCourse/stepThree";
 import { StepFour } from "@/pages/teach/createCourse/stepFour";
 import { StepFive } from "@/pages/teach/createCourse/stepFive";
 import { CourseCreationInterface, VideoCheckState } from "@/types/courseData";
-import { CreateCourseButton } from "@/components/createCourse/createCourseButton";
+import { EditCourseButton } from "@/components/createCourse/editCourseButton";
 import { isYouTubeVideoAccessible } from "@/lib/youtube.lib";
+import { useCourseDataIfEnrolled } from "@/hooks/useCourseDataIfEnrolled";
+import { useParams } from "react-router-dom";
+import { ErrorPage } from "@/pages/error/error";
+import { reformatToCourseCreation } from "@/utils/file.utils";
 
-export function CreateCourse({ children }: { children: React.ReactNode }) {
+export function EditCourse() {
+    const { courseAddress } = useParams();
+    const {
+        data: course,
+        error,
+        isLoading,
+    } = useCourseDataIfEnrolled(courseAddress);
+
     const [isDirty, setIsDirty] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
     const [showDialog, setShowDialog] = useState(false);
@@ -89,6 +100,7 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
         ],
     });
     const [coursePrice, setcoursePrice] = useState(1);
+    const limitedVideos: string[] =[] 
 
     // При монтировании считаем форму «грязной»
     useEffect(() => {
@@ -110,6 +122,73 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
             window.removeEventListener("beforeunload", handleBeforeUnload);
         };
     }, [isDirty]);
+
+    const [jwt, setJwt] = useState("");
+    const [isValidJwt, setIsValidJwt] = useState(false);
+
+    const [promoVideoValid, setPromoVideoValid] = useState<boolean>(true);
+
+    useEffect(() => {
+        const check = async () => {
+            if (!courseData.video?.trim()) {
+                setPromoVideoValid(true); // optional field
+                return;
+            }
+
+            const [isValid] = await isYouTubeVideoAccessible(courseData.video);
+            setPromoVideoValid(isValid);
+        };
+
+        check();
+    }, [courseData.video]);
+
+    const [initialized, setInitialized] = useState(false);
+    const [courseDataLoaded, setCourseDataLoaded] = useState(false);
+
+    useEffect(() => {
+        const formatCourse = async () => {
+            if (!isLoading && course && !error && !initialized) {
+                const formatted = await reformatToCourseCreation(course);
+                console.log("formatted", formatted);
+                setCourseData(formatted);
+                setInitialized(true);
+                setCourseDataLoaded(true); // 👈 устанавливаем как загруженные
+            }
+        };
+
+        formatCourse();
+    }, [isLoading, course, error, initialized]);
+
+    if (isLoading || !course || !courseDataLoaded) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-white">
+                <div className="flex flex-col items-center space-y-4">
+                    <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full" />
+                    <p className="text-gray-700 font-medium">Please wait</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        if (error.message === "Access denied") {
+            return (
+                <ErrorPage
+                    first={"Access Denied"}
+                    second={"You are not enrolled in this course."}
+                    third={"Please check your course list."}
+                />
+            );
+        } else {
+            return (
+                <ErrorPage
+                    first={"Courses Not Found"}
+                    second={"We couldn't find your courses."}
+                    third={"Please try again later."}
+                />
+            );
+        }
+    }
 
     // Навигация по шагам
     const handleNextStep = () => {
@@ -146,26 +225,6 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
         if (currentStep > 1) setCurrentStep((prev) => prev - 1);
     };
 
-    const [jwt, setJwt] = useState("");
-    const [isValidJwt, setIsValidJwt] = useState(false);
-
-    const [promoVideoValid, setPromoVideoValid] = useState<boolean>(true);
-    const limitedVideos: string[] = [];
-
-    useEffect(() => {
-        const check = async () => {
-            if (!courseData.video?.trim()) {
-                setPromoVideoValid(true); // optional field
-                return;
-            }
-
-            const [isValid] = await isYouTubeVideoAccessible(courseData.video);
-            setPromoVideoValid(isValid);
-        };
-
-        check();
-    }, [courseData.video]);
-
     const isFormValid =
         validationStatus.stepOne &&
         validationStatus.stepTwo &&
@@ -180,8 +239,6 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
 
     return (
         <div className="p-6 max-w-4xl mx-auto bg-white rounded-3xl rounded-[2vw] md:border-[6px] border-gray-200">
-            {children}
-
             <StepSlider
                 currentStep={currentStep}
                 totalSteps={totalSteps}
@@ -297,13 +354,14 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
                     </Button>
                 </div>
             </form>
-            <CreateCourseButton
+            <EditCourseButton
                 course={courseData}
-                limitedVideos={limitedVideos}
                 jwt={jwt}
                 open={showDialog}
                 onOpenChange={setShowDialog}
                 coursePrice={coursePrice.toString()}
+                limitedVideos={limitedVideos}
+                courseAddress={courseAddress!}
             />
         </div>
     );

@@ -13,9 +13,16 @@ import { CertificatesSection } from "@/components/profile/certificatesSection";
 import { CertificateInterface } from "@/types/courseData";
 import { useOwnerCoursesList } from "@/hooks/useOwnerCoursesList";
 import { useProfileData } from "@/hooks/useProfileData";
+import { useTonConnect } from "@/hooks/useTonConnect";
+import { Address } from "@ton/core";
 
 export function UserProfile() {
     const { walletAddr } = useParams();
+    const { address: clientAddress } = useTonConnect();
+    const isOwnerAddress = (clientAddress && walletAddr) ?
+        Address.parse(walletAddr).toString() ===
+            Address.parse(clientAddress).toString() : false;
+
     const [searchParams, setSearchParams] = useSearchParams();
     const section = searchParams.get("section") ?? "courses";
     const {
@@ -28,7 +35,7 @@ export function UserProfile() {
         data: profileData,
         error: profileError,
         isLoading: isProfileLoading,
-    } = useProfileData();
+    } = useProfileData(walletAddr!);
 
     const {
         data: courseList,
@@ -112,14 +119,18 @@ export function UserProfile() {
             />
         );
     }
-    
+
     // Rendered profile
     return (
         <div className="mt-8 mx-auto space-y-3 ">
-            {(isWalletLoading || isProfileLoading) ? (
+            {isWalletLoading || isProfileLoading ? (
                 <ProfileTableSkeleton />
             ) : (
-                <ProfileTable walletData={walletData} profileData={profileData}/>
+                <ProfileTable
+                    walletData={walletData}
+                    profileData={profileData}
+                    isOwnerAddress={isOwnerAddress}
+                />
             )}
 
             {/* Tabs Section */}

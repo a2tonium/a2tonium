@@ -20,6 +20,11 @@ export function useClientOwnedCoursesList() {
     return useSWR<OwnerCoursePreview[]>(
         shouldFetch ? ["owned-courses", address] : null,
         fetcher,
-        { shouldRetryOnError: false }
+        {
+            shouldRetryOnError: false,
+            revalidateOnFocus: false,
+            revalidateOnReconnect: false,
+            revalidateIfStale: false,
+        }
     );
 }

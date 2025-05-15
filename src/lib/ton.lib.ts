@@ -9,8 +9,15 @@ import { ApiResponse } from "@/types/tonTypes";
 
 export async function getCourseData(
     contractAddress: string
-): Promise<{ collectionContent: string; ownerAddress: string; cost: string, enrolledNumber: string }> {
-    const url = `https://testnet.tonapi.io/v2/blockchain/accounts/${Address.parse(contractAddress).toString()}/methods/get_course_data`;
+): Promise<{
+    collectionContent: string;
+    ownerAddress: string;
+    cost: string;
+    enrolledNumber: string;
+}> {
+    const url = `https://testnet.tonapi.io/v2/blockchain/accounts/${Address.parse(
+        contractAddress
+    ).toString()}/methods/get_course_data`;
 
     try {
         const response = await fetch(url);
@@ -33,6 +40,88 @@ export async function getCourseData(
         console.error("Error fetching collection data:", error);
         throw error; // Re-throw error to be handled by the caller
     }
+}
+
+export async function getProfileItemsAddresses(): Promise<
+    { address: string; owner: string }[]
+> {
+    const collectionUrl = `https://testnet.tonapi.io/v2/nfts/collections/EQCriJIjnxh2NedMZUiEhV4DT4RIO6_FjQvP5kc3LsqvE7cx/items`;
+
+    try {
+        const response = await fetch(collectionUrl);
+        const data = await response.json();
+
+        if (!Array.isArray(data.nft_items)) {
+            throw new Error("nft_items is not an array");
+        }
+        console.log("data.nft_items", data.nft_items);
+        return data.nft_items.map((item: { address: string; owner: { address: string; }; }) => ({
+            address: item.address,
+            owner: item.owner?.address || "",
+        }));
+    } catch (error) {
+        console.error("Error fetching NFT addresses:", error);
+        throw error;
+    }
+}
+
+export async function getProfileData(
+  ownerAddress: string
+) {
+    console.log("matched");
+  const profileAddrs = await getProfileItemsAddresses();
+    console.log("profileAddrs", profileAddrs);
+    try {
+  const matched = profileAddrs.find(
+    (item) =>
+      Address.parse(item.owner).toString() == Address.parse(ownerAddress).toString()
+  );
+  if (!matched) {
+    console.warn("No NFT profile found for owner:", ownerAddress);
+    return null;
+  }
+
+  const url = `https://testnet.tonapi.io/v2/blockchain/accounts/${matched.address}/methods/get_nft_data`;
+
+  
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (!data.success || !data.decoded) {
+      throw new Error("Failed to decode NFT data");
+    }
+
+    const { individual_content} =
+      data.decoded;
+
+    return hexToUtf8(individual_content).slice(13)
+  } catch (error) {
+    console.error("Error fetching NFT profile data:", error);
+    throw error;
+  }
+}
+
+export async function getProfileAddress(
+  ownerAddress: string
+) {
+    console.log("matched");
+  const profileAddrs = await getProfileItemsAddresses();
+    console.log("profileAddrs", profileAddrs);
+    try {
+  const matched = profileAddrs.find(
+    (item) =>
+      Address.parse(item.owner).toString() == Address.parse(ownerAddress).toString()
+  );
+  if (!matched) {
+    console.warn("No NFT profile found for owner:", ownerAddress);
+    return null;
+  }
+
+    return matched.address;
+  } catch (error) {
+    console.error("Error fetching NFT profile data:", error);
+    throw error;
+  }
 }
 
 // export async function getCollectionData(
@@ -80,7 +169,9 @@ export async function getEnrolledCourseAddresses(
                 return;
             }
             if (a.TonTransfer.comment === ENROLLED_MESSAGE) {
-                enrolledCourses.push(Address.parse(a.TonTransfer.sender.address).toString());
+                enrolledCourses.push(
+                    Address.parse(a.TonTransfer.sender.address).toString()
+                );
             }
         });
     });

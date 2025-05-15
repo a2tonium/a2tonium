@@ -4,6 +4,7 @@ import {
     base64ToFile,
     formatFilename,
     getBase64FromImageURL,
+    isBase64,
 } from "@/utils/file.utils";
 import { ProfileDataInterface } from "@/types/profileData";
 
@@ -16,7 +17,7 @@ export async function uploadImageToPinata(
     try {
         const baseFilename = `a2tonium-${type}-${formatFilename(fileName)}`;
         let file;
-        if (type == "course-certificate" && base64 == "/images/cards/1.png") {
+        if (!isBase64(base64)) {
             const fullBase64 = await getBase64FromImageURL(base64);
 
             file = base64ToFile(fullBase64, baseFilename);

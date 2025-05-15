@@ -14,7 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { CourseCreationInterface } from "@/types/courseData";
 import { useToast } from "@/hooks/use-toast";
 import { Link, useNavigate } from "react-router-dom";
-import { createCourse } from "@/services/course.service";
+import { editCourse } from "@/services/course.service";
 import { useTonConnect } from "@/hooks/useTonConnect";
 import { Check } from "lucide-react";
 import { Spinner } from "@/components/ui/kibo-ui/spinner";
@@ -25,6 +25,7 @@ interface CreateCourseLogicProps {
     jwt: string | null;
     coursePrice: string;
     limitedVideos: string[];
+    courseAddress: string;
 }
 
 const buySchema = z.object({
@@ -33,23 +34,24 @@ const buySchema = z.object({
     }),
 });
 
-export function CreateCourseButton({
+export function EditCourseButton({
     course,
     open,
     onOpenChange,
     jwt,
     coursePrice,
-    limitedVideos
+    limitedVideos,
+    courseAddress,
 }: CreateCourseLogicProps & {
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }) {
-    const { createCourseContract } = useCourseContract();
-    const { customSender, publicKey } = useTonConnect();
+    const { updateCourseContract } = useCourseContract();
+    const { sender, publicKey } = useTonConnect();
     const { toast } = useToast();
 
     const navigate = useNavigate();
-    
+
     const [accepted, setAccepted] = useState(false);
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -70,31 +72,30 @@ export function CreateCourseButton({
         setIsSuccess(false);
 
         try {
-            const txResult = await createCourse(course, jwt ?? "", publicKey, customSender, coursePrice, createCourseContract, limitedVideos);
+            await editCourse(
+                course,
+                jwt ?? "",
+                publicKey,
+                sender,
+                coursePrice,
+                courseAddress,
+                updateCourseContract,
+                limitedVideos
+            );
 
-
-            if (txResult?.boc) {
-                setIsSuccess(true);
-                onOpenChange(false);
-                navigate("/teach");
-                toast({
-                    title: "Successful Course Creation",
-                    description: `You've created the course: ${course.name}`,
-                    className:
-                        "bg-green-500 text-white rounded-[2vw] border-none",
-                });
-            } else {
-                toast({
-                    title: "Cancelled",
-                    description: "Transaction was rejected in Tonkeeper.",
-                    variant: "destructive",
-                });
-            }
+            setIsSuccess(true);
+            onOpenChange(false);
+            navigate("/teach");
+            toast({
+                title: "Successful Course Edition",
+                description: `You've edited the course: ${course.name}`,
+                className: "bg-green-500 text-white rounded-[2vw] border-none",
+            });
         } catch (error) {
-            console.error("Error creating course:", error);
+            console.error("Error editing the course:", error);
             toast({
                 title: "Error",
-                description: "Failed to create course.",
+                description: "Failed to edit the course.",
                 variant: "destructive",
             });
         } finally {
@@ -106,7 +107,7 @@ export function CreateCourseButton({
         <Dialog open={open} onOpenChange={() => onOpenChange(false)}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Create Course</DialogTitle>
+                    <DialogTitle>Edit Course</DialogTitle>
                 </DialogHeader>
                 {/* Course Info Summary */}
                 <div className="bg-gray-200 p-4 rounded-xl shadow-sm space-y-2 mb-4">
@@ -154,7 +155,7 @@ export function CreateCourseButton({
                         className="font-semibold rounded-2xl bg-goluboy hover:bg-blue-500 text-white flex items-center gap-2"
                         disabled={isLoading || !accepted}
                     >
-                        Create Course
+                        Edit Course
                         {isLoading ? (
                             <Spinner className="animate-spin w-4 h-4" />
                         ) : isSuccess ? (

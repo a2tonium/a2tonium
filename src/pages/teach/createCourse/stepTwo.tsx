@@ -38,7 +38,9 @@ const stepTwoSchema = z.object({
 // Типы пропсов
 interface StepTwoProps {
     courseData: CourseCreationInterface;
-    setCourseData: React.Dispatch<React.SetStateAction<CourseCreationInterface>>;
+    setCourseData: React.Dispatch<
+        React.SetStateAction<CourseCreationInterface>
+    >;
     setValidationStatus: React.Dispatch<
         React.SetStateAction<{
             stepOne: boolean;
@@ -54,6 +56,7 @@ interface StepTwoProps {
     // Логика табов для модулей
     activeModuleIndex: number;
     setActiveModuleIndex: (index: number) => void;
+    limitedVideos: string[];
 }
 
 export function StepTwo({
@@ -65,6 +68,7 @@ export function StepTwo({
     setActiveModuleIndex,
     videoCheckState,
     setVideoCheckState,
+    limitedVideos,
 }: StepTwoProps) {
     // Ошибки вида errors[moduleIndex][lessonIndex] = { title?: string; videoUrl?: string }
     const [errors, setErrors] = useState<
@@ -244,7 +248,15 @@ export function StepTwo({
         setCourseData((prev) => ({ ...prev, modules: updated }));
     };
 
-    const handleRemoveLesson = (moduleIndex: number, lessonIndex: number) => {
+    const handleRemoveLesson = (
+        moduleIndex: number,
+        lessonIndex: number,
+        videoId: string,
+        limitedVideos: string[]
+    ) => {
+        if (limitedVideos.includes(videoId)) {
+            limitedVideos.splice(limitedVideos.indexOf(videoId), 1);
+        }
         const updated = [...courseData.modules];
         updated[moduleIndex].lessons = updated[moduleIndex].lessons.filter(
             (_, i) => i !== lessonIndex
@@ -256,7 +268,8 @@ export function StepTwo({
         moduleIndex: number,
         lessonIndex: number,
         field: "title" | "videoId",
-        value: string
+        value: string,
+        limitedVideos: string[]
     ) => {
         const updated = [...courseData.modules];
         updated[moduleIndex].lessons[lessonIndex] = {
@@ -282,7 +295,8 @@ export function StepTwo({
             }));
 
             // Проверка только одного видео
-            const isValid = await isYouTubeVideoAccessible(value);
+            const [isValid, isLimited] = await isYouTubeVideoAccessible(value);
+            if (isLimited) limitedVideos.push(value);
             setVideoCheckState((prev) => ({
                 ...prev,
                 [moduleIndex]: {
@@ -436,7 +450,9 @@ export function StepTwo({
                                                 onClick={() =>
                                                     handleRemoveLesson(
                                                         modIndex,
-                                                        lessonIndex
+                                                        lessonIndex,
+                                                        lesson.videoId,
+                                                        limitedVideos
                                                     )
                                                 }
                                                 type="button"
@@ -459,7 +475,8 @@ export function StepTwo({
                                                         modIndex,
                                                         lessonIndex,
                                                         "title",
-                                                        e.target.value
+                                                        e.target.value,
+                                                        limitedVideos
                                                     )
                                                 }
                                                 placeholder="Enter lesson title"
@@ -493,7 +510,8 @@ export function StepTwo({
                                                             modIndex,
                                                             lessonIndex,
                                                             "videoId",
-                                                            e.target.value
+                                                            e.target.value,
+                                                            limitedVideos
                                                         )
                                                     }
                                                     placeholder="https://youtube.com/..."

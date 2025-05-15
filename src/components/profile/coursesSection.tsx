@@ -1,8 +1,8 @@
-import type { EnrolledCoursePreview } from "@/types/courseData" // Assuming this interface is defined in a types file
+import type { OwnerCoursePreview } from "@/types/courseData" // Assuming this interface is defined in a types file
 import { CourseCards } from "@/components/profile/courseCards"
 
 interface CoursesSectionProps {
-  courses: EnrolledCoursePreview[]
+  courses: OwnerCoursePreview[]
 }
 
 export function CoursesSection({ courses }: CoursesSectionProps) {

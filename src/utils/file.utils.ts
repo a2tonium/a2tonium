@@ -1,3 +1,9 @@
+import {
+    CourseAttributesInterface,
+    CourseCreationInterface,
+    CourseDeployedInterface,
+} from "@/types/courseData";
+
 export function base64ToFile(base64: string, filename: string): File {
     let mime = "image/png";
     let ext = "png";
@@ -33,7 +39,11 @@ export function formatFilename(courseName: string): string {
 }
 
 export async function getBase64FromImageURL(imageUrl: string): Promise<string> {
-    const response = await fetch(imageUrl);
+    let url = imageUrl;
+    if (imageUrl.startsWith("ipfs://")) {
+        url = `https://ipfs.io/ipfs/${imageUrl.slice(7)}`;
+    }
+    const response = await fetch(url);
     const blob = await response.blob();
     return await new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -43,6 +53,12 @@ export async function getBase64FromImageURL(imageUrl: string): Promise<string> {
         reader.onerror = reject;
         reader.readAsDataURL(blob);
     });
+}
+
+export function isBase64(str: string) {
+    const base64Regex =
+        /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+    return base64Regex.test(str);
 }
 
 // Helper function to convert string to Uint8Array
@@ -66,4 +82,96 @@ export function hexToUint8Array(hex: string): Uint8Array {
     return array;
 }
 
-export const uint8ArrayToString = (arr: Uint8Array): string => new TextDecoder().decode(arr);
+export const uint8ArrayToString = (arr: Uint8Array): string =>
+    new TextDecoder().decode(arr);
+
+export const giveFullYoutubeLink = (url: string): string => {
+    return `https://www.youtube.com/watch?v=${url}`;
+};
+
+export const reformatToCourseCreation = async (
+    course: CourseDeployedInterface
+): Promise<CourseCreationInterface> => {
+    const {
+        image,
+        cover_image,
+        video,
+        courseCompletion,
+        attributes,
+        modules,
+        ...rest
+    } = course;
+
+    const defaultAttributes: CourseAttributesInterface = {
+        category: [],
+        duration: "",
+        level: "Beginner",
+        lessons: 0,
+        language: "English",
+        summary: "",
+        workload: "",
+        learn: "",
+        about: "",
+        gains: "",
+        requirements: "",
+    };
+
+    const parsedAttributes = attributes.reduce((acc, { trait_type, value }) => {
+        switch (trait_type) {
+            case "category":
+                acc.category = Array.isArray(value)
+                    ? value
+                    : typeof value === "string"
+                    ? value.split(",").map((v) => v.trim())
+                    : [];
+                break;
+            case "lessons":
+                acc.lessons = typeof value === "number" ? value : parseInt(value);
+                break;
+            case "language":
+            case "level":
+            case "duration":
+            case "summary":
+            case "workload":
+            case "learn":
+            case "about":
+            case "gains":
+            case "requirements":
+                acc[trait_type] = String(value);
+                break;
+            default:
+                console.warn(`Unknown trait_type: ${trait_type}`);
+        }
+        return acc;
+    }, defaultAttributes);
+
+    return {
+        ...rest,
+        image: (await getBase64FromImageURL(image)) || "",
+        cover_image: cover_image
+            ? (await getBase64FromImageURL(cover_image)) || ""
+            : "",
+        video: video ? giveFullYoutubeLink(video) : "",
+        social_links: course.social_links ?? [],
+        courseCompletion: [
+            {
+                ...courseCompletion[0],
+                certificate: courseCompletion[0]?.certificate || "",
+            },
+        ],
+        attributes: parsedAttributes,
+        modules: modules.map((module) => ({
+            id: module.id,
+            title: module.title,
+            lessons: module.lessons.map((lesson) => ({
+                id: lesson.id,
+                title: lesson.title,
+                videoId: lesson.videoId,
+            })),
+            quiz: {
+                correct_answers:  "",
+                questions: module.quiz.questions,
+            },
+        })),
+    };
+};

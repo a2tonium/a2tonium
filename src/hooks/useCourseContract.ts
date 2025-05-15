@@ -2,11 +2,13 @@ import { useTonClient } from "@/hooks/useTonClient";
 // import { useAsyncInitialize } from "@/hooks/useAsyncInitialize";
 import { Course } from "@/wrappers/course";
 import { useTonConnect } from "@/hooks/useTonConnect";
-import { Address, beginCell, OpenedContract, Sender, toNano } from "@ton/core";
+import { Address, beginCell, fromNano, OpenedContract, Sender, toNano } from "@ton/core";
 import { encodeOffChainContent } from "@/utils/encodeOffChainContent.utils";
 import { CustomSender } from "@/types/tonTypes";
 import { SendTransactionResponse } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
+import { Certificate } from "../wrappers/certificate";
+import { CoursePromotionFactory } from "../wrappers/coursePromotionFactory";
 
 export function useCourseContract() {
     const { client } = useTonClient();
@@ -14,10 +16,10 @@ export function useCourseContract() {
     const [ready, setReady] = useState(false);
 
     useEffect(() => {
-        if (client && address) {
+        if (client) {
             setReady(true);
         }
-    }, [client, address]);
+    }, [client]);
     // const courseContract = useAsyncInitialize(async () => {
     //     if (!client) return;
     //     let i = 0n;
@@ -107,6 +109,34 @@ export function useCourseContract() {
         });
     };
 
+    const updateCourseContract = async (
+        sender: Sender,
+        courseURL: string,
+        courseAddress: string,
+        courseCost: string
+    ) => {
+        const courseContract = client?.open(
+            Course.fromAddress(Address.parse(courseAddress))
+        ) as OpenedContract<Course>;
+
+        if (!courseContract) {
+            console.error("Course contract not found");
+            return null;
+        }
+        const content = encodeOffChainContent(`ipfs://${courseURL}`);
+        await courseContract.send(
+            sender,
+            {
+                value: toNano(0.03),
+            },
+            {
+                $$type: "UpdateCourse",
+                content: content,
+                cost: toNano(courseCost),
+            }
+        );
+    };
+
     const enrollToCourseContract = async (
         sender: Sender,
         courseAddress: string,
@@ -136,10 +166,99 @@ export function useCourseContract() {
         );
     };
 
+    const withdrawCourseContract = async (
+        sender: Sender,
+        courseAddress: string
+    ) => {
+        const courseContract = client?.open(
+            Course.fromAddress(Address.parse(courseAddress))
+        ) as OpenedContract<Course>;
+
+        if (!courseContract) {
+            console.error("Course contract not found");
+            return null;
+        }
+        await courseContract.send(
+            sender,
+            {
+                value: toNano(0.1),
+            },
+
+            "Withdraw"
+        );
+    };
+
+    const asnwerQuiz = async (
+        sender: Sender,
+        courseAddress: string,
+        quizId: bigint,
+        answers: string
+    ) => {
+        const certificateContract = client?.open(
+            Certificate.fromAddress(Address.parse(courseAddress))
+        ) as OpenedContract<Certificate>;
+
+        if (!certificateContract) {
+            console.error("Course contract not found");
+            return null;
+        }
+        await certificateContract.send(
+            sender,
+            {
+                value: toNano(0.2),
+            },
+            {
+                $$type: "Quiz",
+                quizId: quizId,
+                answers: beginCell().storeStringTail(answers).endCell(),
+            }
+        );
+    };
+
+    const promoteCourseContract = async (
+        sender: Sender,
+        courseAddress: string
+    ) => {
+        const coursePromotionFactory = client?.open(
+            CoursePromotionFactory.fromAddress(
+                Address.parse(
+                    "kQB0hulzDHUjXXu5CZdc-lZGPUKOfJsrW6iibt6549kveOEI"
+                )
+            )
+        ) as OpenedContract<CoursePromotionFactory>;
+
+        if (!coursePromotionFactory) {
+            console.error("Course contract not found");
+            return null;
+        }
+        await coursePromotionFactory.send(
+            sender,
+            {
+                value: toNano(0.3),
+            },
+            {
+                $$type: "Promote",
+                course_address: beginCell()
+                    .storeAddress(Address.parse(courseAddress))
+                    .endCell(),
+            }
+        );
+    };
+
+    const getAddressBalance = async (address: string) => {
+        const balance = await client?.getBalance(Address.parse(address));
+        return balance !== undefined ? fromNano(balance).toString() : "0";
+    };
+
     return {
         createCourseContract,
         enrollToCourseContract,
         getOwnerCourseContractList,
+        withdrawCourseContract,
+        updateCourseContract,
+        asnwerQuiz,
+        promoteCourseContract,
+        getAddressBalance,
         ready,
     };
 }

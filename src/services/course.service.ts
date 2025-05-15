@@ -12,6 +12,7 @@ import {
     CourseDeployedInterface,
     CoursePromoInterface,
     EnrolledCoursePreview,
+    OwnerCoursePreview,
 } from "@/types/courseData";
 import { encryptCourseAnswers } from "@/utils/crypt.utils";
 import { CustomSender } from "@/types/tonTypes";
@@ -26,7 +27,12 @@ export async function createCourse(
     publicKey: string,
     sender: CustomSender,
     coursePrice: string,
-    createCourseContract: (sender: CustomSender, courseURL: string, coursePrice: string) => Promise<SendTransactionResponse | null>
+    createCourseContract: (
+        sender: CustomSender,
+        courseURL: string,
+        coursePrice: string
+    ) => Promise<SendTransactionResponse | null>,
+    limitedVideos: string[]
 ): Promise<SendTransactionResponse | null> {
     const gateway = await findPinataGateway(jwt);
     const pinata = createPinataInstance(jwt, gateway);
@@ -44,12 +50,75 @@ export async function createCourse(
         `ipfs://${imageUrl}`,
         `ipfs://${coverImageUrl}`,
         `ipfs://${certificateUrl}`,
-        publicKey
+        publicKey,
+        limitedVideos
     );
 
     console.log("cleaned", cleaned);
     const courseURL = await uploadCourseDataToPinata(cleaned, pinata);
     return await createCourseContract(sender, courseURL, coursePrice);
+}
+
+export async function editCourse(
+    course: CourseCreationInterface,
+    jwt: string,
+    publicKey: string,
+    sender: Sender,
+    coursePrice: string,
+    courseAddress: string,
+    updateCourseContract: (
+        sender: Sender,
+        courseURL: string,
+        courseAddress: string,
+        courseCost: string
+    ) => Promise<void | null>,
+    limitedVideos: string[]
+) {
+    const gateway = await findPinataGateway(jwt);
+    const pinata = createPinataInstance(jwt, gateway);
+    const [imageUrl, coverImageUrl, certificateUrl] =
+        await uploadImagesToPinata(
+            course.image,
+            course.cover_image || "",
+            course.courseCompletion[0].certificate,
+            pinata,
+            course.name
+        );
+
+    const cleaned = await reformatCourseData(
+        course,
+        `ipfs://${imageUrl}`,
+        `ipfs://${coverImageUrl}`,
+        `ipfs://${certificateUrl}`,
+        publicKey,
+        limitedVideos
+    );
+
+    console.log("cleaned", cleaned);
+    const courseURL = await uploadCourseDataToPinata(cleaned, pinata);
+    await updateCourseContract(sender, courseURL, courseAddress, coursePrice);
+}
+
+export async function promoteCourse(
+    sender: Sender,
+    courseAddress: string,
+    promoteCourseContract: (
+        sender: Sender,
+        courseAddress: string
+    ) => Promise<void | null>
+) {
+    await promoteCourseContract(sender, courseAddress);
+}
+
+export async function withdrawCourse(
+    sender: Sender,
+    courseAddress: string,
+    withdrawCourseContract: (
+        sender: Sender,
+        courseAddress: string
+    ) => Promise<void | null>
+) {
+    await withdrawCourseContract(sender, courseAddress);
 }
 
 export async function courseEnroll(
@@ -71,10 +140,19 @@ export async function courseEnroll(
 
 export async function fetchCourseIfEnrolled(
     userAddress: string,
-    contractAddress: string
+    contractAddress: string,
+    ownedCourses: string[]
 ): Promise<CourseDeployedInterface> {
     const enrolledCourses = await getEnrolledCourseAddresses(userAddress);
-    if (!enrolledCourses.includes(Address.parse(contractAddress).toString())) {
+    // console.log("owned: ",ownedCourses.includes(Address.parse(contractAddress).toString()))
+    // console.log("enrolled: ",enrolledCourses.includes(Address.parse(contractAddress).toString()))
+    if (
+        !ownedCourses.includes(Address.parse(contractAddress).toString()) &&
+        !enrolledCourses.includes(Address.parse(contractAddress).toString())
+    ) {
+        console.warn(
+            "User is not enrolled in this course or does not own the course contract."
+        );
         throw new Error("Access denied");
     }
     const { collectionContent } = await getCourseData(contractAddress);
@@ -140,60 +218,59 @@ export async function listEnrolledCourses(
 
 export async function listOwnerCourses(
     courseAddrs: string[]
-): Promise<EnrolledCoursePreview[]> {
-    console.log("courseADADADADAD",courseAddrs);
+): Promise<OwnerCoursePreview[]> {
+    console.log("courseADADADADAD", courseAddrs);
     if (!courseAddrs) {
         return [];
     }
 
     const previews = await Promise.all(
-        courseAddrs?.map(
-            async (addr): Promise<EnrolledCoursePreview | null> => {
-                try {
-                    const { collectionContent } = await getCourseData(addr);
-                    if (
-                        collectionContent == undefined ||
-                        collectionContent == null ||
-                        collectionContent === "" ||
-                        !collectionContent
-                    ) {
-                        console.warn(
-                            "No collection content found for course:",
-                            addr
-                        );
-                        return null;
-                    }
-                    const course: CourseCreationInterface = await fetch(
-                        collectionContent
-                    ).then((res) => res.json());
-
-                    return {
-                        courseAddress: addr,
-                        title: course.name,
-                        image: ipfsToHttp(course.image),
-                    };
-                } catch (err) {
-                    console.warn("Skipping invalid course:", addr, err);
+        courseAddrs?.map(async (addr): Promise<OwnerCoursePreview | null> => {
+            try {
+                const { collectionContent, cost } = await getCourseData(addr);
+                if (
+                    collectionContent == undefined ||
+                    collectionContent == null ||
+                    collectionContent === "" ||
+                    !collectionContent
+                ) {
+                    console.warn(
+                        "No collection content found for course:",
+                        addr
+                    );
                     return null;
                 }
+                const course: CourseDeployedInterface = await fetch(
+                    collectionContent
+                ).then((res) => res.json());
+
+                return {
+                    courseAddress: addr,
+                    cost: cost,
+                    course: course,
+                };
+            } catch (err) {
+                console.warn("Skipping invalid course:", addr, err);
+                return null;
             }
-        )
+        })
     );
 
-    return previews.filter(Boolean) as EnrolledCoursePreview[];
+    return previews.filter(Boolean) as OwnerCoursePreview[];
 }
-
 
 export async function reformatCourseData(
     course: CourseCreationInterface,
     imageUrl: string,
     coverImageUrl: string,
     certificateUrl: string,
-    walletPublicKey: string // base64 string
+    walletPublicKey: string,
+    limitedVideos: string[]
 ): Promise<CourseDeployedInterface> {
     const formatted: CourseDeployedInterface = {
         ...course,
         image: imageUrl,
+        limitedVideos: limitedVideos,
         cover_image: coverImageUrl,
         video: course.video
             ? extractYoutubeVideoId(course.video) || undefined

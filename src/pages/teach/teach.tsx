@@ -24,7 +24,6 @@ export const Teach = () => {
             />
         );
     }
-
     return (
         <main className="p-4 max-w-4xl bg-white p-4 flex flex-col items-center mx-auto pb-10 rounded-[2vw] md:border-[6px] border-gray-200">
             <div className="w-full max-w-3xl">

@@ -8,9 +8,12 @@ import {
 } from "@/lib/pinata/pinataUploader.lib";
 
 import { ProfileDataInterface } from "@/types/profileData";
-import { Cell, Sender } from "@ton/core";
-import { hexToUtf8 } from "@/utils/ton.utils";
-import { getTonWalletData, getUserNFTsRaw } from "@/lib/ton.lib";
+import { Sender } from "@ton/core";
+import {
+    getProfileData,
+    getTonWalletData,
+    getUserNFTsRaw,
+} from "@/lib/ton.lib";
 
 export async function createProfile(
     sender: Sender,
@@ -34,7 +37,7 @@ export async function createProfile(
     const gateway = await findPinataGateway(jwt);
     const pinata = createPinataInstance(jwt, gateway);
     const imageUrl = await uploadImageToPinata(
-        "profile",
+        "profile-image",
         profileData.name,
         profileData.image,
         pinata
@@ -60,15 +63,17 @@ export async function updateProfile(
         }[];
         jwt: string;
     },
-    updateProfileData: (sender: Sender, profileUrl: string) => Promise<null | undefined>
+    updateProfileData: (
+        sender: Sender,
+        profileUrl: string
+    ) => Promise<null | undefined>
 ) {
-
     const { profileData, jwt } = reformatProfileData(form);
 
     const gateway = await findPinataGateway(jwt);
     const pinata = createPinataInstance(jwt, gateway);
     const imageUrl = await uploadImageToPinata(
-        "profile",
+        "profile-image",
         profileData.name,
         form.image,
         pinata
@@ -82,16 +87,23 @@ export async function updateProfile(
     await updateProfileData(sender, profileUrl);
 }
 
-export async function showProfileData(profileCell: Cell) {
-    // const link = profileCell.beginParse().loadRef().beginParse().loadStringTail()
-    const link = hexToUtf8(profileCell.toBoc().toString("hex"));
-    const ipfsLink = link.slice(21, -4);
-    console.log("Link:", ipfsLink);
-    const profileData: ProfileDataInterface = await fetch(
-        `https://ipfs.io/ipfs/${ipfsLink}`
-    ).then((res) => res.json());
+export async function fetchProfileData(ownerAddress: string) {
+    try {
+        // const link = profileCell.beginParse().loadRef().beginParse().loadStringTail()
+        const profileLink = await getProfileData(ownerAddress);
 
-    return profileData;
+        const ipfsLink = profileLink?.slice(8);
+        console.log("Link:", ipfsLink);
+
+        const profileData: ProfileDataInterface = await fetch(
+            `https://ipfs.io/ipfs/${ipfsLink}`
+        ).then((res) => res.json());
+
+        return profileData;
+    } catch (error) {
+        console.error("Error fetching profile data:", error);
+        return undefined;
+    }
 }
 
 export async function fetchTonWalletData(addr: string) {

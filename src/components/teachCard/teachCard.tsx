@@ -9,30 +9,40 @@ import {
 import { EllipsisVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { CourseDeployedInterface } from "@/types/courseData";
+import { CoursePromoteDialog } from "@/components/teachCard/coursePromoteDialog";
+import { CourseWithdrawDialog } from "@/components/teachCard/courseWithdrawDialog";
+
+import { ipfsToHttp } from "@/utils/ton.utils";
 
 interface TeachCardProps {
-    courseAddress: string;
-    title: string;
-    image: string;
+    course: CourseDeployedInterface;
+    courseAddress: string | undefined;
+    cost: string;
 }
 
-export const TeachCard: React.FC<TeachCardProps> = ({
-    courseAddress,
-    title,
-    image,
-}) => {
+export function TeachCard({ course, courseAddress, cost }: TeachCardProps) {
     const navigate = useNavigate();
+    const image = ipfsToHttp(course.image);
+    const [isPromoteOpen, setPromoteOpen] = React.useState(false);
+    const [isWithdrawOpen, setWithdrawOpen] = React.useState(false);
 
-    const handleCardClick = () => {
+    const handleCardClick = (e: React.MouseEvent) => {
+        const target = e.target as HTMLElement;
+
+        if (
+            target.closest("button") ||
+            target.closest("svg") ||
+            target.closest("[role='dialog']")
+        ) {
+            return;
+        }
+
         navigate(`/course/${courseAddress}`);
     };
-    const handleInfoClick = (e: React.MouseEvent) => {
+    const handleEditCourse = (e: React.MouseEvent) => {
         e.stopPropagation();
-        navigate(`/course/${courseAddress}/information`);
-    };
-    const handleSyllabusClick = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        navigate(`/course/${courseAddress}/syllabus`);
+        navigate(`/course/${courseAddress}/edit`);
     };
 
     return (
@@ -44,19 +54,17 @@ export const TeachCard: React.FC<TeachCardProps> = ({
             <div className="absolute top-4 right-4">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <button className="p-2 rounded-md hover:bg-gray-100">
+                        <button
+                            className="p-2 rounded-md hover:bg-gray-100"
+                            onClick={(e) => e.stopPropagation()}
+                        >
                             <EllipsisVertical className="w-5 h-5" />
                         </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-40">
                         <DropdownMenuItem>
-                            <button className="w-full text-left text-gray-800 hover:text-blue-500">
-                                Редактировать
-                            </button>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
                             <button className="w-full text-left text-gray-800 hover:text-red-500">
-                                Удалить
+                                Удалить Курс
                             </button>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -65,40 +73,69 @@ export const TeachCard: React.FC<TeachCardProps> = ({
 
             {/* Основной контент */}
             <div className="flex items-center">
-                {/* Изображение слева */}
                 <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-md overflow-hidden bg-gray-200 flex-shrink-0">
                     <img
                         src={image}
-                        alt={title}
+                        alt={course.name}
                         className="w-full h-full object-cover"
                     />
                 </div>
 
-                {/* Текстовый блок */}
                 <div className="ml-4 md:pt-3 flex-1 pr-10 overflow-hidden">
                     <CardTitle className="line-clamp-4 text-sm sm:text-sm md:text-base lg:text-base font-semibold break-words">
-                        {title}
+                        {course.name}
                     </CardTitle>
+                    <div className="line-clamp-4 text-sm sm:text-sm md:text-base lg:text-base font-light break-words">
+                        Price: {cost}
+                    </div>
 
-                    {/* Кнопки при наведении */}
                     <div className="hidden sm:flex opacity-0 hover:opacity-100 transition-opacity duration-300">
                         <Button
                             variant="link"
+                            type="button"
                             className="text-blue-500"
-                            onClick={handleInfoClick}
+                            onClick={handleEditCourse}
                         >
-                            Описание
+                            Edit Course
                         </Button>
                         <Button
                             variant="link"
+                            type="button"
                             className="text-blue-500"
-                            onClick={handleSyllabusClick}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setPromoteOpen(true);
+                            }}
                         >
-                            Содержание
+                            Promote Course
+                        </Button>
+
+                        <Button
+                            variant="link"
+                            type="button"
+                            className="text-blue-500"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setWithdrawOpen(true);
+                            }}
+                        >
+                            Withdraw Course
                         </Button>
                     </div>
                 </div>
             </div>
+            <CoursePromoteDialog
+                course={course}
+                courseAddress={courseAddress}
+                isPromoteOpen={isPromoteOpen}
+                setPromoteOpen={setPromoteOpen}
+            />
+            <CourseWithdrawDialog
+                course={course}
+                courseAddress={courseAddress}
+                isWithdrawOpen={isWithdrawOpen}
+                setWithdrawOpen={setWithdrawOpen}
+            />
         </Card>
     );
-};
+}
