@@ -81,9 +81,6 @@ export function CoursePromoSample() {
                                 </span>
                             </span>
                         </div>
-                        <p className=" mt-4 leading-relaxed">
-                            {courseData.attributes.summary}
-                        </p>
 
                         {/* stats area */}
                         <div className="mt-4 space-y-2">
