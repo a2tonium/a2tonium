@@ -33,7 +33,6 @@ export interface CourseAttributesInterface {
     level: string;
     lessons: number;
     language: string;
-    summary: string;
     workload: string;
     learn: string;
     about: string;

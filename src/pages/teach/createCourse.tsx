@@ -59,7 +59,6 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
             level: "Beginner",
             lessons: 0,
             language: "English",
-            summary: "",
             workload: "",
             learn: "",
             about: "",

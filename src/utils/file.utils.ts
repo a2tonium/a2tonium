@@ -108,7 +108,6 @@ export const reformatToCourseCreation = async (
         level: "Beginner",
         lessons: 0,
         language: "English",
-        summary: "",
         workload: "",
         learn: "",
         about: "",
@@ -136,9 +135,6 @@ export const reformatToCourseCreation = async (
                 break;
             case "Duration":
                 acc.duration = String(value);
-                break;
-            case "Summary":
-                acc.summary = String(value);
                 break;
             case "Workload":
                 acc.workload = String(value);

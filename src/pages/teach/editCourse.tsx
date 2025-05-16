@@ -62,7 +62,6 @@ export function EditCourse() {
             level: "Beginner",
             lessons: 0,
             language: "English",
-            summary: "",
             workload: "",
             learn: "",
             about: "",
