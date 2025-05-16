@@ -158,7 +158,7 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
     const [isValidJwt, setIsValidJwt] = useState(false);
 
     const [promoVideoValid, setPromoVideoValid] = useState<boolean>(true);
-    const limitedVideos: string[] = [];
+    const [limitedVideos, setLimitedVideos] = useState<string[]>([]);
 
     useEffect(() => {
         const check = async () => {
@@ -242,6 +242,7 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
                         videoCheckState={videoCheckState}
                         setVideoCheckState={setVideoCheckState}
                         limitedVideos={limitedVideos}
+                        setLimitedVideos={setLimitedVideos}
                     />
                 )}
 

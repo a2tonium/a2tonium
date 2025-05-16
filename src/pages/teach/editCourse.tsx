@@ -100,7 +100,7 @@ export function EditCourse() {
         ],
     });
     const [coursePrice, setcoursePrice] = useState(1);
-    const limitedVideos: string[] =[] 
+    const [limitedVideos, setLimitedVideos] = useState<string[]>([]); 
 
     // При монтировании считаем форму «грязной»
     useEffect(() => {
@@ -148,6 +148,7 @@ export function EditCourse() {
     useEffect(() => {
         const formatCourse = async () => {
             if (!isLoading && data && !error && !initialized) {
+                limitedVideos.push(...data.data!.modules[0].lessons.map((lesson) => lesson.videoId));
                 const formatted = await reformatToCourseCreation(data.data!);
                 console.log("formatted", formatted);
                 setCourseData(formatted);
@@ -271,6 +272,7 @@ export function EditCourse() {
                         videoCheckState={videoCheckState}
                         setVideoCheckState={setVideoCheckState}
                         limitedVideos={limitedVideos}
+                        setLimitedVideos={setLimitedVideos}
                     />
                 )}
 

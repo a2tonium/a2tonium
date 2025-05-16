@@ -57,6 +57,7 @@ interface StepTwoProps {
     activeModuleIndex: number;
     setActiveModuleIndex: (index: number) => void;
     limitedVideos: string[];
+    setLimitedVideos: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export function StepTwo({
@@ -69,6 +70,7 @@ export function StepTwo({
     videoCheckState,
     setVideoCheckState,
     limitedVideos,
+    setLimitedVideos,
 }: StepTwoProps) {
     // Ошибки вида errors[moduleIndex][lessonIndex] = { title?: string; videoUrl?: string }
     const [errors, setErrors] = useState<
@@ -255,7 +257,11 @@ export function StepTwo({
         limitedVideos: string[]
     ) => {
         if (limitedVideos.includes(videoId)) {
-            limitedVideos.splice(limitedVideos.indexOf(videoId), 1);
+            setLimitedVideos((prev) =>
+                prev.includes(videoId)
+                    ? prev.filter((v) => v !== videoId)
+                    : prev
+            );
         }
         const updated = [...courseData.modules];
         updated[moduleIndex].lessons = updated[moduleIndex].lessons.filter(
@@ -296,7 +302,13 @@ export function StepTwo({
 
             // Проверка только одного видео
             const [isValid, isLimited] = await isYouTubeVideoAccessible(value);
-            if (isLimited) limitedVideos.push(value);
+            if (isLimited) {
+                const videoIdOnly = extractYoutubeVideoId(value);
+                if (videoIdOnly && !limitedVideos.includes(videoIdOnly)) {
+                    setLimitedVideos((prev) => [...prev, videoIdOnly]);
+                }
+            }
+            console.log(limitedVideos);
             setVideoCheckState((prev) => ({
                 ...prev,
                 [moduleIndex]: {

@@ -99,7 +99,7 @@ export async function fetchProfileData(ownerAddress: string) {
             return undefined;
         }
         const profileData: ProfileDataInterface = await fetch(
-            `https://ipfs.io/ipfs/${ipfsLink}`
+            `https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${ipfsLink}`
         ).then((res) => res.json());
 
         return profileData;
