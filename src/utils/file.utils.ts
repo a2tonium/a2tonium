@@ -118,26 +118,42 @@ export const reformatToCourseCreation = async (
 
     const parsedAttributes = attributes.reduce((acc, { trait_type, value }) => {
         switch (trait_type) {
-            case "category":
+            case "Category":
                 acc.category = Array.isArray(value)
                     ? value
                     : typeof value === "string"
                     ? value.split(",").map((v) => v.trim())
                     : [];
                 break;
-            case "lessons":
+            case "Lessons":
                 acc.lessons = typeof value === "number" ? value : parseInt(value);
                 break;
-            case "language":
-            case "level":
-            case "duration":
-            case "summary":
-            case "workload":
-            case "learn":
-            case "about":
-            case "gains":
-            case "requirements":
-                acc[trait_type] = String(value);
+            case "Language":
+                acc.language = String(value);
+                break;
+            case "Level":
+                acc.level = String(value);
+                break;
+            case "Duration":
+                acc.duration = String(value);
+                break;
+            case "Summary":
+                acc.summary = String(value);
+                break;
+            case "Workload":
+                acc.workload = String(value);
+                break;
+            case "Learn":
+                acc.learn = String(value);
+                break;
+            case "About":
+                acc.about = String(value);
+                break;
+            case "Gains":
+                acc.gains = String(value);
+                break;
+            case "Requirements":
+                acc.requirements = String(value);
                 break;
             default:
                 console.warn(`Unknown trait_type: ${trait_type}`);
@@ -156,7 +172,7 @@ export const reformatToCourseCreation = async (
         courseCompletion: [
             {
                 ...courseCompletion[0],
-                certificate: courseCompletion[0]?.certificate || "",
+                certificate: (await getBase64FromImageURL(courseCompletion[0]?.certificate)) || "",
             },
         ],
         attributes: parsedAttributes,
@@ -166,7 +182,7 @@ export const reformatToCourseCreation = async (
             lessons: module.lessons.map((lesson) => ({
                 id: lesson.id,
                 title: lesson.title,
-                videoId: lesson.videoId,
+                videoId: giveFullYoutubeLink(lesson.videoId),
             })),
             quiz: {
                 correct_answers:  "",

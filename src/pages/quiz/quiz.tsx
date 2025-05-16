@@ -51,7 +51,7 @@ export function Quiz() {
         totalQuestions: number;
     };
 
-    const quizzes: QuizItem[] = course.modules.map((m: ModuleInterfaceNew) => ({
+    const quizzes: QuizItem[] = course.data!.modules.map((m: ModuleInterfaceNew) => ({
         id: m.id,
         title: m.title,
         // completed: m.completed,
@@ -82,7 +82,7 @@ export function Quiz() {
             courseId:
                 // course.id,
                 "1",
-            courseTitle: course.name,
+            courseTitle: course.data!.name,
         },
         quizzes,
     };

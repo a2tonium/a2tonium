@@ -94,7 +94,10 @@ export async function fetchProfileData(ownerAddress: string) {
 
         const ipfsLink = profileLink?.slice(8);
         console.log("Link:", ipfsLink);
-
+        if (!ipfsLink) {
+            console.warn("No IPFS link found for profile data");
+            return undefined;
+        }
         const profileData: ProfileDataInterface = await fetch(
             `https://ipfs.io/ipfs/${ipfsLink}`
         ).then((res) => res.json());

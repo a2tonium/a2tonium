@@ -142,7 +142,7 @@ export async function fetchCourseIfEnrolled(
     userAddress: string,
     contractAddress: string,
     ownedCourses: string[]
-): Promise<CourseDeployedInterface> {
+): Promise<{data: CourseDeployedInterface, cost: string}> {
     const enrolledCourses = await getEnrolledCourseAddresses(userAddress);
     // console.log("owned: ",ownedCourses.includes(Address.parse(contractAddress).toString()))
     // console.log("enrolled: ",enrolledCourses.includes(Address.parse(contractAddress).toString()))
@@ -155,16 +155,16 @@ export async function fetchCourseIfEnrolled(
         );
         throw new Error("Access denied");
     }
-    const { collectionContent } = await getCourseData(contractAddress);
+    const { collectionContent, cost } = await getCourseData(contractAddress);
     const data = await fetch(collectionContent).then((res) => res.json());
 
-    return data as CourseDeployedInterface;
+    return {data, cost};
 }
 
 export async function fetchCoursePromo(
     contractAddress: string
 ): Promise<CoursePromoInterface> {
-    const { collectionContent, cost, enrolledNumber } = await getCourseData(
+    const { collectionContent, cost, enrolledNumber, ownerAddress } = await getCourseData(
         contractAddress
     );
     const data = await fetch(collectionContent).then((res) => res.json());
@@ -172,6 +172,7 @@ export async function fetchCoursePromo(
         ...data,
         cost: cost,
         enrolledNumber: enrolledNumber,
+        ownerAddress: ownerAddress,
     };
     return dataWithCost;
 }

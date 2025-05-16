@@ -8,8 +8,8 @@ export function useCourseDataIfEnrolled(contractAddress?: string) {
     const { address: userAddress } = useTonConnect();
     const { getOwnerCourseContractList, ready } = useCourseContract();
 
-    const fetcher = async (): Promise<CourseDeployedInterface | null> => {
-        if (!userAddress || !contractAddress || !ready) return null;
+    const fetcher = async (): Promise<{data:CourseDeployedInterface | null, cost: string}> => {
+        if (!userAddress || !contractAddress || !ready) return { data: null, cost: "" };
         const ownerCourseAddresses = await getOwnerCourseContractList(
             userAddress
         );
@@ -20,7 +20,7 @@ export function useCourseDataIfEnrolled(contractAddress?: string) {
             ownerCourseAddresses
         );
     };
-    return useSWR<CourseDeployedInterface | null>(
+    return useSWR<{data:CourseDeployedInterface | null, cost: string}>(
         ready && contractAddress
             ? ["enrolled-course", userAddress, contractAddress]
             : null,

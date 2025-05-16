@@ -4,12 +4,10 @@ import {
     getEventsUrl,
     hexToDecimal,
 } from "@/utils/ton.utils";
-import { Address, fromNano } from "@ton/core";
+import { Address, Cell, fromNano } from "@ton/core";
 import { ApiResponse } from "@/types/tonTypes";
 
-export async function getCourseData(
-    contractAddress: string
-): Promise<{
+export async function getCourseData(contractAddress: string): Promise<{
     collectionContent: string;
     ownerAddress: string;
     cost: string;
@@ -27,7 +25,11 @@ export async function getCourseData(
             // Extract collection data from the 'decoded' field
             const enrolledNumber = hexToDecimal(data.stack[1].num);
             const collectionContent = getLink(hexToUtf8(data.stack[2].cell));
-            const ownerAddress = hexToUtf8(data.stack[3].cell);
+            const address = data.stack[3].cell;
+            const cell = Cell.fromBoc(Buffer.from(address, "hex"))[0];
+            const ownerAddress = cell.beginParse().loadAddress().toString();
+            console.log("ownerAddress",ownerAddress);
+
             const cost = fromNano(hexToDecimal(data.stack[4].num));
 
             return { collectionContent, ownerAddress, cost, enrolledNumber };
@@ -55,73 +57,71 @@ export async function getProfileItemsAddresses(): Promise<
             throw new Error("nft_items is not an array");
         }
         console.log("data.nft_items", data.nft_items);
-        return data.nft_items.map((item: { address: string; owner: { address: string; }; }) => ({
-            address: item.address,
-            owner: item.owner?.address || "",
-        }));
+        return data.nft_items.map(
+            (item: { address: string; owner: { address: string } }) => ({
+                address: item.address,
+                owner: item.owner?.address || "",
+            })
+        );
     } catch (error) {
         console.error("Error fetching NFT addresses:", error);
         throw error;
     }
 }
 
-export async function getProfileData(
-  ownerAddress: string
-) {
+export async function getProfileData(ownerAddress: string) {
     console.log("matched");
-  const profileAddrs = await getProfileItemsAddresses();
+    const profileAddrs = await getProfileItemsAddresses();
     console.log("profileAddrs", profileAddrs);
     try {
-  const matched = profileAddrs.find(
-    (item) =>
-      Address.parse(item.owner).toString() == Address.parse(ownerAddress).toString()
-  );
-  if (!matched) {
-    console.warn("No NFT profile found for owner:", ownerAddress);
-    return null;
-  }
+        const matched = profileAddrs.find(
+            (item) =>
+                Address.parse(item.owner).toString() ==
+                Address.parse(ownerAddress).toString()
+        );
+        if (!matched) {
+            console.warn("No NFT profile found for owner:", ownerAddress);
+            return null;
+        }
 
-  const url = `https://testnet.tonapi.io/v2/blockchain/accounts/${matched.address}/methods/get_nft_data`;
+        const url = `https://testnet.tonapi.io/v2/blockchain/accounts/${matched.address}/methods/get_nft_data`;
 
-  
-    const response = await fetch(url);
-    const data = await response.json();
+        const response = await fetch(url);
+        const data = await response.json();
 
-    if (!data.success || !data.decoded) {
-      throw new Error("Failed to decode NFT data");
+        if (!data.success || !data.decoded) {
+            throw new Error("Failed to decode NFT data");
+        }
+
+        const { individual_content } = data.decoded;
+
+        return hexToUtf8(individual_content).slice(13);
+    } catch (error) {
+        console.error("Error fetching NFT profile data:", error);
+        throw error;
     }
-
-    const { individual_content} =
-      data.decoded;
-
-    return hexToUtf8(individual_content).slice(13)
-  } catch (error) {
-    console.error("Error fetching NFT profile data:", error);
-    throw error;
-  }
 }
 
-export async function getProfileAddress(
-  ownerAddress: string
-) {
+export async function getProfileAddress(ownerAddress: string) {
     console.log("matched");
-  const profileAddrs = await getProfileItemsAddresses();
+    const profileAddrs = await getProfileItemsAddresses();
     console.log("profileAddrs", profileAddrs);
     try {
-  const matched = profileAddrs.find(
-    (item) =>
-      Address.parse(item.owner).toString() == Address.parse(ownerAddress).toString()
-  );
-  if (!matched) {
-    console.warn("No NFT profile found for owner:", ownerAddress);
-    return null;
-  }
+        const matched = profileAddrs.find(
+            (item) =>
+                Address.parse(item.owner).toString() ==
+                Address.parse(ownerAddress).toString()
+        );
+        if (!matched) {
+            console.warn("No NFT profile found for owner:", ownerAddress);
+            return null;
+        }
 
-    return matched.address;
-  } catch (error) {
-    console.error("Error fetching NFT profile data:", error);
-    throw error;
-  }
+        return matched.address;
+    } catch (error) {
+        console.error("Error fetching NFT profile data:", error);
+        throw error;
+    }
 }
 
 // export async function getCollectionData(

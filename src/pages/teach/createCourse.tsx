@@ -12,11 +12,19 @@ import { StepFive } from "@/pages/teach/createCourse/stepFive";
 import { CourseCreationInterface, VideoCheckState } from "@/types/courseData";
 import { CreateCourseButton } from "@/components/createCourse/createCourseButton";
 import { isYouTubeVideoAccessible } from "@/lib/youtube.lib";
+import { ErrorPage } from "@/pages/error/error";
+import { useClientProfileData } from "@/hooks/useClientProfileData";
 
 export function CreateCourse({ children }: { children: React.ReactNode }) {
     const [isDirty, setIsDirty] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
     const [showDialog, setShowDialog] = useState(false);
+
+    const {
+        data: profileData,
+        error: profileError,
+        isLoading: isProfileLoading,
+    } = useClientProfileData();
 
     const totalSteps = 5;
 
@@ -177,6 +185,27 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
     const handleCreateCourse = () => {
         setShowDialog(true);
     };
+
+    if (isProfileLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-white">
+                <div className="flex flex-col items-center space-y-4">
+                    <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full" />
+                    <p className="text-gray-700 font-medium">Please wait</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!isProfileLoading && (profileError || !profileData)) {
+        return (
+            <ErrorPage
+                first={"Profile Not Found"}
+                second={"You need to create a profile first."}
+                third={"Please create a profile to create a course."}
+            />
+        );
+    }
 
     return (
         <div className="p-6 max-w-4xl mx-auto bg-white rounded-3xl rounded-[2vw] md:border-[6px] border-gray-200">

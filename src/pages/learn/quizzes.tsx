@@ -47,7 +47,7 @@ export function Quizzes() {
         return <QuizzesSkeleton />;
     }
 
-    const allQuizzes = course.modules.map((mod, index) => {
+    const allQuizzes = course.data!.modules.map((mod, index) => {
         // For demonstration: a "title" from moduleTitle, or some quiz-specific fields
         return {
             id: `${index + 1}`,
@@ -64,7 +64,7 @@ export function Quizzes() {
         <SidebarProvider>
             <div className="flex w-full mx-auto bg-white rounded-[2vw] md:border-[6px] border-gray-200">
                 {/* Sidebar */}
-                <CourseSidebar courseData={course} />
+                <CourseSidebar courseData={course.data!} />
                 <div className="max-w-4xl flex-grow mx-auto p-0 pt-6 md:pr-6 md:p-6">
                     {/* Sidebar Trigger + Title */}
                     <div className="flex items-center gap-2 mb-4">

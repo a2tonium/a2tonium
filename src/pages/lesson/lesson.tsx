@@ -45,7 +45,7 @@ export function Lesson() {
         return <LessonSkeleton />;
     }
 
-    const allModules = course.modules;
+    const allModules = course.data!.modules;
     const currentModule: ModuleInterfaceNew | undefined = allModules.find((m) =>
         m.lessons.some((l) => l.id === lessonId)
     );
@@ -85,7 +85,7 @@ export function Lesson() {
                             course: {
                                 // courseId: course.id,
                                 courseId: "1",
-                                courseTitle: course.name,
+                                courseTitle: course.data!.name,
                             },
                             modules: allModules.map((m) => ({
                                 moduleTitle: m.title,

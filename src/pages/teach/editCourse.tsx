@@ -20,7 +20,7 @@ import { reformatToCourseCreation } from "@/utils/file.utils";
 export function EditCourse() {
     const { courseAddress } = useParams();
     const {
-        data: course,
+        data,
         error,
         isLoading,
     } = useCourseDataIfEnrolled(courseAddress);
@@ -147,19 +147,20 @@ export function EditCourse() {
 
     useEffect(() => {
         const formatCourse = async () => {
-            if (!isLoading && course && !error && !initialized) {
-                const formatted = await reformatToCourseCreation(course);
+            if (!isLoading && data && !error && !initialized) {
+                const formatted = await reformatToCourseCreation(data.data!);
                 console.log("formatted", formatted);
                 setCourseData(formatted);
+                setcoursePrice(parseFloat(data.cost));
                 setInitialized(true);
                 setCourseDataLoaded(true); // 👈 устанавливаем как загруженные
             }
         };
 
         formatCourse();
-    }, [isLoading, course, error, initialized]);
+    }, [isLoading, data, error, initialized]);
 
-    if (isLoading || !course || !courseDataLoaded) {
+    if (isLoading || !data || !courseDataLoaded) {
         return (
             <div className="flex items-center justify-center min-h-screen bg-white">
                 <div className="flex flex-col items-center space-y-4">

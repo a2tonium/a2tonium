@@ -147,4 +147,5 @@ export interface ModuleInterfaceNew {
 export interface CoursePromoInterface extends CourseDeployedInterface {
     cost: string;
     enrolledNumber: string;
+    ownerAddress: string;
 }

@@ -55,7 +55,7 @@ export function Syllabus() {
     return (
         <SidebarProvider>
             <div className="flex w-full mx-auto bg-white rounded-[2vw] md:border-[6px] border-gray-200">
-                <CourseSidebar courseData={course} />
+                <CourseSidebar courseData={course.data!} />
 
                 <div className="max-w-4xl flex-grow mx-auto p-0 pt-6 md:pr-6 md:p-6">
                     <div className="flex items-center gap-2 mb-4">
@@ -68,7 +68,7 @@ export function Syllabus() {
                     <Separator className="mb-4" />
 
                     <div className="w-full space-y-4">
-                        {course.modules.map((mod, mIndex) => {
+                        {course.data!.modules.map((mod, mIndex) => {
                             const firstLessonId = mod.lessons[0]?.id;
 
                             return (

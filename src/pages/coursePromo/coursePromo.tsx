@@ -9,22 +9,24 @@ import {
 import { BuyPanel } from "@/components/coursePromo/buyPanel";
 import { CoursePromoSkeleton } from "@/components/coursePromo/coursePromoSkeleton";
 import { ErrorPage } from "@/pages/error/error";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useCourseDataPromo } from "@/hooks/useCourseDataPromo";
 import { StatBadge } from "@/components/coursePromo/statBadge";
 import { useCategoryNames } from "@/hooks/useCategoryNames";
 import { LessonVideo } from "@/components/lessonVideo/lessonVideo";
 import { getAttribute } from "@/utils/courseAttributes";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar } from "@/components/ui/avatar";
 
 // Example course object with the required fields
 
 export function CoursePromo() {
     const { courseAddress } = useParams();
-    const {
-        data: course,
-        error,
-        isLoading,
-    } = useCourseDataPromo(courseAddress);
+    const { data, error, isLoading } = useCourseDataPromo(courseAddress);
+
+    const course = data?.course;
+    const profileData = data?.profile;
+
     const categoryNames = useCategoryNames(
         getAttribute(course?.attributes, "category")
     );
@@ -91,10 +93,12 @@ export function CoursePromo() {
                             <h1 className="text-2xl sm:text-2xl md:text-3xl font-bold text-gray-800">
                                 {course.name}
                             </h1>
-                            <span className="text-xs sm:text-sm text-gray-500 mt-1 ">
+                            <span className="text-xs sm:text-sm text-gray-500 font-semibold mt-1 ">
                                 Author:{" "}
                                 <span className="hover:underline cursor-pointer">
-                                    {course.social_links[0]}
+                                    <Link to={`/user/${course.ownerAddress}`}>
+                                        {profileData?.name}
+                                    </Link>
                                 </span>
                             </span>
                         </div>
@@ -156,7 +160,47 @@ export function CoursePromo() {
                                     />
                                 </div>
                             )}
-                            {/* Course Duration */}
+                            {/* Author */}
+                            <div>
+                                <h2 className="text-2xl font-semibold mb-3">
+                                    About Author
+                                </h2>
+                                <Link to={`/user/${course.ownerAddress}`}>
+                                    <Card className="hover:border-blue-500 transition-all duration-200 cursor-pointer">
+                                        <CardContent className="flex items-center gap-4 p-4">
+                                            {/* Author Avatar */}
+                                            {profileData?.image ? (
+                                                <Avatar className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden">
+                                                    <img
+                                                        src={`https://ipfs.io/ipfs/${profileData.image.substring(
+                                                            7
+                                                        )}`}
+                                                        alt="Author Avatar"
+                                                        className="object-cover w-full h-full"
+                                                    />
+                                                </Avatar>
+                                            ) : (
+                                                <Avatar className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-gray-200" />
+                                            )}
+
+                                            {/* Author Name & Description */}
+                                            <div className="flex flex-col justify-center text-left">
+                                                <p className="text-lg font-semibold text-gray-800">
+                                                    {profileData?.name ||
+                                                        "Unnamed"}
+                                                </p>
+                                                {profileData?.description && (
+                                                    <p className="text-sm text-gray-600 mt-1 line-clamp-3 whitespace-pre-wrap">
+                                                        {
+                                                            profileData.description
+                                                        }
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </Link>
+                            </div>
                             {/* What You Will Learn */}
                             <div>
                                 <h2 className="text-2xl font-semibold">
