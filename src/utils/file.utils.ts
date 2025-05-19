@@ -41,7 +41,7 @@ export function formatFilename(courseName: string): string {
 export async function getBase64FromImageURL(imageUrl: string): Promise<string> {
     let url = imageUrl;
     if (imageUrl.startsWith("ipfs://")) {
-        url = `https://ipfs.io/ipfs/${imageUrl.slice(7)}`;
+        url = `https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${imageUrl.slice(7)}`;
     }
     const response = await fetch(url);
     const blob = await response.blob();

@@ -54,7 +54,7 @@ export function CoursePromo() {
                 {course.cover_image ? (
                     <img
                         className="absolute top-1/2 left-1/2 w-full h-full object-cover transform -translate-x-1/2 -translate-y-1/2"
-                        src={`https://ipfs.io/ipfs/${course.cover_image.substring(
+                        src={`https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${course.cover_image.substring(
                             7
                         )}`}
                         alt="Course Background"
@@ -62,9 +62,9 @@ export function CoursePromo() {
                 ) : (
                     <img
                         className="absolute top-1/2 left-1/2 w-full h-full object-cover transform -translate-x-1/2 -translate-y-1/2 scale-125 blur-[10px]"
-                        src={`https://ipfs.io/ipfs/${course.image.substring(
-                            7
-                        )}`}
+                        src={`https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${course.image.substring(
+                                7
+                            )}`}
                         alt="Course Background"
                     />
                 )}
@@ -76,7 +76,7 @@ export function CoursePromo() {
                     {/* Course Image */}
                     <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 bg-white-900 shadow-md rounded-xl overflow-hidden border border-[3px]">
                         <img
-                            src={`https://ipfs.io/ipfs/${course.image.substring(
+                            src={`https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${course.image.substring(
                                 7
                             )}`}
                             alt="Course"
@@ -172,7 +172,7 @@ export function CoursePromo() {
                                             {profileData?.image ? (
                                                 <Avatar className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden">
                                                     <img
-                                                        src={`https://ipfs.io/ipfs/${profileData.image.substring(
+                                                        src={`https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${profileData.image.substring(
                                                             7
                                                         )}`}
                                                         alt="Author Avatar"

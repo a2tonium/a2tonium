@@ -15,7 +15,6 @@ import { Quizzes } from "@/pages/learn/quizzes";
 import { Lesson } from "@/pages/lesson/lesson";
 import { Quiz } from "@/pages/quiz/quiz";
 import { QuizAttempt } from "@/pages/quiz/quizAttempt";
-import { QuizReview } from "@/pages/quiz/quizReview";
 import { CoursePromo } from "@/pages/coursePromo/coursePromo";
 import { UserProfile } from "@/pages/user/profile";
 import { CoursePromoSample } from "@/pages/teach/createCourse/coursePromoSample";
@@ -55,7 +54,6 @@ export default function App() {
                             <Route path="quiz/:quizId">
                                 <Route index element={<ProtectedRoute><MainLayout><Quiz /></MainLayout></ProtectedRoute>} />
                                 <Route path="attempt" element={<ProtectedRoute><AnimQuiz><QuizAttempt /></AnimQuiz></ProtectedRoute>} />
-                                <Route path="review" element={<ProtectedRoute><AnimQuiz><QuizReview /></AnimQuiz></ProtectedRoute>} />
                             </Route>
                             <Route path="edit" element={<ProtectedRoute><MainLayout><EditCourse /></MainLayout></ProtectedRoute>} />
                         </Route>

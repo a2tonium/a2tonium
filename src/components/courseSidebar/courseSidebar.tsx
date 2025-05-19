@@ -72,7 +72,7 @@ export function CourseSidebar({
                     <Avatar className="w-24 h-24 rounded-lg overflow-hidden">
                         <AvatarImage
                             className="w-full h-full object-cover"
-                            src={`https://ipfs.io/ipfs/${courseData.image.substring(
+                            src={`https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${courseData.image.substring(
                                 7
                             )}`}
                             alt={courseData.name}

@@ -27,7 +27,7 @@ export function CourseCards({ courses }: CourseCardsProps) {
             <CardContent className="p-0">
               <div className="aspect-square w-full overflow-hidden">
                 <img
-                  src={course.course.image || "/placeholder.svg?height=300&width=300"}
+                  src={`https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${course.course.image.substring(7)}`}
                   alt={course.course.name}
                   className="h-full w-full object-cover transform transition-transform duration-300 ease-in-out hover:scale-105"
                 />

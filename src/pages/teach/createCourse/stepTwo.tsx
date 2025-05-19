@@ -203,15 +203,15 @@ export function StepTwo({
             modules: [
                 ...prev.modules,
                 {
-                    id: "",
+                    id: `${prev.modules.length + 1}`,
                     title: `Module ${prev.modules.length + 1}`,
                     lessons: [{ id: "", title: "", videoId: "" }],
                     quiz: {
                         correct_answers: "aaaaa",
                         questions: Array(5)
                             .fill(null)
-                            .map(() => ({
-                                id: "",
+                            .map((_, index) => ({
+                                id: index.toString(),
                                 text: "",
                                 options: ["", ""],
                             })) as Array<{

@@ -50,7 +50,7 @@ export function Certificate() {
                 {/* Certificate Image */}
                 <div className="w-1/2">
                     <img
-                        src="/images/cards/1.png"
+                        src="/images/certificate/sample.png"
                         alt="Certificate"
                         className="w-full rounded-xl object-cover"
                     />

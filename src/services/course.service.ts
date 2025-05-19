@@ -18,7 +18,7 @@ import { encryptCourseAnswers } from "@/utils/crypt.utils";
 import { CustomSender } from "@/types/tonTypes";
 import { SendTransactionResponse } from "@tonconnect/ui-react";
 import { Address, Sender } from "@ton/core";
-import { getCourseData, getEnrolledCourseAddresses } from "@/lib/ton.lib";
+import { getCourseData, getEnrolledCourseAddresses, getOwnedCourseAddresses } from "@/lib/ton.lib";
 import { ipfsToHttp } from "@/utils/ton.utils";
 
 export async function createCourse(
@@ -161,6 +161,8 @@ export async function fetchCourseIfEnrolled(
     return {data, cost};
 }
 
+
+
 export async function fetchCoursePromo(
     contractAddress: string
 ): Promise<CoursePromoInterface> {
@@ -218,8 +220,11 @@ export async function listEnrolledCourses(
 }
 
 export async function listOwnerCourses(
-    courseAddrs: string[]
+    userAddress: string
 ): Promise<OwnerCoursePreview[]> {
+
+    const courseAddrs = await getOwnedCourseAddresses(userAddress);
+    
     console.log("courseADADADADAD", courseAddrs);
     if (!courseAddrs) {
         return [];

@@ -347,7 +347,7 @@ export function EditCourse() {
                         <span className="font-semibold">
                             {currentStep !== totalSteps
                                 ? "Next"
-                                : "Create Course"}
+                                : "Edit Course"}
                         </span>
                         <ChevronRight
                             className="flex justify-center items-center"

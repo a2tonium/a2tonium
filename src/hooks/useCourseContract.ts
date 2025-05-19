@@ -9,10 +9,11 @@ import { SendTransactionResponse } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
 import { Certificate } from "../wrappers/certificate";
 import { CoursePromotionFactory } from "../wrappers/coursePromotionFactory";
+import { encryptCourseAnswers } from "../utils/crypt.utils";
 
 export function useCourseContract() {
     const { client } = useTonClient();
-    const { address } = useTonConnect();
+    const { address, publicKey, sender } = useTonConnect();
     const [ready, setReady] = useState(false);
 
     useEffect(() => {
@@ -189,19 +190,23 @@ export function useCourseContract() {
     };
 
     const asnwerQuiz = async (
-        sender: Sender,
         courseAddress: string,
         quizId: bigint,
         answers: string
     ) => {
+        // const publicKey = await 
         const certificateContract = client?.open(
             Certificate.fromAddress(Address.parse(courseAddress))
         ) as OpenedContract<Certificate>;
 
         if (!certificateContract) {
             console.error("Course contract not found");
-            return null;
+            return ;
         }
+        const encrypted_answers = await encryptCourseAnswers(
+            answers,
+            publicKey
+        );
         await certificateContract.send(
             sender,
             {
@@ -210,7 +215,7 @@ export function useCourseContract() {
             {
                 $$type: "Quiz",
                 quizId: quizId,
-                answers: beginCell().storeStringTail(answers).endCell(),
+                answers: beginCell().storeStringTail(`${encrypted_answers}|${publicKey}`).endCell(),
             }
         );
     };

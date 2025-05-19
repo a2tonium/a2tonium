@@ -1,5 +1,4 @@
-import { ChevronRight, type LucideIcon } from "lucide-react";
-
+import { BookCheck, ChevronRight, type LucideIcon } from "lucide-react";
 import {
     Collapsible,
     CollapsibleContent,
@@ -7,7 +6,6 @@ import {
 } from "@/components/ui/collapsible";
 import {
     SidebarGroup,
-    //   SidebarGroupLabel,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
@@ -16,6 +14,9 @@ import {
     SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { CertificateDialog } from "@/components/courseSidebar/certificateDialog";
 
 export function SidebarMain({
     items,
@@ -31,9 +32,16 @@ export function SidebarMain({
         }[];
     }[];
 }) {
+    const [isCertValid] = useState(true);
+
+    const handleGetCertificate = async (rating: number, comment: string) => {
+        console.log("Certificate requested with rating:", rating);
+        console.log("Comment:", comment);
+        // TODO: Add real logic here
+    };
+
     return (
         <SidebarGroup>
-            {/* <SidebarGroupLabel>Platform</SidebarGroupLabel> */}
             <SidebarMenu>
                 {items.map((item) => (
                     <Collapsible
@@ -63,6 +71,37 @@ export function SidebarMain({
                                     ))}
                                 </SidebarMenuSub>
                             </CollapsibleContent>
+
+                            {/* Get Certificate Button with Dialog */}
+                            <div className="flex items-center justify-start mt-2 pl-2">
+                                <BookCheck className="w-4 h-4" />
+                                <CertificateDialog
+                                    onSubmit={handleGetCertificate}
+                                    trigger={
+                                        <Button
+                                            type="button"
+                                            variant={"link"}
+                                            className={`rounded-2xl gap-0 flex justify-center items-center p-1.5 ${
+                                                !isCertValid
+                                                    ? "text-gray-500 cursor-not-allowed"
+                                                    : "hover:border-blue-500 text-gray-500 hover:text-goluboy transition-colors duration-200"
+                                            }`}
+                                            disabled={!isCertValid}
+                                        >
+                                            <span className="font-semibold">
+                                                Get Certificate
+                                            </span>
+                                            <ChevronRight
+                                                className="flex justify-center items-center"
+                                                style={{
+                                                    width: "18px",
+                                                    height: "18px",
+                                                }}
+                                            />
+                                        </Button>
+                                    }
+                                />
+                            </div>
                         </SidebarMenuItem>
                     </Collapsible>
                 ))}

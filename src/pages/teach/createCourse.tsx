@@ -14,17 +14,20 @@ import { CreateCourseButton } from "@/components/createCourse/createCourseButton
 import { isYouTubeVideoAccessible } from "@/lib/youtube.lib";
 import { ErrorPage } from "@/pages/error/error";
 import { useClientProfileData } from "@/hooks/useClientProfileData";
+import { useProfileContract } from "@/hooks/useProfileContract";
 
 export function CreateCourse({ children }: { children: React.ReactNode }) {
-    const [isDirty, setIsDirty] = useState(false);
-    const [currentStep, setCurrentStep] = useState(1);
-    const [showDialog, setShowDialog] = useState(false);
-
     const {
         data: profileData,
         error: profileError,
         isLoading: isProfileLoading,
     } = useClientProfileData();
+    const { ready } = useProfileContract();
+    const [isDirty, setIsDirty] = useState(false);
+    const [currentStep, setCurrentStep] = useState(1);
+    const [showDialog, setShowDialog] = useState(false);
+
+    
 
     const totalSteps = 5;
 
@@ -185,7 +188,7 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
         setShowDialog(true);
     };
 
-    if (isProfileLoading) {
+    if (isProfileLoading && !ready) {
         return (
             <div className="flex items-center justify-center min-h-screen bg-white">
                 <div className="flex flex-col items-center space-y-4">
@@ -196,7 +199,7 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
         );
     }
 
-    if (!isProfileLoading && (profileError || !profileData)) {
+    if ((!isProfileLoading && ready) && (profileError || !profileData)) {
         return (
             <ErrorPage
                 first={"Profile Not Found"}

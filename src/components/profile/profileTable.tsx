@@ -117,7 +117,7 @@ export function ProfileTable({ walletData, profileData, isOwnerAddress }: Profil
                         <div className="w-full flex md:justify-end">
                             <Avatar className="w-[150px] h-[150px] rounded-2xl">
                                 <img
-                                    src={`https://ipfs.io/ipfs/${userData.image.substring(7)}`}
+                                    src={`https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${userData.image.substring(7)}`}
                                     alt="Profile avatar"
                                     className="w-full h-full object-cover rounded-2xl"
                                 />

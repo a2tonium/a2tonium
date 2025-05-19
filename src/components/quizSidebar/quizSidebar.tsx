@@ -27,7 +27,7 @@ export function QuizSidebar({ data, ...props }: QuizSidebarProps) {
     const { isMobile } = useSidebar();
 
     const handleTitleClick = () => {
-        navigate(`/course/${data.course.courseId}`);
+        navigate(`../syllabus`);
     };
 
     return (

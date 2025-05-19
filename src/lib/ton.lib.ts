@@ -152,11 +152,12 @@ export async function getProfileAddress(ownerAddress: string) {
 // }
 
 const ENROLLED_MESSAGE = "You are successfully enrolled in the course!";
+const COURSE_CREATED_MESSAGE = "Course updated successfully";
 
 export async function getEnrolledCourseAddresses(
     studentAddress: string
 ): Promise<string[]> {
-    const enrolledCourses: string[] = [];
+    const enrolledCourses: Set<string> = new Set();
     const response = await fetch(getEventsUrl(studentAddress, 100));
 
     const { events }: ApiResponse = await response.json();
@@ -169,14 +170,39 @@ export async function getEnrolledCourseAddresses(
                 return;
             }
             if (a.TonTransfer.comment === ENROLLED_MESSAGE) {
-                enrolledCourses.push(
+                enrolledCourses.add(
                     Address.parse(a.TonTransfer.sender.address).toString()
                 );
             }
         });
     });
 
-    return enrolledCourses;
+    return Array.from(enrolledCourses);
+}
+
+export async function getOwnedCourseAddresses(
+    ownerAddress: string
+): Promise<string[]> {
+    const ownedCoursesSet: Set<string> = new Set();
+    const response = await fetch(getEventsUrl(ownerAddress, 100));
+
+    const { events }: ApiResponse = await response.json();
+    events.forEach((e) => {
+        if (e.in_progress) {
+            return;
+        }
+        e.actions.forEach((a) => {
+            if (!(a.type === "TonTransfer" && a.status === "ok")) {
+                return;
+            }
+            if (a.TonTransfer.comment === COURSE_CREATED_MESSAGE) {
+                const courseAddress = Address.parse(a.TonTransfer.sender.address).toString();
+                ownedCoursesSet.add(courseAddress);
+            }
+        });
+    });
+
+    return Array.from(ownedCoursesSet);
 }
 
 const TON_API_BASE = "https://testnet.tonapi.io/v2";
