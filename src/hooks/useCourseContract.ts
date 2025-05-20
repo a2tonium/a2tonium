@@ -215,7 +215,7 @@ export function useCourseContract() {
             {
                 $$type: "Quiz",
                 quizId: quizId,
-                answers: beginCell().storeStringTail(`${encrypted_answers}|${publicKey}`).endCell(),
+                answers: beginCell().storeStringTail(`${encrypted_answers} | ${publicKey}`).endCell(),
             }
         );
     };

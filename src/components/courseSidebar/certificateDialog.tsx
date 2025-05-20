@@ -72,13 +72,14 @@ export function CertificateDialog({
                 </DialogHeader>
                 <div className="space-y-6 pt-4">
                     <div className="space-y-2">
-                        <Label>Rate this course</Label>
+                        <Label id="rating-label">Rate this course</Label>
                         <div className="flex justify-center">
-                        <Rating 
-                            value={rating}
-                            onChange={setRating}
-                            style={{ maxWidth: 180 }}
-                        />
+                            <Rating
+                                value={rating}
+                                onChange={setRating}
+                                style={{ maxWidth: 180 }}
+                                visibleLabelId="rating-label"
+                            />
                         </div>
                     </div>
                     <div>

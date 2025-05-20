@@ -18,7 +18,11 @@ import { encryptCourseAnswers } from "@/utils/crypt.utils";
 import { CustomSender } from "@/types/tonTypes";
 import { SendTransactionResponse } from "@tonconnect/ui-react";
 import { Address, Sender } from "@ton/core";
-import { getCourseData, getEnrolledCourseAddresses, getOwnedCourseAddresses } from "@/lib/ton.lib";
+import {
+    getCourseData,
+    getEnrolledCourseAddresses,
+    getOwnedCourseAddresses,
+} from "@/lib/ton.lib";
 import { ipfsToHttp } from "@/utils/ton.utils";
 
 export async function createCourse(
@@ -142,7 +146,7 @@ export async function fetchCourseIfEnrolled(
     userAddress: string,
     contractAddress: string,
     ownedCourses: string[]
-): Promise<{data: CourseDeployedInterface, cost: string}> {
+): Promise<{ data: CourseDeployedInterface; cost: string }> {
     const enrolledCourses = await getEnrolledCourseAddresses(userAddress);
     // console.log("owned: ",ownedCourses.includes(Address.parse(contractAddress).toString()))
     // console.log("enrolled: ",enrolledCourses.includes(Address.parse(contractAddress).toString()))
@@ -158,17 +162,14 @@ export async function fetchCourseIfEnrolled(
     const { collectionContent, cost } = await getCourseData(contractAddress);
     const data = await fetch(collectionContent).then((res) => res.json());
 
-    return {data, cost};
+    return { data, cost };
 }
-
-
 
 export async function fetchCoursePromo(
     contractAddress: string
 ): Promise<CoursePromoInterface> {
-    const { collectionContent, cost, enrolledNumber, ownerAddress } = await getCourseData(
-        contractAddress
-    );
+    const { collectionContent, cost, enrolledNumber, ownerAddress } =
+        await getCourseData(contractAddress);
     const data = await fetch(collectionContent).then((res) => res.json());
     const dataWithCost = {
         ...data,
@@ -222,9 +223,8 @@ export async function listEnrolledCourses(
 export async function listOwnerCourses(
     userAddress: string
 ): Promise<OwnerCoursePreview[]> {
-
     const courseAddrs = await getOwnedCourseAddresses(userAddress);
-    
+
     console.log("courseADADADADAD", courseAddrs);
     if (!courseAddrs) {
         return [];
@@ -299,7 +299,7 @@ export async function reformatCourseData(
     };
 
     let lessonCount = 0;
-    const allAnswers: string[] = [];
+    let allAnswers = ""; // Инициализируем как строку
 
     formatted.modules = course.modules.map((mod) => {
         const updatedLessons = mod.lessons.map((lesson) => {
@@ -311,8 +311,8 @@ export async function reformatCourseData(
             };
         });
 
-        // Store answers
-        allAnswers.push(mod.quiz.correct_answers);
+        // Добавляем ответы с пробелом
+        allAnswers += mod.quiz.correct_answers + " ";
 
         return {
             id: mod.id,
@@ -324,6 +324,9 @@ export async function reformatCourseData(
         };
     });
 
+    // Удалим лишний пробел в конце (опционально)
+    allAnswers = allAnswers.trim();
+    console.log("allAnswers", allAnswers);
     formatted.attributes = formatted.attributes.map((attr) =>
         attr.trait_type === "Lessons"
             ? { ...attr, value: String(lessonCount) }
@@ -332,9 +335,12 @@ export async function reformatCourseData(
 
     // Encrypt all answers
     const { encryptedMessage, senderPublicKey } = await encryptCourseAnswers(
-        allAnswers.join(","),
+        allAnswers,
         walletPublicKey
     );
+    console.log("1", walletPublicKey);
+    console.log("2", senderPublicKey);
+
     formatted.quiz_answers.encrypted_answers = encryptedMessage;
     formatted.quiz_answers.sender_public_key = senderPublicKey;
 
