@@ -123,6 +123,7 @@ export function EditCourse() {
     }, [isDirty]);
 
     const [jwt, setJwt] = useState("");
+    const [publicKey, setPublicKey] = useState("");
     const [isValidJwt, setIsValidJwt] = useState(false);
 
     const [promoVideoValid, setPromoVideoValid] = useState<boolean>(true);
@@ -308,6 +309,8 @@ export function EditCourse() {
                         setIsValidJwt={setIsValidJwt}
                         isValidJwt={isValidJwt}
                         coursePrice={coursePrice}
+                        publicKey={publicKey}
+                        setPublicKey={setPublicKey}
                     />
                 )}
 
@@ -360,6 +363,7 @@ export function EditCourse() {
                 course={courseData}
                 jwt={jwt}
                 open={showDialog}
+                ownerPublicKey={publicKey}
                 onOpenChange={setShowDialog}
                 coursePrice={coursePrice.toString()}
                 limitedVideos={limitedVideos}

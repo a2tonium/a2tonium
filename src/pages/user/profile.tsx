@@ -7,21 +7,22 @@ import { CoursesSectionSkeleton } from "@/components/profile/coursesSectionSkele
 import { CertificatesSectionSkeleton } from "@/components/profile/certificatesSectionSkeleton";
 import { ProfileSkeleton } from "@/components/profile/profileSkeleton";
 import { useWalletData } from "@/hooks/useWalletData";
-import { useUserNFTs } from "@/hooks/useUserNFTs";
 import { CoursesSection } from "@/components/profile/coursesSection";
 import { CertificatesSection } from "@/components/profile/certificatesSection";
-import { CertificateInterface } from "@/types/courseData";
 import { useOwnerCoursesList } from "@/hooks/useOwnerCoursesList";
 import { useProfileData } from "@/hooks/useProfileData";
 import { useTonConnect } from "@/hooks/useTonConnect";
 import { Address } from "@ton/core";
+import { useOwnerCertificateList } from "@/hooks/useOwnerCertificatesList";
 
 export function UserProfile() {
     const { walletAddr } = useParams();
     const { address: clientAddress } = useTonConnect();
-    const isOwnerAddress = (clientAddress && walletAddr) ?
-        Address.parse(walletAddr).toString() ===
-            Address.parse(clientAddress).toString() : false;
+    const isOwnerAddress =
+        clientAddress && walletAddr
+            ? Address.parse(walletAddr).toString() ===
+              Address.parse(clientAddress).toString()
+            : false;
 
     const [searchParams, setSearchParams] = useSearchParams();
     const section = searchParams.get("section") ?? "courses";
@@ -44,53 +45,10 @@ export function UserProfile() {
     } = useOwnerCoursesList(walletAddr);
 
     const {
-        // data: nftList,
+        data: nftList,
         error: nftError,
         isLoading: isNFTLoading,
-    } = useUserNFTs(walletAddr);
-
-    const nftList2: CertificateInterface[] = [
-        {
-            certificateAddress: "1",
-            title: "Certificate 1awdddddddawdawdawdwad",
-            image: "/images/cards/1.png",
-        },
-        {
-            certificateAddress: "2",
-            title: "Certificate 2",
-            image: "/images/cards/1.png",
-        },
-        {
-            certificateAddress: "1",
-            title: "Certificate 1awdddddddawdawdawdwad",
-            image: "/images/cards/1.png",
-        },
-        {
-            certificateAddress: "1",
-            title: "Certificate 1awdddddddawdawdawdwad",
-            image: "/images/cards/1.png",
-        },
-        {
-            certificateAddress: "1",
-            title: "Certificate 1awdddddddawdawdawdwad",
-            image: "/images/cards/1.png",
-        },
-        {
-            certificateAddress: "1",
-            title: "Certificate 1awdddddddawdawdawdwad",
-            image: "/images/cards/1.png",
-        },
-        {
-            certificateAddress: "1",
-            title: "Certificawdwad 1awdddddddawdawdawdwad awdawdawdawd wdadwawdawdawd awdadwawdadw awdawdawd",
-            image: "/images/cards/1.png",
-        },
-        {
-            certificateAddress: "1",
-            title: "Certificate 1awdddddddawdawdawdwad",
-            image: "/images/cards/1.png",
-        },
-    ];
+    } = useOwnerCertificateList(walletAddr);
 
     const isLoading = isWalletLoading && isNFTLoading && isCoursesLoading;
     // Loading state
@@ -99,7 +57,7 @@ export function UserProfile() {
     }
 
     // Error state
-    if (walletError || nftError || courseError || profileError) {
+    if (walletError || profileError) {
         return (
             <ErrorPage
                 first={"Wallet Not Found"}
@@ -160,6 +118,10 @@ export function UserProfile() {
                         <div className="mt-4 space-y-4">
                             {isCoursesLoading ? (
                                 <CoursesSectionSkeleton />
+                            ) : courseError ? (
+                                <div className="text-gray-500 font-medium">
+                                    Failed to load courses.
+                                </div>
                             ) : (
                                 <CoursesSection courses={courseList || []} />
                             )}
@@ -170,9 +132,13 @@ export function UserProfile() {
                         <div className="mt-4 space-y-4">
                             {isNFTLoading ? (
                                 <CertificatesSectionSkeleton />
+                            ) : nftError ? (
+                                <div className="text-gray-500 font-medium">
+                                    Failed to load certificates.
+                                </div>
                             ) : (
                                 <CertificatesSection
-                                    certificates={nftList2 || []}
+                                    certificates={nftList || []}
                                 />
                             )}
                         </div>

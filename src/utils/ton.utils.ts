@@ -28,7 +28,7 @@ export function getLink(utf8: string): string {
         console.warn("No IPFS hash found in the string:", utf8);
         throw new Error("Invalid IPFS hash format");
     }
-    const ipfsUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
+    const ipfsUrl = `https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${ipfsHash}`;
 
     return ipfsUrl;
 }

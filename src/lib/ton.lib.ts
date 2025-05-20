@@ -1,11 +1,15 @@
-import {
-    getLink,
-    hexToUtf8,
-    getEventsUrl,
-    hexToDecimal,
-} from "@/utils/ton.utils";
+import { getLink, hexToUtf8, hexToDecimal } from "@/utils/ton.utils";
 import { Address, Cell, fromNano } from "@ton/core";
-import { ApiResponse } from "@/types/tonTypes";
+import {
+    ClassifiedCourses,
+    MAX_FAILURES,
+    NFTDataResponse,
+    NFTItem,
+    NFTResponse,
+    RETRY_DELAY,
+} from "@/types/courseData";
+import { Certificate } from "@/wrappers/certificate";
+import { Course } from "@/wrappers/course";
 
 export async function getCourseData(contractAddress: string): Promise<{
     collectionContent: string;
@@ -28,7 +32,7 @@ export async function getCourseData(contractAddress: string): Promise<{
             const address = data.stack[3].cell;
             const cell = Cell.fromBoc(Buffer.from(address, "hex"))[0];
             const ownerAddress = cell.beginParse().loadAddress().toString();
-            console.log("ownerAddress",ownerAddress);
+            console.log("ownerAddress", ownerAddress);
 
             const cost = fromNano(hexToDecimal(data.stack[4].num));
 
@@ -43,6 +47,42 @@ export async function getCourseData(contractAddress: string): Promise<{
         throw error; // Re-throw error to be handled by the caller
     }
 }
+
+export async function getCertificateData(certificateAddress: string): Promise<{
+    collectionContent: string;
+    ownerAddress: string;
+    collectionAddress: string;
+}> {
+    console.log("certificateAddressAAAAAAAAAAA", certificateAddress);
+    const url = `https://testnet.tonapi.io/v2/blockchain/accounts/${Address.parse(
+        certificateAddress
+    ).toString()}/methods/get_nft_data`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log("dataBBBBBBBBBBBBBBB", data);
+        if (data.success) {
+            // Extract collection data from the 'decoded' field
+            const collectionContent = getLink(hexToUtf8(data.decoded.individual_content));
+            const ownerAddress = Address.parse(data.decoded.owner_address).toString();
+            console.log("ownerAddress", ownerAddress);
+
+            const collectionAddress = Address.parse(data.decoded.collection_address).toString();
+            console.log("ALLL DATA", collectionContent, ownerAddress, collectionAddress);
+            return { collectionContent, ownerAddress, collectionAddress };
+        } else {
+            throw new Error(
+                "Failed to fetch collection data: " + JSON.stringify(data)
+            );
+        }
+    } catch (error) {
+        console.error("Error fetching collection data:", error);
+        throw error; // Re-throw error to be handled by the caller
+    }
+}
+
+
 
 export async function getProfileItemsAddresses(): Promise<
     { address: string; owner: string }[]
@@ -151,59 +191,132 @@ export async function getProfileAddress(ownerAddress: string) {
 //     }
 // }
 
-const ENROLLED_MESSAGE = "You are successfully enrolled in the course!";
-const COURSE_CREATED_MESSAGE = "Course updated successfully";
 
 export async function getEnrolledCourseAddresses(
     studentAddress: string
 ): Promise<string[]> {
-    const enrolledCourses: Set<string> = new Set();
-    const response = await fetch(getEventsUrl(studentAddress, 100));
+    const localKey = `enrolledCourses:${studentAddress}`;
+    const cached = localStorage.getItem(localKey);
 
-    const { events }: ApiResponse = await response.json();
-    events.forEach((e) => {
-        if (e.in_progress) {
-            return;
+    if (cached) {
+        try {
+            const parsed = JSON.parse(cached);
+            if (Array.isArray(parsed)) {
+                return parsed;
+            }
+        } catch (err) {
+            console.warn("Failed to parse cached enrolled courses:", err);
         }
-        e.actions.forEach((a) => {
-            if (!(a.type === "TonTransfer" && a.status === "ok")) {
-                return;
-            }
-            if (a.TonTransfer.comment === ENROLLED_MESSAGE) {
-                enrolledCourses.add(
-                    Address.parse(a.TonTransfer.sender.address).toString()
-                );
-            }
-        });
+    }
+
+    const enrolledCourses: Set<string> = new Set();
+    const { notCompleted } = await fetchAndClassifyCourses(studentAddress);
+
+    notCompleted.forEach((nft) => {
+        enrolledCourses.add(Address.parse(nft.collection.address).toString());
     });
 
-    return Array.from(enrolledCourses);
+    const result = Array.from(enrolledCourses);
+    localStorage.setItem(localKey, JSON.stringify(result));
+
+    return result;
+}
+
+export async function getCompletedCourseAddresses(
+    studentAddress: string
+): Promise<string[]> {
+    const localKey = `completedCourses:${studentAddress}`;
+    const cached = localStorage.getItem(localKey);
+
+    if (cached) {
+        try {
+            const parsed = JSON.parse(cached);
+            if (Array.isArray(parsed)) {
+                return parsed;
+            }
+        } catch (err) {
+            console.warn("Failed to parse cached enrolled courses:", err);
+        }
+    }
+
+    const enrolledCourses: Set<string> = new Set();
+    const { completed } = await fetchAndClassifyCourses(studentAddress);
+
+    completed.forEach((nft) => {
+        enrolledCourses.add(Address.parse(nft.collection.address).toString());
+    });
+
+    const result = Array.from(enrolledCourses);
+    localStorage.setItem(localKey, JSON.stringify(result));
+
+    return result;
 }
 
 export async function getOwnedCourseAddresses(
     ownerAddress: string
 ): Promise<string[]> {
-    const ownedCoursesSet: Set<string> = new Set();
-    const response = await fetch(getEventsUrl(ownerAddress, 100));
+    const localKey = `ownedCourses:${ownerAddress}`;
+    const cached = localStorage.getItem(localKey);
 
-    const { events }: ApiResponse = await response.json();
-    events.forEach((e) => {
-        if (e.in_progress) {
-            return;
+    if (cached) {
+        try {
+            const parsed = JSON.parse(cached);
+            if (Array.isArray(parsed)) {
+                return parsed;
+            }
+        } catch (err) {
+            console.warn("Failed to parse cached owned courses:", err);
         }
-        e.actions.forEach((a) => {
-            if (!(a.type === "TonTransfer" && a.status === "ok")) {
-                return;
-            }
-            if (a.TonTransfer.comment === COURSE_CREATED_MESSAGE) {
-                const courseAddress = Address.parse(a.TonTransfer.sender.address).toString();
-                ownedCoursesSet.add(courseAddress);
-            }
-        });
-    });
+    }
 
-    return Array.from(ownedCoursesSet);
+    const ownedCoursesSet: Set<string> = new Set();
+    let i = 0n;
+    let attempts = 0;
+
+    while (attempts < MAX_FAILURES) {
+        try {
+            const courseContract = (await Course.fromInit(
+                Address.parse(ownerAddress),
+                i
+            )) as Course;
+
+            const url = `https://testnet.tonapi.io/v2/blockchain/accounts/${courseContract.address.toString()}/methods/get_course_data`;
+
+            const response = await fetch(url);
+            console.log(response.status);
+
+            if (response.status === 429) {
+                throw new Error(`Too many requests: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log("data", data);
+
+            if (data.success) {
+                ownedCoursesSet.add(Address.parse(courseContract.address.toString()).toString());
+                i++;
+                attempts = 0; // reset after success
+            } else {
+                const result = Array.from(ownedCoursesSet);
+                localStorage.setItem(localKey, JSON.stringify(result));
+                return result;
+            }
+        } catch (error) {
+            attempts++;
+            console.warn(
+                `Failed to fetch NFT data (attempt ${attempts}):`,
+                error
+            );
+            await new Promise((r) => setTimeout(r, RETRY_DELAY));
+        }
+    }
+
+    const result = Array.from(ownedCoursesSet);
+    localStorage.setItem(localKey, JSON.stringify(result));
+    return result;
 }
+
+
 
 const TON_API_BASE = "https://testnet.tonapi.io/v2";
 const API_KEY = import.meta.env.VITE_TONAPI;
@@ -219,6 +332,7 @@ export async function getTonWalletData(addr: string) {
     if (!res.ok) {
         throw new Error(`Failed to fetch wallet: ${res.statusText}`);
     }
+ 
     return await res.json();
 }
 
@@ -230,4 +344,161 @@ export async function getUserNFTsRaw(addr: string) {
         throw new Error("NFTs fetch failed");
     }
     return await res.json();
+}
+
+async function getCourseNFTs(walletAddress: string): Promise<NFTItem[]> {
+    const nfts = await fetchNFTs(walletAddress);
+    const result: NFTItem[] = [];
+    for (const nft of nfts) {
+        if (
+            (
+                await Certificate.fromInit(
+                    Address.parse(nft.collection.address),
+                    BigInt(nft.index)
+                )
+            ).address.toString() == Address.parse(nft.address).toString()
+        )
+            result.push(nft);
+    }
+
+    return result;
+}
+
+async function fetchNFTs(walletAddress: string): Promise<NFTItem[]> {
+    let attempts = 0;
+    while (attempts < MAX_FAILURES) {
+        try {
+            const url = `https://testnet.tonapi.io/v2/accounts/${walletAddress}/nfts`;
+            const response = await fetch(url);
+            if (!response.ok)
+                throw new Error(`Failed to fetch NFTs: ${response.status}`);
+            const data: NFTResponse = (await response.json()) as NFTResponse;
+            console.log("dataAAAAAAAAAAAAAAAAA", data.nft_items);
+            return data.nft_items;
+        } catch (error) {
+            attempts++;
+            console.warn(`Failed to fetch NFTs (attempt ${attempts}):`, error);
+            await new Promise((r) => setTimeout(r, RETRY_DELAY));
+        }
+    }
+    throw new Error(
+        `Failed to fetch NFTs after ${MAX_FAILURES} attempts`
+    );
+}
+
+async function fetchNFTData(nftAddress: string): Promise<NFTDataResponse> {
+    let attempts = 0;
+    while (attempts < MAX_FAILURES) {
+        try {
+            const response = await fetch(
+                `https://testnet.tonapi.io/v2/blockchain/accounts/${nftAddress}/methods/get_nft_data`
+            );
+            if (!response.ok) {
+                attempts++;
+                await new Promise((r) => setTimeout(r, RETRY_DELAY));
+                continue;
+            }
+            const data: NFTDataResponse =
+                (await response.json()) as NFTDataResponse;
+            return data;
+        } catch (error) {
+            attempts++;
+            console.warn(
+                `Failed to fetch NFT data (attempt ${attempts}):`,
+                error
+            );
+            await new Promise((r) => setTimeout(r, RETRY_DELAY));
+        }
+    }
+    throw new Error(
+        `Failed to fetch NFT data for ${nftAddress} after ${MAX_FAILURES} attempts`
+    );
+}
+
+async function classifyCoursesWithGlobalRetry(
+    courseNFTs: NFTItem[],
+    maxGlobalFailures = MAX_FAILURES,
+    retryDelay = RETRY_DELAY
+): Promise<ClassifiedCourses> {
+    const completed: NFTItem[] = [];
+    const notCompleted: NFTItem[] = [];
+
+    let globalFailures = 0;
+    let pendingNFTs = [...courseNFTs];
+
+    while (pendingNFTs.length > 0) {
+        const stillPending: NFTItem[] = [];
+
+        for (const courseNFT of pendingNFTs) {
+            if (globalFailures >= maxGlobalFailures) {
+                console.warn(
+                    `Reached max global failures (${maxGlobalFailures}), stopping.`
+                );
+                return { completed, notCompleted };
+            }
+
+            try {
+                const nftData = await fetchNFTData(courseNFT.address);
+                if (nftData.success && nftData.decoded) {
+                    if (nftData.decoded.init === true) {
+                        completed.push(courseNFT);
+                    } else {
+                        notCompleted.push(courseNFT);
+                    }
+                } else {
+                    notCompleted.push(courseNFT);
+                }
+            } catch (error) {
+                console.error(
+                    `Error fetching NFT data for ${courseNFT.address}:`,
+                    error
+                );
+                globalFailures++;
+                stillPending.push(courseNFT);
+            }
+        }
+
+        if (stillPending.length === 0) break;
+
+        if (globalFailures >= maxGlobalFailures) {
+            console.warn(
+                `Reached max global failures (${maxGlobalFailures}), stopping.`
+            );
+            break;
+        }
+
+        await new Promise((r) => setTimeout(r, retryDelay));
+        pendingNFTs = stillPending;
+    }
+
+    return { completed, notCompleted };
+}
+
+export async function fetchAndClassifyCourses(walletAddress: string) {
+    let courseNFTs: NFTItem[] = [];
+    let attempts = 0;
+
+    while (attempts < MAX_FAILURES) {
+        try {
+            courseNFTs = await getCourseNFTs(walletAddress);
+            break;
+        } catch (error) {
+            console.warn(
+                `Failed to get course NFTs (attempt ${attempts + 1}):`,
+                error
+            );
+            attempts++;
+            await new Promise((r) => setTimeout(r, RETRY_DELAY));
+        }
+    }
+
+    if (courseNFTs.length === 0) {
+        return {
+            completed: [],
+            notCompleted: [],
+        };
+    }
+
+    const classified = await classifyCoursesWithGlobalRetry(courseNFTs);
+    return classified;
 }

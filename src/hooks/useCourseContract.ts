@@ -2,18 +2,24 @@ import { useTonClient } from "@/hooks/useTonClient";
 // import { useAsyncInitialize } from "@/hooks/useAsyncInitialize";
 import { Course } from "@/wrappers/course";
 import { useTonConnect } from "@/hooks/useTonConnect";
-import { Address, beginCell, fromNano, OpenedContract, Sender, toNano } from "@ton/core";
+import {
+    Address,
+    beginCell,
+    fromNano,
+    OpenedContract,
+    Sender,
+    toNano,
+} from "@ton/core";
 import { encodeOffChainContent } from "@/utils/encodeOffChainContent.utils";
 import { CustomSender } from "@/types/tonTypes";
 import { SendTransactionResponse } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
 import { Certificate } from "../wrappers/certificate";
 import { CoursePromotionFactory } from "../wrappers/coursePromotionFactory";
-import { encryptCourseAnswers } from "../utils/crypt.utils";
 
 export function useCourseContract() {
     const { client } = useTonClient();
-    const { address, publicKey, sender } = useTonConnect();
+    const { address, sender } = useTonConnect();
     const [ready, setReady] = useState(false);
 
     useEffect(() => {
@@ -189,24 +195,57 @@ export function useCourseContract() {
         );
     };
 
-    const asnwerQuiz = async (
-        courseAddress: string,
+    const answerQuiz = async (
+        certificateAddress: string,
         quizId: bigint,
-        answers: string
+        encrypted_answers: string,
+        encrypted_PublicKey: string
     ) => {
-        // const publicKey = await 
         const certificateContract = client?.open(
-            Certificate.fromAddress(Address.parse(courseAddress))
+            Certificate.fromAddress(Address.parse(certificateAddress))
         ) as OpenedContract<Certificate>;
 
         if (!certificateContract) {
             console.error("Course contract not found");
-            return ;
+            return;
         }
-        const encrypted_answers = await encryptCourseAnswers(
-            answers,
-            publicKey
+
+        console.log("encrypted_answers", encrypted_answers);
+        await certificateContract.send(
+            sender,
+            {
+                value: toNano(0.2),
+            },
+            {
+                $$type: "Quiz",
+                quizId: quizId - 1n,
+                answers: beginCell()
+                    .storeStringTail(
+                        `${encrypted_answers} | ${encrypted_PublicKey}`
+                    )
+                    .endCell(),
+            }
         );
+    };
+
+    const issueCertificate = async (
+        certificateAddress: string,
+        quizId: bigint,
+        rating: string,
+        review: string
+    ) => {
+        const certificateContract = client?.open(
+            Certificate.fromAddress(Address.parse(certificateAddress))
+        ) as OpenedContract<Certificate>;
+
+        if (!certificateContract) {
+            console.error("Course contract not found");
+            return;
+        }
+
+        console.log("rating", rating);
+        console.log("comment", review);
+
         await certificateContract.send(
             sender,
             {
@@ -215,7 +254,11 @@ export function useCourseContract() {
             {
                 $$type: "Quiz",
                 quizId: quizId,
-                answers: beginCell().storeStringTail(`${encrypted_answers} | ${publicKey}`).endCell(),
+                answers: beginCell()
+                    .storeStringTail(
+                        `${rating} | ${review}`
+                    )
+                    .endCell(),
             }
         );
     };
@@ -261,9 +304,10 @@ export function useCourseContract() {
         getOwnerCourseContractList,
         withdrawCourseContract,
         updateCourseContract,
-        asnwerQuiz,
+        answerQuiz,
         promoteCourseContract,
         getAddressBalance,
+        issueCertificate,
         ready,
     };
 }

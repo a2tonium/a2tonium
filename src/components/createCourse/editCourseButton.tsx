@@ -26,6 +26,7 @@ interface CreateCourseLogicProps {
     coursePrice: string;
     limitedVideos: string[];
     courseAddress: string;
+    ownerPublicKey: string
 }
 
 const buySchema = z.object({
@@ -42,6 +43,7 @@ export function EditCourseButton({
     coursePrice,
     limitedVideos,
     courseAddress,
+    ownerPublicKey
 }: CreateCourseLogicProps & {
     open: boolean;
     onOpenChange: (open: boolean) => void;
@@ -76,6 +78,7 @@ export function EditCourseButton({
                 course,
                 jwt ?? "",
                 publicKey,
+                ownerPublicKey,
                 sender,
                 coursePrice,
                 courseAddress,

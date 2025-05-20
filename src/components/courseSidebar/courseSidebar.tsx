@@ -8,6 +8,7 @@ import {
     SidebarHeader,
     useSidebar,
 } from "@/components/ui/sidebar";
+import { CourseDeployedInterface } from "@/types/courseData";
 
 const data = [
     {
@@ -47,16 +48,11 @@ const data = [
     // }
 ];
 
-interface CourseData {
-    image: string;
-    name: string;
-}
-
 export function CourseSidebar({
     courseData,
     ...props
 }: {
-    courseData: CourseData;
+    courseData: CourseDeployedInterface;
 }) {
     const { isMobile } = useSidebar();
 
@@ -86,7 +82,7 @@ export function CourseSidebar({
                     </div>
                 </SidebarHeader>
                 <SidebarContent>
-                    <SidebarMain items={data} />
+                    <SidebarMain items={data} courseData={courseData} />
                 </SidebarContent>
                 {/* <SidebarFooter>
                 <NavUser user={data.user} />

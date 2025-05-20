@@ -35,8 +35,23 @@ export const Header: React.FC<HeaderProps> = ({ className }) => {
                 <div className="flex items-center space-x-3 py-2">
                     {/* Logo */}
                     <div>
-                        <Link to="/catalog">
-                            <div className="flex items-center space-x-2 group">
+                        <Link
+                            to="/catalog"
+                            onClick={() => {
+                                for (let i = 0; i < localStorage.length; i++) {
+                                    const key = localStorage.key(i);
+                                    if (
+                                        key &&
+                                        !key.startsWith("i18") &&
+                                        !key.startsWith("ton")
+                                    ) {
+                                        localStorage.removeItem(key);
+                                        i--;
+                                    }
+                                }
+                            }}
+                        >
+                            <div className="flex items-center space-x-2 group cursor-pointer">
                                 <img
                                     src="/images/logo/logo(blue_back_circle).png"
                                     alt="Logo"

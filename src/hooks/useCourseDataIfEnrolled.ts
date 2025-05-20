@@ -2,15 +2,14 @@ import useSWR from "swr";
 import { CourseDeployedInterface } from "@/types/courseData";
 import { fetchCourseIfEnrolled } from "@/services/course.service";
 import { useTonConnect } from "@/hooks/useTonConnect";
-import { useCourseContract } from "@/hooks/useCourseContract";
+import { getOwnedCourseAddresses } from "@/lib/ton.lib";
 
 export function useCourseDataIfEnrolled(contractAddress?: string) {
     const { address: userAddress } = useTonConnect();
-    const { getOwnerCourseContractList, ready } = useCourseContract();
 
     const fetcher = async (): Promise<{data:CourseDeployedInterface | null, cost: string}> => {
-        if (!userAddress || !contractAddress || !ready) return { data: null, cost: "" };
-        const ownerCourseAddresses = await getOwnerCourseContractList(
+        if (!userAddress || !contractAddress) return { data: null, cost: "" };
+        const ownerCourseAddresses = await getOwnedCourseAddresses(
             userAddress
         );
         console.log(ownerCourseAddresses)
@@ -21,7 +20,7 @@ export function useCourseDataIfEnrolled(contractAddress?: string) {
         );
     };
     return useSWR<{data:CourseDeployedInterface | null, cost: string}>(
-        ready && contractAddress
+        userAddress && contractAddress
             ? ["enrolled-course", userAddress, contractAddress]
             : null,
         fetcher,

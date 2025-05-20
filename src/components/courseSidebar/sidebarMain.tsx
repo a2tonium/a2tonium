@@ -17,9 +17,11 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { CertificateDialog } from "@/components/courseSidebar/certificateDialog";
+import { CourseDeployedInterface } from "@/types/courseData";
 
 export function SidebarMain({
     items,
+    courseData,
 }: {
     items: {
         title: string;
@@ -31,15 +33,9 @@ export function SidebarMain({
             url: string;
         }[];
     }[];
+    courseData: CourseDeployedInterface
 }) {
     const [isCertValid] = useState(true);
-
-    const handleGetCertificate = async (rating: number, comment: string) => {
-        console.log("Certificate requested with rating:", rating);
-        console.log("Comment:", comment);
-        // TODO: Add real logic here
-    };
-
     return (
         <SidebarGroup>
             <SidebarMenu>
@@ -76,7 +72,7 @@ export function SidebarMain({
                             <div className="flex items-center justify-start mt-2 pl-2">
                                 <BookCheck className="w-4 h-4" />
                                 <CertificateDialog
-                                    onSubmit={handleGetCertificate}
+                                    quizId={courseData.modules.at(-1)!.id}
                                     trigger={
                                         <Button
                                             type="button"

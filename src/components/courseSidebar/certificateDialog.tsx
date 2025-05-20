@@ -14,18 +14,25 @@ import { Rating } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
 import { Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { issueCertificateService } from "@/services/course.service";
+import { useCourseContract } from "@/hooks/useCourseContract";
+import { useParams } from "react-router-dom";
+import { useTonConnect } from "@/hooks/useTonConnect";
 
 export function CertificateDialog({
     trigger,
-    onSubmit,
+    quizId
 }: {
     trigger: React.ReactNode;
-    onSubmit?: (rating: number, comment: string) => Promise<void> | void;
+    quizId: string;
 }) {
+    const { issueCertificate } = useCourseContract();
+    const { courseAddress } = useParams();
+    const { address: studentAddress } = useTonConnect();
     const { toast } = useToast();
     const [open, setOpen] = useState(false);
     const [rating, setRating] = useState(0);
-    const [comment, setComment] = useState("");
+    const [review, setReview] = useState("");
     const [error, setError] = useState("");
     const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -35,8 +42,14 @@ export function CertificateDialog({
             setError("Please provide a rating.");
             return;
         }
-        if (comment.length > 512) {
-            setError("Comment cannot exceed 512 characters.");
+
+        if (review.trim() === "") {
+            setError("Comment is required.");
+            return;
+        }
+
+        if (review.length > 256) {
+            setError("Comment cannot exceed 256 characters.");
             return;
         }
 
@@ -44,7 +57,15 @@ export function CertificateDialog({
         setError("");
 
         try {
-            await onSubmit?.(rating, comment);
+
+            await issueCertificateService(
+                courseAddress!,
+                studentAddress,
+                BigInt(quizId),
+                rating.toString(),
+                review,
+                issueCertificate
+            );
             setSuccess(true);
             toast({
                 title: "Certificate Granted",
@@ -83,16 +104,16 @@ export function CertificateDialog({
                         </div>
                     </div>
                     <div>
-                        <Label>Comment</Label>
+                        <Label>Write short Review</Label>
                         <Textarea
                             placeholder="Share your thoughts..."
-                            value={comment}
-                            onChange={(e) => setComment(e.target.value)}
-                            maxLength={512}
+                            value={review}
+                            onChange={(e) => setReview(e.target.value)}
+                            maxLength={256}
                             className="rounded-2xl"
                         />
                         <p className="text-xs text-muted-foreground text-right">
-                            {comment.length}/512
+                            {review.length}/256
                         </p>
                     </div>
                     {error && <p className="text-red-500 text-xs">{error}</p>}

@@ -10,6 +10,8 @@ import { useCourseDataIfEnrolled } from "@/hooks/useCourseDataIfEnrolled";
 import { ErrorPage } from "@/pages/error/error";
 import { useCourseContract } from "@/hooks/useCourseContract";
 import { useToast } from "@/hooks/use-toast";
+import { useTonConnect } from "../../hooks/useTonConnect";
+import { sendAnswersToQuiz } from "../../services/course.service";
 
 export function QuizAttempt() {
     const { quizId, courseAddress } = useParams<{
@@ -23,7 +25,8 @@ export function QuizAttempt() {
         error,
         isLoading,
     } = useCourseDataIfEnrolled(courseAddress);
-    const { asnwerQuiz } = useCourseContract();
+    const { answerQuiz } = useCourseContract();
+    const { address: studentAddress } = useTonConnect();
 
     const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
     const [errors, setErrors] = useState<number[]>([]);
@@ -130,8 +133,8 @@ export function QuizAttempt() {
 
         setErrors([]);
         try {   
-
-        await asnwerQuiz(courseAddress!, BigInt(quizId!), convertAnswerToString(selectedAnswers));
+        console.log("Submitting quiz...", convertAnswerToString(selectedAnswers));
+        await sendAnswersToQuiz(courseAddress!, studentAddress, BigInt(quizId!), convertAnswerToString(selectedAnswers), course.data!.owner_public_key, answerQuiz);
         toast({
                     title: "Successful Quiz Submission",
                     description: `Wait for the teacher to check your answers.`,

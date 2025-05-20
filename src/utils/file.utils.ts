@@ -30,6 +30,9 @@ export function base64ToFile(base64: string, filename: string): File {
     return new File([array], `${filename}.${ext}`, { type: mime });
 }
 
+export const base64ToUint8Array = (base64: string): Uint8Array =>
+    Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+
 export function formatFilename(courseName: string): string {
     return courseName
         .trim()

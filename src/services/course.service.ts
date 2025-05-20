@@ -12,13 +12,16 @@ import {
     CourseDeployedInterface,
     CoursePromoInterface,
     EnrolledCoursePreview,
+    MAX_FAILURES,
     OwnerCoursePreview,
+    RETRY_DELAY,
 } from "@/types/courseData";
 import { encryptCourseAnswers } from "@/utils/crypt.utils";
 import { CustomSender } from "@/types/tonTypes";
 import { SendTransactionResponse } from "@tonconnect/ui-react";
 import { Address, Sender } from "@ton/core";
 import {
+    fetchAndClassifyCourses,
     getCourseData,
     getEnrolledCourseAddresses,
     getOwnedCourseAddresses,
@@ -28,6 +31,7 @@ import { ipfsToHttp } from "@/utils/ton.utils";
 export async function createCourse(
     course: CourseCreationInterface,
     jwt: string,
+    ownerPublicKey: string,
     publicKey: string,
     sender: CustomSender,
     coursePrice: string,
@@ -55,6 +59,7 @@ export async function createCourse(
         `ipfs://${coverImageUrl}`,
         `ipfs://${certificateUrl}`,
         publicKey,
+        ownerPublicKey,
         limitedVideos
     );
 
@@ -67,6 +72,7 @@ export async function editCourse(
     course: CourseCreationInterface,
     jwt: string,
     publicKey: string,
+    ownerPublicKey: string,
     sender: Sender,
     coursePrice: string,
     courseAddress: string,
@@ -95,6 +101,7 @@ export async function editCourse(
         `ipfs://${coverImageUrl}`,
         `ipfs://${certificateUrl}`,
         publicKey,
+        ownerPublicKey,
         limitedVideos
     );
 
@@ -148,8 +155,8 @@ export async function fetchCourseIfEnrolled(
     ownedCourses: string[]
 ): Promise<{ data: CourseDeployedInterface; cost: string }> {
     const enrolledCourses = await getEnrolledCourseAddresses(userAddress);
-    // console.log("owned: ",ownedCourses.includes(Address.parse(contractAddress).toString()))
-    // console.log("enrolled: ",enrolledCourses.includes(Address.parse(contractAddress).toString()))
+    console.log("owned: ",ownedCourses.includes(Address.parse(contractAddress).toString()))
+    console.log("enrolled: ",enrolledCourses.includes(Address.parse(contractAddress).toString()))
     if (
         !ownedCourses.includes(Address.parse(contractAddress).toString()) &&
         !enrolledCourses.includes(Address.parse(contractAddress).toString())
@@ -184,40 +191,60 @@ export async function listEnrolledCourses(
     userAddress: string
 ): Promise<EnrolledCoursePreview[]> {
     const courseAddrs = await getEnrolledCourseAddresses(userAddress);
+    
+    if (!courseAddrs || courseAddrs.length === 0) {
+        return [];
+    }
 
-    const previews = await Promise.all(
-        courseAddrs.map(async (addr): Promise<EnrolledCoursePreview | null> => {
+    const previews: EnrolledCoursePreview[] = [];
+
+    for (const addr of courseAddrs) {
+        let attempts = 0;
+
+        while (attempts < MAX_FAILURES) {
             try {
                 const { collectionContent } = await getCourseData(addr);
-                if (
-                    collectionContent == undefined ||
-                    collectionContent == null ||
-                    collectionContent === "" ||
-                    !collectionContent
-                ) {
-                    console.warn(
-                        "No collection content found for course:",
-                        addr
-                    );
-                    return null;
-                }
-                const course: CourseCreationInterface = await fetch(
-                    collectionContent
-                ).then((res) => res.json());
 
-                return {
-                    courseAddress: addr,
+                if (
+                    !collectionContent ||
+                    collectionContent === "" ||
+                    collectionContent === undefined
+                ) {
+                    console.warn("No collection content for course:", addr);
+                    break; // skip this course
+                }
+
+                const res = await fetch(collectionContent);
+
+                if (res.status === 429) {
+                    throw new Error("Too many requests (429)");
+                }
+
+                if (!res.ok) {
+                    throw new Error(`Fetch failed: ${res.status}`);
+                }
+
+                const course: CourseCreationInterface = await res.json();
+
+                previews.push({
+                    courseAddress: Address.parse(addr).toString(),
                     title: course.name,
                     image: ipfsToHttp(course.image),
-                };
-            } catch (err) {
-                console.warn("Skipping invalid course:", addr, err);
-                return null;
-            }
-        })
-    );
+                });
 
-    return previews.filter(Boolean) as EnrolledCoursePreview[];
+                break; // success, break retry loop
+            } catch (err) {
+                attempts++;
+                console.warn(
+                    `Error loading enrolled course ${addr} (attempt ${attempts}):`,
+                    err
+                );
+                await new Promise((r) => setTimeout(r, RETRY_DELAY));
+            }
+        }
+    }
+
+    return previews;
 }
 
 export async function listOwnerCourses(
@@ -225,44 +252,59 @@ export async function listOwnerCourses(
 ): Promise<OwnerCoursePreview[]> {
     const courseAddrs = await getOwnedCourseAddresses(userAddress);
 
-    console.log("courseADADADADAD", courseAddrs);
-    if (!courseAddrs) {
+    if (!courseAddrs || courseAddrs.length === 0) {
         return [];
     }
 
-    const previews = await Promise.all(
-        courseAddrs?.map(async (addr): Promise<OwnerCoursePreview | null> => {
+    const previews: OwnerCoursePreview[] = [];
+
+    for (const addr of courseAddrs) {
+        let attempts = 0;
+
+        while (attempts < MAX_FAILURES) {
             try {
                 const { collectionContent, cost } = await getCourseData(addr);
+
                 if (
-                    collectionContent == undefined ||
-                    collectionContent == null ||
+                    !collectionContent ||
                     collectionContent === "" ||
-                    !collectionContent
+                    collectionContent === undefined
                 ) {
-                    console.warn(
-                        "No collection content found for course:",
-                        addr
-                    );
-                    return null;
+                    console.warn("No collection content for course:", addr);
+                    break; // skip this course
                 }
-                const course: CourseDeployedInterface = await fetch(
-                    collectionContent
-                ).then((res) => res.json());
 
-                return {
-                    courseAddress: addr,
-                    cost: cost,
-                    course: course,
-                };
+                const res = await fetch(collectionContent);
+
+                if (res.status === 429) {
+                    throw new Error("Too many requests (429)");
+                }
+
+                if (!res.ok) {
+                    throw new Error(`Fetch failed: ${res.status}`);
+                }
+
+                const course: CourseDeployedInterface = await res.json();
+
+                previews.push({
+                    courseAddress: Address.parse(addr).toString(),
+                    cost,
+                    course,
+                });
+
+                break; // success, break retry loop
             } catch (err) {
-                console.warn("Skipping invalid course:", addr, err);
-                return null;
+                attempts++;
+                console.warn(
+                    `Error loading course ${addr} (attempt ${attempts}):`,
+                    err
+                );
+                await new Promise((r) => setTimeout(r, RETRY_DELAY));
             }
-        })
-    );
+        }
+    }
 
-    return previews.filter(Boolean) as OwnerCoursePreview[];
+    return previews;
 }
 
 export async function reformatCourseData(
@@ -271,6 +313,7 @@ export async function reformatCourseData(
     coverImageUrl: string,
     certificateUrl: string,
     walletPublicKey: string,
+    ownerPublicKey: string,
     limitedVideos: string[]
 ): Promise<CourseDeployedInterface> {
     const formatted: CourseDeployedInterface = {
@@ -278,6 +321,7 @@ export async function reformatCourseData(
         image: imageUrl,
         limitedVideos: limitedVideos,
         cover_image: coverImageUrl,
+        owner_public_key: ownerPublicKey,
         video: course.video
             ? extractYoutubeVideoId(course.video) || undefined
             : undefined,
@@ -336,7 +380,7 @@ export async function reformatCourseData(
     // Encrypt all answers
     const { encryptedMessage, senderPublicKey } = await encryptCourseAnswers(
         allAnswers,
-        walletPublicKey
+        ownerPublicKey
     );
     console.log("1", walletPublicKey);
     console.log("2", senderPublicKey);
@@ -345,4 +389,83 @@ export async function reformatCourseData(
     formatted.quiz_answers.sender_public_key = senderPublicKey;
 
     return formatted;
+}
+
+export async function sendAnswersToQuiz(
+    courseAddress: string,
+    studentAddress: string,
+    quizId: bigint,
+    answers: string,
+    ownerPublicKey: string,
+    answerQuiz: (
+        courseAddress: string,
+        quizId: bigint,
+        answers: string,
+        ownerPublicKey: string
+    ) => Promise<void>
+) {
+    const { notCompleted } = await fetchAndClassifyCourses(studentAddress);
+
+    const matchedNFT = notCompleted.find(
+        (nft) =>
+            Address.parse(nft.collection.address).toString() ===
+            Address.parse(courseAddress).toString()
+    );
+
+    if (!matchedNFT) {
+        console.warn(
+            "User is not enrolled in this course or does not own the course contract."
+        );
+        throw new Error("Access denied");
+    }
+    const nftAddress = Address.parse(matchedNFT.address).toString();
+    console.log("NFT Address:", nftAddress);
+    const {encryptedMessage, senderPublicKey} = await encryptCourseAnswers(
+        answers,
+        ownerPublicKey
+    );
+    await answerQuiz(nftAddress, BigInt(quizId!), encryptedMessage, senderPublicKey);
+
+
+    console.log("Student is enrolled in:", matchedNFT);
+
+}
+
+
+export async function issueCertificateService(
+    courseAddress: string,
+    studentAddress: string,
+    quizId: bigint,
+    rating: string,
+    review: string,
+    issueCertficate: (
+        certificateAddress: string,
+        quizId: bigint,
+        rating: string,
+        review: string
+    ) => Promise<void>
+) {
+    const { notCompleted } = await fetchAndClassifyCourses(studentAddress);
+
+    const matchedNFT = notCompleted.find(
+        (nft) =>
+            Address.parse(nft.collection.address).toString() ===
+            Address.parse(courseAddress).toString()
+    );
+
+    if (!matchedNFT) {
+        console.warn(
+            "User is not enrolled in this course or does not own the course contract."
+        );
+        throw new Error("Access denied");
+    }
+    const nftAddress = Address.parse(matchedNFT.address).toString();
+    console.log("NFT Address:", nftAddress);
+    await issueCertficate(nftAddress, quizId, rating, review);
+
+    // теперь matchedNFT содержит нужный NFTItem
+    // можно продолжать, например:
+    console.log("Student is enrolled in:", matchedNFT);
+
+    // TODO: отправить ответы и т.п.
 }

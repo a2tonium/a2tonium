@@ -23,6 +23,8 @@ interface StepFiveProps {
     setIsValidJwt: React.Dispatch<React.SetStateAction<boolean>>;
     isValidJwt: boolean;
     coursePrice: number;
+    publicKey: string;
+    setPublicKey: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export function StepFive({
@@ -34,9 +36,15 @@ export function StepFive({
     setIsValidJwt,
     isValidJwt,
     coursePrice,
+    publicKey,
+    setPublicKey,
 }: StepFiveProps) {
-    const jwtSchema = z.string().min(10, "JWT слишком короткий");
+    const stepFiveSchema = z.object({
+        jwt: z.string().min(10, "JWT слишком короткий"),
+        publicKey: z.string().min(10, "Public Key слишком короткий"),
+    });
     const [jwtError, setJwtError] = useState<string | null>(null);
+    const [publicKeyError, setPublicKeyError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
     const handlePromoPage = () => {
@@ -60,11 +68,20 @@ export function StepFive({
     const handlePinataConnection = async () => {
         setIsLoading(true);
         setJwtError(null);
+        setPublicKeyError(null);
         setIsValidJwt(false);
 
-        const validation = jwtSchema.safeParse(jwt);
+        const validation = stepFiveSchema.safeParse({ jwt, publicKey });
+
         if (!validation.success) {
-            setJwtError(validation.error.errors[0].message);
+            for (const error of validation.error.errors) {
+                if (error.path[0] === "jwt") {
+                    setJwtError(error.message);
+                }
+                if (error.path[0] === "publicKey") {
+                    setPublicKeyError(error.message);
+                }
+            }
             setIsLoading(false);
             return;
         }
@@ -158,7 +175,7 @@ export function StepFive({
             </div>
             <div className="pt-4">
                 <h1 className="text-lg mb-5 md:text-xl font-bold">
-                    Pinata Cloud Information
+                    Pinata Cloud and Public Key Information
                 </h1>
 
                 <div className="space-y-4">
@@ -191,28 +208,58 @@ export function StepFive({
                                 {jwtError}
                             </p>
                         )}
-                        <div>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={handlePinataConnection}
-                                className="p-2.5 mt-4 gap-1.5 flex items-center border-blue-500 text-blue-500 
-                                hover:border-blue-700 hover:text-blue-700 transition-colors duration-200 rounded-2xl"
-                                disabled={jwt === ""}
-                            >
-                                <span className="m-0 p-0 font-semibold text-xs sm:text-sm flex items-center gap-2">
-                                    Check JWT
-                                    {isLoading ? (
-                                        <Spinner className="w-4 h-4 text-blue-500" />
-                                    ) : isValidJwt ? (
-                                        <Check className="w-4 h-4 text-blue-500" />
-                                    ) : (
-                                        <Search className="w-4 h-4" />
-                                    )}
-                                </span>
-                            </Button>
-                        </div>
                     </div>
+                </div>
+                <div className="mt-4">
+                    <Label
+                        htmlFor="publicKey"
+                        className="block text-sm font-medium text-gray-700"
+                    >
+                        Public Key
+                    </Label>
+                    <Input
+                        id="publicKey"
+                        name="publicKey"
+                        type="text"
+                        required
+                        value={publicKey}
+                        onChange={(e) => {
+                            setPublicKey(e.target.value);
+                            setPublicKeyError(null);
+                        }}
+                        className={`mt-1 block w-full rounded-2xl border p-2 shadow-sm sm:text-sm ${
+                            publicKeyError
+                                ? "border-red-500"
+                                : "border-gray-300"
+                        }`}
+                        placeholder="Введите ваш Public Key"
+                    />
+                    {jwtError && (
+                        <p className="text-red-500 text-xs mt-1">
+                            {publicKeyError}
+                        </p>
+                    )}
+                </div>
+                <div>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handlePinataConnection}
+                        className="p-2.5 mt-4 gap-1.5 flex items-center border-blue-500 text-blue-500 
+                                hover:border-blue-700 hover:text-blue-700 transition-colors duration-200 rounded-2xl"
+                        disabled={jwt === "" || publicKey === ""}
+                    >
+                        <span className="m-0 p-0 font-semibold text-xs sm:text-sm flex items-center gap-2">
+                            Check
+                            {isLoading ? (
+                                <Spinner className="w-4 h-4 text-blue-500" />
+                            ) : isValidJwt ? (
+                                <Check className="w-4 h-4 text-blue-500" />
+                            ) : (
+                                <Search className="w-4 h-4" />
+                            )}
+                        </span>
+                    </Button>
                 </div>
 
                 <div className="flex justify-between text-gray-500 text-xs mt-4">

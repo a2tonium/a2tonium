@@ -1,3 +1,6 @@
+export const MAX_FAILURES = 10;
+export const RETRY_DELAY = 2000;
+
 export interface QuestionInterface {
     id: string;
     text: string;
@@ -76,7 +79,20 @@ export interface CertificateInterface {
 }
 
 export interface CertificateCompletionInterface {
-    certificateId: string;
+    certificateAddress: string;
+    name: string;
+    image: string;
+    description: string;
+    courseAddress: string;
+    ownerAddress: string;
+    attributes: {
+        trait_type: string;
+        value: string;
+    }[];
+    grades: string[];
+}
+
+export interface CertificateFullInterface {
     certificateAddress: string;
     title: string;
     description: string;
@@ -89,6 +105,8 @@ export interface CertificateCompletionInterface {
         value: string;
     }[];
 }
+
+
 
 export type CourseAttribute = {
     trait_type: string;
@@ -132,6 +150,7 @@ export interface CourseDeployedInterface
         sender_public_key: string;
     };
     limitedVideos: string[];
+    owner_public_key: string;
 }
 
 export interface ModuleInterfaceNew {
@@ -148,3 +167,63 @@ export interface CoursePromoInterface extends CourseDeployedInterface {
     enrolledNumber: string;
     ownerAddress: string;
 }
+
+export type MetadataAttribute = {
+    trait_type: string;
+    value: string;
+};
+
+export type Metadata = {
+    attributes: MetadataAttribute[];
+    description: string;
+    quiz_grades: string[];
+    name: string;
+    image: string;
+};
+
+export type Preview = {
+    resolution: string;
+    url: string;
+};
+
+export type Collection = {
+    address: string;
+    // name: string;
+    // description: string;
+};
+
+export type Owner = {
+    address: string;
+    // is_scam: boolean;
+    // is_wallet: boolean;
+};
+
+export type NFTItem = {
+    address: string;
+    index: number;
+    owner: Owner;
+    collection: Collection;
+    verified: boolean;
+    metadata: Metadata;
+    previews: Preview;
+    // approved_by, trust
+};
+
+export type NFTResponse = {
+    nft_items: NFTItem[];
+};
+
+export type NFTDataResponse = {
+    success: boolean;
+    exit_code: number;
+    decoded?: {
+        init: boolean;
+        [key: string]: unknown;
+    };
+    [key: string]: unknown;
+};
+
+export type ClassifiedCourses = {
+    completed: NFTItem[];
+    notCompleted: NFTItem[];
+};

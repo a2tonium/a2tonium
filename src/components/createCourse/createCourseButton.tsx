@@ -25,6 +25,7 @@ interface CreateCourseLogicProps {
     jwt: string | null;
     coursePrice: string;
     limitedVideos: string[];
+    ownerPublicKey: string
 }
 
 const buySchema = z.object({
@@ -39,7 +40,8 @@ export function CreateCourseButton({
     onOpenChange,
     jwt,
     coursePrice,
-    limitedVideos
+    limitedVideos,
+    ownerPublicKey
 }: CreateCourseLogicProps & {
     open: boolean;
     onOpenChange: (open: boolean) => void;
@@ -70,7 +72,7 @@ export function CreateCourseButton({
         setIsSuccess(false);
 
         try {
-            const txResult = await createCourse(course, jwt ?? "", publicKey, customSender, coursePrice, createCourseContract, limitedVideos);
+            const txResult = await createCourse(course, jwt ?? "", ownerPublicKey,publicKey, customSender, coursePrice, createCourseContract, limitedVideos);
 
 
             if (txResult?.boc) {

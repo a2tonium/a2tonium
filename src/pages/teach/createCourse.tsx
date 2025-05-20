@@ -157,6 +157,7 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
     };
 
     const [jwt, setJwt] = useState("");
+    const [publicKey, setPublicKey] = useState("");
     const [isValidJwt, setIsValidJwt] = useState(false);
 
     const [promoVideoValid, setPromoVideoValid] = useState<boolean>(true);
@@ -281,6 +282,8 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
                         setIsValidJwt={setIsValidJwt}
                         isValidJwt={isValidJwt}
                         coursePrice={coursePrice}
+                        publicKey={publicKey}
+                        setPublicKey={setPublicKey}
                     />
                 )}
 
@@ -333,6 +336,7 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
                 course={courseData}
                 limitedVideos={limitedVideos}
                 jwt={jwt}
+                ownerPublicKey={publicKey}
                 open={showDialog}
                 onOpenChange={setShowDialog}
                 coursePrice={coursePrice.toString()}
