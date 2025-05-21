@@ -1,13 +1,13 @@
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
-import { Check, ListOrdered } from "lucide-react";
+import { Check, ListOrdered, X } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { CourseSidebar } from "@/components/courseSidebar/courseSidebar";
 import { QuizzesSkeleton } from "@/components/quizzes/quizzesSkeleton";
 import { ErrorPage } from "@/pages/error/error";
-import { useCourseDataIfEnrolled } from "@/hooks/useCourseDataIfEnrolled";
+import { useCourseDataIfEnrolledWithGrades } from "@/hooks/useCourseDataIfEnrolledWithGrades";
 
 export function Quizzes() {
     const navigate = useNavigate();
@@ -17,7 +17,7 @@ export function Quizzes() {
         data: course,
         error,
         isLoading,
-    } = useCourseDataIfEnrolled(courseAddress);
+    } = useCourseDataIfEnrolledWithGrades(courseAddress);
 
     const handleQuizClick = (quizId: string) => {
         navigate(`../quiz/${quizId}`);
@@ -48,14 +48,14 @@ export function Quizzes() {
     }
 
     const allQuizzes = course.data!.modules.map((mod, index) => {
-        // For demonstration: a "title" from moduleTitle, or some quiz-specific fields
+        const reversedIndex = course.grades.length - 1 - index;
+        const gradeEntry = course.grades[reversedIndex];
+
         return {
             id: `${index + 1}`,
-            title: `${mod.title}`,
-            // completed: mod.completed,
-            completed: false,
-            // score: mod.completed ? mod.score : null,
-            score: null,
+            title: mod.title,
+            completed: !!gradeEntry?.quizGrade,
+            score: gradeEntry?.quizGrade ?? null,
             totalQuestions: mod.quiz.questions.length,
         };
     });
@@ -64,7 +64,10 @@ export function Quizzes() {
         <SidebarProvider>
             <div className="flex w-full mx-auto bg-white rounded-[2vw] md:border-[6px] border-gray-200">
                 {/* Sidebar */}
-                <CourseSidebar courseData={course.data!} />
+                <CourseSidebar
+                    courseData={course.data!}
+                    grades={course.grades}
+                />
                 <div className="max-w-4xl flex-grow mx-auto p-0 pt-6 md:pr-6 md:p-6">
                     {/* Sidebar Trigger + Title */}
                     <div className="flex items-center gap-2 mb-4">
@@ -102,13 +105,33 @@ export function Quizzes() {
                                     {/* Completion Status / Score */}
                                     <div className="pl-2 flex flex-col items-end">
                                         {quiz.completed ? (
-                                            <span className="flex space-x-1 text-green-600 font-semibold text-[10px] sm:text-sm">
-                                                <Check className="w-4 h-4 sm:w-5 sm:h-5" />
-                                                <span>
-                                                    Score: {quiz.score}/
-                                                    {quiz.totalQuestions}
-                                                </span>
-                                            </span>
+                                            (() => {
+                                                const scoreNum = parseFloat(
+                                                    quiz.score || "0"
+                                                );
+                                                const isPassed = scoreNum >= 70;
+
+                                                return (
+                                                    <span
+                                                        className={`flex space-x-1 font-semibold text-[10px] sm:text-sm ${
+                                                            isPassed
+                                                                ? "text-green-600"
+                                                                : "text-red-500"
+                                                        }`}
+                                                    >
+                                                        {isPassed ? (
+                                                            <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+                                                        ) : (
+                                                            <span className="text-lg leading-none">
+                                                                <X className="w-4 h-4 sm:w-5 sm:h-5"/>
+                                                            </span>
+                                                        )}
+                                                        <span>
+                                                            Score: {quiz.score}
+                                                        </span>
+                                                    </span>
+                                                );
+                                            })()
                                         ) : (
                                             <span className="text-gray-400 text-xs sm:text-sm">
                                                 Not completed

@@ -162,6 +162,11 @@ export interface ModuleInterfaceNew {
     };
 }
 
+export interface QuizAnswers {
+    quizId: string;
+    quizGrade: string;
+}
+
 export interface CoursePromoInterface extends CourseDeployedInterface {
     cost: string;
     enrolledNumber: string;

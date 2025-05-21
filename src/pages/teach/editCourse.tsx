@@ -19,11 +19,7 @@ import { reformatToCourseCreation } from "@/utils/file.utils";
 
 export function EditCourse() {
     const { courseAddress } = useParams();
-    const {
-        data,
-        error,
-        isLoading,
-    } = useCourseDataIfEnrolled(courseAddress);
+    const { data, error, isLoading } = useCourseDataIfEnrolled(courseAddress);
 
     const [isDirty, setIsDirty] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
@@ -99,7 +95,7 @@ export function EditCourse() {
         ],
     });
     const [coursePrice, setcoursePrice] = useState(1);
-    const [limitedVideos, setLimitedVideos] = useState<string[]>([]); 
+    const [limitedVideos, setLimitedVideos] = useState<string[]>([]);
 
     // При монтировании считаем форму «грязной»
     useEffect(() => {
@@ -148,7 +144,11 @@ export function EditCourse() {
     useEffect(() => {
         const formatCourse = async () => {
             if (!isLoading && data && !error && !initialized) {
-                limitedVideos.push(...data.data!.modules[0].lessons.map((lesson) => lesson.videoId));
+                limitedVideos.push(
+                    ...data.data!.modules[0].lessons.map(
+                        (lesson) => lesson.videoId
+                    )
+                );
                 const formatted = await reformatToCourseCreation(data.data!);
                 console.log("formatted", formatted);
                 setCourseData(formatted);

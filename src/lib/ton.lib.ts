@@ -6,10 +6,12 @@ import {
     NFTDataResponse,
     NFTItem,
     NFTResponse,
+    QuizAnswers,
     RETRY_DELAY,
 } from "@/types/courseData";
 import { Certificate } from "@/wrappers/certificate";
 import { Course } from "@/wrappers/course";
+import { EventsResponse } from "../types/tonTypes";
 
 export async function getCourseData(contractAddress: string): Promise<{
     collectionContent: string;
@@ -64,12 +66,23 @@ export async function getCertificateData(certificateAddress: string): Promise<{
         console.log("dataBBBBBBBBBBBBBBB", data);
         if (data.success) {
             // Extract collection data from the 'decoded' field
-            const collectionContent = getLink(hexToUtf8(data.decoded.individual_content));
-            const ownerAddress = Address.parse(data.decoded.owner_address).toString();
+            const collectionContent = getLink(
+                hexToUtf8(data.decoded.individual_content)
+            );
+            const ownerAddress = Address.parse(
+                data.decoded.owner_address
+            ).toString();
             console.log("ownerAddress", ownerAddress);
 
-            const collectionAddress = Address.parse(data.decoded.collection_address).toString();
-            console.log("ALLL DATA", collectionContent, ownerAddress, collectionAddress);
+            const collectionAddress = Address.parse(
+                data.decoded.collection_address
+            ).toString();
+            console.log(
+                "ALLL DATA",
+                collectionContent,
+                ownerAddress,
+                collectionAddress
+            );
             return { collectionContent, ownerAddress, collectionAddress };
         } else {
             throw new Error(
@@ -81,8 +94,6 @@ export async function getCertificateData(certificateAddress: string): Promise<{
         throw error; // Re-throw error to be handled by the caller
     }
 }
-
-
 
 export async function getProfileItemsAddresses(): Promise<
     { address: string; owner: string }[]
@@ -191,7 +202,6 @@ export async function getProfileAddress(ownerAddress: string) {
 //     }
 // }
 
-
 export async function getEnrolledCourseAddresses(
     studentAddress: string
 ): Promise<string[]> {
@@ -293,7 +303,9 @@ export async function getOwnedCourseAddresses(
             console.log("data", data);
 
             if (data.success) {
-                ownedCoursesSet.add(Address.parse(courseContract.address.toString()).toString());
+                ownedCoursesSet.add(
+                    Address.parse(courseContract.address.toString()).toString()
+                );
                 i++;
                 attempts = 0; // reset after success
             } else {
@@ -316,8 +328,6 @@ export async function getOwnedCourseAddresses(
     return result;
 }
 
-
-
 const TON_API_BASE = "https://testnet.tonapi.io/v2";
 const API_KEY = import.meta.env.VITE_TONAPI;
 
@@ -332,18 +342,65 @@ export async function getTonWalletData(addr: string) {
     if (!res.ok) {
         throw new Error(`Failed to fetch wallet: ${res.statusText}`);
     }
- 
+
     return await res.json();
 }
 
-export async function getUserNFTsRaw(addr: string) {
-    const res = await fetch(`${TON_API_BASE}/accounts/${addr}/nfts`, {
-        headers: { Authorization: `Bearer ${API_KEY}` },
-    });
-    if (!res.ok) {
-        throw new Error("NFTs fetch failed");
-    }
-    return await res.json();
+export async function getAllGrades(
+    certificateAddress: string,
+    courseOwnerAddress: string
+): Promise<QuizAnswers[]> {
+    courseOwnerAddress = Address.parse(courseOwnerAddress).toRawString();
+    const baseUrl = `https://testnet.tonapi.io/v2/accounts/${certificateAddress}/events`;
+    const allComments: QuizAnswers[] = [];
+    let nextFrom: number | undefined = undefined;
+    let foundFirstOne = false;
+
+    do {
+        const url = new URL(baseUrl);
+        url.searchParams.set("limit", "100");
+        if (nextFrom !== undefined) {
+            url.searchParams.set("before_lt", nextFrom.toString());
+        }
+
+        const res = await fetch(url.toString());
+        if (!res.ok) {
+            throw new Error(
+                `Failed to fetch events: ${res.status} ${res.statusText}`
+            );
+        }
+        const data: EventsResponse = (await res.json()) as EventsResponse;
+        for (const event of data.events) {
+            for (const action of event.actions) {
+                if (
+                    action.type === "TonTransfer" &&
+                    action.TonTransfer &&
+                    action.TonTransfer.sender.address === courseOwnerAddress
+                ) {
+                    const comment = action.TonTransfer.comment;
+                    const parts = comment.split(" | ");
+                    if (parts.length === 4) {
+                        allComments.push({
+                            quizId: parts[0],
+                            quizGrade: parts[1],
+                        });
+                        if (parts[0] === "1") {
+                            foundFirstOne = true;
+                            break; // stop inner loop
+                        }
+                    }
+                }
+            }
+            if (foundFirstOne) break; // stop outer loop
+        }
+
+        if (foundFirstOne) break; // stop fetching more pages
+
+        nextFrom = data.next_from;
+        if (!nextFrom || data.events.length === 0) break;
+    } while (!foundFirstOne && nextFrom);
+
+    return allComments;
 }
 
 async function getCourseNFTs(walletAddress: string): Promise<NFTItem[]> {
@@ -381,9 +438,7 @@ async function fetchNFTs(walletAddress: string): Promise<NFTItem[]> {
             await new Promise((r) => setTimeout(r, RETRY_DELAY));
         }
     }
-    throw new Error(
-        `Failed to fetch NFTs after ${MAX_FAILURES} attempts`
-    );
+    throw new Error(`Failed to fetch NFTs after ${MAX_FAILURES} attempts`);
 }
 
 async function fetchNFTData(nftAddress: string): Promise<NFTDataResponse> {

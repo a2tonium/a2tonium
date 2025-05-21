@@ -14,6 +14,11 @@ export interface Event {
     actions: TonTransferAction[];
 }
 
+export interface EventsResponse {
+    events: Event[];
+    next_from?: number;
+}
+
 export interface ApiResponse {
     events: Event[];
 }

@@ -15,13 +15,13 @@ import {
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { CertificateDialog } from "@/components/courseSidebar/certificateDialog";
-import { CourseDeployedInterface } from "@/types/courseData";
+import { CourseDeployedInterface, QuizAnswers } from "@/types/courseData";
 
 export function SidebarMain({
     items,
     courseData,
+    grades
 }: {
     items: {
         title: string;
@@ -34,8 +34,10 @@ export function SidebarMain({
         }[];
     }[];
     courseData: CourseDeployedInterface
+    grades: QuizAnswers[];
 }) {
-    const [isCertValid] = useState(true);
+
+    const isCertValid = grades.length === courseData.modules.length;
     return (
         <SidebarGroup>
             <SidebarMenu>

@@ -10,8 +10,8 @@ import { useCourseDataIfEnrolled } from "@/hooks/useCourseDataIfEnrolled";
 import { ErrorPage } from "@/pages/error/error";
 import { useCourseContract } from "@/hooks/useCourseContract";
 import { useToast } from "@/hooks/use-toast";
-import { useTonConnect } from "../../hooks/useTonConnect";
-import { sendAnswersToQuiz } from "../../services/course.service";
+import { useTonConnect } from "@/hooks/useTonConnect";
+import { sendAnswersToQuiz } from "@/services/course.service";
 
 export function QuizAttempt() {
     const { quizId, courseAddress } = useParams<{
@@ -132,16 +132,25 @@ export function QuizAttempt() {
         }
 
         setErrors([]);
-        try {   
-        console.log("Submitting quiz...", convertAnswerToString(selectedAnswers));
-        await sendAnswersToQuiz(courseAddress!, studentAddress, BigInt(quizId!), convertAnswerToString(selectedAnswers), course.data!.owner_public_key, answerQuiz);
-        toast({
-                    title: "Successful Quiz Submission",
-                    description: `Wait for the teacher to check your answers.`,
-                    className:
-                        "bg-green-500 text-white rounded-[2vw] border-none",
-                });
-        navigate(-1);
+        try {
+            console.log(
+                "Submitting quiz...",
+                convertAnswerToString(selectedAnswers)
+            );
+            await sendAnswersToQuiz(
+                courseAddress!,
+                studentAddress,
+                BigInt(quizId!),
+                convertAnswerToString(selectedAnswers),
+                course.data!.owner_public_key,
+                answerQuiz
+            );
+            toast({
+                title: "Successful Quiz Submission",
+                description: `Wait for the teacher to check your answers.`,
+                className: "bg-green-500 text-white rounded-[2vw] border-none",
+            });
+            navigate(-1);
         } catch (error) {
             console.error("Error creating course:", error);
             toast({
@@ -150,7 +159,6 @@ export function QuizAttempt() {
                 variant: "destructive",
             });
         }
-
     };
 
     const convertAnswerToString = (answers: number[]): string => {

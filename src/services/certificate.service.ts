@@ -2,9 +2,10 @@ import {
     CertificateCompletionInterface,
     CertificateInterface,
     MAX_FAILURES,
+    QuizAnswers,
     RETRY_DELAY,
 } from "@/types/courseData";
-import { fetchAndClassifyCourses, getCertificateData } from "@/lib/ton.lib";
+import { fetchAndClassifyCourses, getAllGrades, getCertificateData } from "@/lib/ton.lib";
 import { ipfsToHttp } from "@/utils/ton.utils";
 import { Address } from "@ton/core";
 
@@ -149,3 +150,25 @@ export async function getCertificate(
     );
 }
 
+export async function getQuizGrades(
+    userAddress: string,
+    courseAddress: string,
+    courseOwnerAddress: string
+): Promise<QuizAnswers[]>  {
+    const { notCompleted } = await fetchAndClassifyCourses(userAddress);
+
+    const matchedNFT = notCompleted.find(
+        (nft) =>
+            Address.parse(nft.collection.address).toString() ===
+            Address.parse(courseAddress).toString()
+    );
+    if (!matchedNFT) {
+        console.warn(
+            "User is not enrolled in this course or does not own the course contract."
+        );
+        throw new Error("Access denied");
+    }
+    const certificateAddress = Address.parse(matchedNFT.address).toString();
+
+    return await getAllGrades(certificateAddress, courseOwnerAddress);
+}

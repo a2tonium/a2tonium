@@ -255,9 +255,7 @@ export function useCourseContract() {
                 $$type: "Quiz",
                 quizId: quizId,
                 answers: beginCell()
-                    .storeStringTail(
-                        `${rating} | ${review}`
-                    )
+                    .storeStringTail(`${rating} | ${review}`)
                     .endCell(),
             }
         );
@@ -293,9 +291,28 @@ export function useCourseContract() {
         );
     };
 
-    const getAddressBalance = async (address: string) => {
-        const balance = await client?.getBalance(Address.parse(address));
-        return balance !== undefined ? fromNano(balance).toString() : "0";
+    const getAddressBalance = async (address: string): Promise<string> => {
+        try {
+            const response = await fetch(
+                `https://testnet.tonapi.io/v2/accounts/${Address.parse(address).toRawString()}`
+            );
+            console.log("addres", Address.parse(address).toRawString());
+            if (!response.ok)
+                throw new Error(`HTTP error! status: ${response.status}`);
+
+            const data = await response.json();
+            const tonBalanceNano = data.balance;
+
+            if (typeof tonBalanceNano !== "number") {
+                throw new Error("Invalid ton_balance in response");
+            }
+
+            // Convert from nanoTON to TON
+            return Number(fromNano(tonBalanceNano)).toFixed(2);
+        } catch (error) {
+            console.error("Failed to get balance:", error);
+            return "0"; // Fallback to zero on error
+        }
     };
 
     return {

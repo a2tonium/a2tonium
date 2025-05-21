@@ -5,9 +5,9 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { CourseSidebar } from "@/components/courseSidebar/courseSidebar";
 import { SyllabusSkeleton } from "@/components/syllabus/syllabusSkeleton";
 import { ErrorPage } from "@/pages/error/error";
-import { useCourseDataIfEnrolled } from "@/hooks/useCourseDataIfEnrolled";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { useCourseDataIfEnrolledWithGrades } from "@/hooks/useCourseDataIfEnrolledWithGrades";
 
 export function Syllabus() {
     const navigate = useNavigate();
@@ -16,7 +16,7 @@ export function Syllabus() {
         data: course,
         error,
         isLoading,
-    } = useCourseDataIfEnrolled(courseAddress);
+    } = useCourseDataIfEnrolledWithGrades(courseAddress);
 
     // Функция перехода к конкретному уроку
     const handleLessonClick = (lessonId: string) => {
@@ -55,7 +55,10 @@ export function Syllabus() {
     return (
         <SidebarProvider>
             <div className="flex w-full mx-auto bg-white rounded-[2vw] md:border-[6px] border-gray-200">
-                <CourseSidebar courseData={course.data!} />
+                <CourseSidebar
+                    courseData={course.data!}
+                    grades={course.grades}
+                />
 
                 <div className="max-w-4xl flex-grow mx-auto p-0 pt-6 md:pr-6 md:p-6">
                     <div className="flex items-center gap-2 mb-4">
@@ -84,9 +87,33 @@ export function Syllabus() {
                                             <Label className="cursor-pointer text-sm sm:text-base font-semibold ml-2 hover:underline">
                                                 {mIndex + 1}. {mod.title}
                                             </Label>
-                                            <span className="text-gray-400 text-xs sm:text-sm mr-2">
-                                                Not completed
-                                            </span>
+                                            {(() => {
+                                                const gradeStr =
+                                                    course.grades[
+                                                        course.grades.length -
+                                                            1 -
+                                                            mIndex
+                                                    ]?.quizGrade;
+                                                const gradeNum =
+                                                    parseFloat(gradeStr);
+
+                                                const gradeColorClass =
+                                                    !gradeStr
+                                                        ? "text-gray-400"
+                                                        : gradeNum > 70
+                                                        ? "text-green-500"
+                                                        : "text-red-500";
+
+                                                return (
+                                                    <span
+                                                        className={`text-xs sm:text-sm mr-2 ${gradeColorClass}`}
+                                                    >
+                                                        {gradeStr
+                                                            ? `Grade: ${gradeStr}`
+                                                            : "Not completed"}
+                                                    </span>
+                                                );
+                                            })()}
                                         </div>
                                     </Card>
 

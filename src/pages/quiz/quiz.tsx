@@ -1,11 +1,10 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { QuizSidebar } from "@/components/quizSidebar/quizSidebar";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { QuizSkeleton } from "@/components/quiz/quizSkeleton";
-import { useCourseDataIfEnrolled } from "@/hooks/useCourseDataIfEnrolled";
-import { ModuleInterfaceNew } from "@/types/courseData";
+import { useCourseDataIfEnrolledWithGrades } from "@/hooks/useCourseDataIfEnrolledWithGrades";
 import { ErrorPage } from "@/pages/error/error";
 
 export function Quiz() {
@@ -17,7 +16,7 @@ export function Quiz() {
         data: course,
         error,
         isLoading,
-    } = useCourseDataIfEnrolled(courseAddress);
+    } = useCourseDataIfEnrolledWithGrades(courseAddress);
 
     if (error) {
         if (error.message === "Access denied") {
@@ -51,15 +50,21 @@ export function Quiz() {
         totalQuestions: number;
     };
 
-    const quizzes: QuizItem[] = course.data!.modules.map((m: ModuleInterfaceNew) => ({
-        id: m.id,
-        title: m.title,
-        // completed: m.completed,
-        completed: false,
-        // score: m.score ?? null,
-        score: null,
-        totalQuestions: m.quiz.questions.length,
-    }));
+    const quizzes: QuizItem[] = course.data!.modules.map((m, index) => {
+        const reversedIndex = course.grades.length - 1 - index;
+        const gradeEntry = course.grades[reversedIndex];
+        const score = gradeEntry?.quizGrade
+            ? parseFloat(gradeEntry.quizGrade)
+            : null;
+
+        return {
+            id: m.id,
+            title: m.title,
+            completed: score !== null,
+            score: score,
+            totalQuestions: m.quiz.questions.length,
+        };
+    });
 
     const currentQuizIndex = quizzes.findIndex((q) => q.id === quizId);
     const currentQuiz = quizzes[currentQuizIndex];
@@ -129,7 +134,7 @@ export function Quiz() {
                                     variant="default"
                                     className="bg-blue-500 hover:bg-blue-600 text-white ml-4 rounded-sm"
                                 >
-                                    {currentQuiz.completed ? "Review" : "Start"}
+                                    Start
                                 </Button>
                             </div>
                         </div>
@@ -141,24 +146,57 @@ export function Quiz() {
                                     Your grade
                                 </h3>
                                 {currentQuiz.completed ? (
-                                    <div className="text-sm text-gray-800">
-                                        Highest score:{" "}
-                                        {currentQuiz.score ?? "--"}/
-                                        {currentQuiz.totalQuestions}
-                                    </div>
+                                    (() => {
+                                        const correctAnswers = Math.round(
+                                            (currentQuiz.score! / 100) *
+                                                currentQuiz.totalQuestions
+                                        );
+                                        const passed = currentQuiz.score! >= 70;
+
+                                        return (
+                                            <>
+                                                <div
+                                                    className={`flex items-center gap-2 text-sm font-medium ${
+                                                        passed
+                                                            ? "text-green-600"
+                                                            : "text-red-500"
+                                                    }`}
+                                                >
+                                                    {passed ? (
+                                                        <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+                                                    ) : (
+                                                        <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                                                    )}
+                                                    <span>
+                                                        Score: {correctAnswers}/
+                                                        {
+                                                            currentQuiz.totalQuestions
+                                                        }
+                                                    </span>
+                                                </div>
+                                                <div
+                                                    className={`mt-2 font-bold text-xl ${
+                                                        passed
+                                                            ? "text-green-600"
+                                                            : "text-red-500"
+                                                    }`}
+                                                >
+                                                    {currentQuiz.score}%
+                                                </div>
+                                            </>
+                                        );
+                                    })()
                                 ) : (
-                                    <div className="text-sm text-gray-600">
-                                        You haven’t submitted this yet. We keep
-                                        your highest score.
-                                    </div>
+                                    <>
+                                        <div className="text-sm text-gray-600">
+                                            You haven’t submitted this yet. We
+                                            keep your highest score.
+                                        </div>
+                                        <div className="mt-2 font-bold text-xl text-gray-400">
+                                            --
+                                        </div>
+                                    </>
                                 )}
-                                <div className="mt-2 font-bold text-xl">
-                                    {currentQuiz.completed
-                                        ? `${currentQuiz.score ?? "--"}/${
-                                              currentQuiz.totalQuestions
-                                          }`
-                                        : "--"}
-                                </div>
                             </div>
                         </div>
 

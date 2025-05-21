@@ -14,6 +14,7 @@ import {
     EnrolledCoursePreview,
     MAX_FAILURES,
     OwnerCoursePreview,
+    QuizAnswers,
     RETRY_DELAY,
 } from "@/types/courseData";
 import { encryptCourseAnswers } from "@/utils/crypt.utils";
@@ -27,6 +28,7 @@ import {
     getOwnedCourseAddresses,
 } from "@/lib/ton.lib";
 import { ipfsToHttp } from "@/utils/ton.utils";
+import { getQuizGrades } from "./certificate.service";
 
 export async function createCourse(
     course: CourseCreationInterface,
@@ -167,9 +169,35 @@ export async function fetchCourseIfEnrolled(
         throw new Error("Access denied");
     }
     const { collectionContent, cost } = await getCourseData(contractAddress);
+    
     const data = await fetch(collectionContent).then((res) => res.json());
 
     return { data, cost };
+}
+
+export async function fetchCourseIfEnrolledWithGrades(
+    userAddress: string,
+    contractAddress: string,
+    ownedCourses: string[]
+): Promise<{ data: CourseDeployedInterface; cost: string; grades: QuizAnswers[] }> {
+    const enrolledCourses = await getEnrolledCourseAddresses(userAddress);
+    console.log("owned: ",ownedCourses.includes(Address.parse(contractAddress).toString()))
+    console.log("enrolled: ",enrolledCourses.includes(Address.parse(contractAddress).toString()))
+    if (
+        !ownedCourses.includes(Address.parse(contractAddress).toString()) &&
+        !enrolledCourses.includes(Address.parse(contractAddress).toString())
+    ) {
+        console.warn(
+            "User is not enrolled in this course or does not own the course contract."
+        );
+        throw new Error("Access denied");
+    }
+    const { collectionContent, cost, ownerAddress } = await getCourseData(contractAddress);
+
+    const data = await fetch(collectionContent).then((res) => res.json());
+    const grades = await getQuizGrades(userAddress, contractAddress, ownerAddress);
+    console.log("grades", grades);
+    return { data, cost, grades };
 }
 
 export async function fetchCoursePromo(

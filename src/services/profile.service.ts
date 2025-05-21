@@ -12,7 +12,6 @@ import { Sender } from "@ton/core";
 import {
     getProfileData,
     getTonWalletData,
-    getUserNFTsRaw,
 } from "@/lib/ton.lib";
 
 export async function createProfile(
@@ -168,11 +167,6 @@ export async function fetchTonWalletData(addr: string) {
 //         ],
 //     };
 // }
-
-export async function fetchUserNFTs(addr: string) {
-    const data = await getUserNFTsRaw(addr);
-    return data.nft_items;
-}
 
 export function reformatProfileData(profile: {
     image: string;

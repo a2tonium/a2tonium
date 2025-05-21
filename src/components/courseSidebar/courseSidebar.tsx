@@ -8,7 +8,7 @@ import {
     SidebarHeader,
     useSidebar,
 } from "@/components/ui/sidebar";
-import { CourseDeployedInterface } from "@/types/courseData";
+import { CourseDeployedInterface, QuizAnswers } from "@/types/courseData";
 
 const data = [
     {
@@ -50,9 +50,11 @@ const data = [
 
 export function CourseSidebar({
     courseData,
+    grades,
     ...props
 }: {
     courseData: CourseDeployedInterface;
+    grades: QuizAnswers[];
 }) {
     const { isMobile } = useSidebar();
 
@@ -82,7 +84,7 @@ export function CourseSidebar({
                     </div>
                 </SidebarHeader>
                 <SidebarContent>
-                    <SidebarMain items={data} courseData={courseData} />
+                    <SidebarMain items={data} courseData={courseData} grades={grades} />
                 </SidebarContent>
                 {/* <SidebarFooter>
                 <NavUser user={data.user} />
