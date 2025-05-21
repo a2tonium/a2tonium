@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
-import { LessonInterface } from "@/types/courseData";
+import { LessonInterface } from "@/types/course.types";
 
 interface LessonSidebarProps extends React.ComponentProps<typeof Sidebar> {
     data: {

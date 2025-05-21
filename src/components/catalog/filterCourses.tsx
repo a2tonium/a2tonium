@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { FilterType } from "@/types/courseData";
+import { FilterType } from "@/types/course.types";
 import { useTranslation } from "react-i18next";
 import categoryData from "@/data/categories.json";
 
@@ -43,41 +43,37 @@ export function FilterCourses({
         setSelectedCategory(updated);
     };
 
-    
-
     const renderCategoryGroup = (cat: Category) => (
         <AccordionItem key={cat.id} value={cat.id}>
-          <AccordionTrigger className="text-left text-sm font-medium hover:bg-muted px-1 rounded-sm">
-            <div className="flex items-center gap-2 w-full">
-              <div onClick={(e) => e.stopPropagation()}>
-                <Checkbox
-                  checked={selectedCategory.includes(cat.id)}
-                  onCheckedChange={() => handleCategoryToggle(cat.id)}
-                />
-              </div>
-    
-              <span>{t(`category.${cat.id}`)}</span>
-            </div>
-          </AccordionTrigger>
-      
-          <AccordionContent className="space-y-2">
-            {cat.subcategories?.map((sub) => (
-              <Label
-                key={sub.id}
-                className="flex items-center gap-2 cursor-pointer ml-6"
-              >
-                <Checkbox
-                  checked={selectedCategory.includes(sub.id)}
-                  onCheckedChange={() => handleCategoryToggle(sub.id)}
-                />
-                {t(`category.${sub.id}`)}
-              </Label>
-            ))}
-          </AccordionContent>
+            <AccordionTrigger className="text-left text-sm font-medium hover:bg-muted px-1 rounded-sm">
+                <div className="flex items-center gap-2 w-full">
+                    <div onClick={(e) => e.stopPropagation()}>
+                        <Checkbox
+                            checked={selectedCategory.includes(cat.id)}
+                            onCheckedChange={() => handleCategoryToggle(cat.id)}
+                        />
+                    </div>
+
+                    <span>{t(`category.${cat.id}`)}</span>
+                </div>
+            </AccordionTrigger>
+
+            <AccordionContent className="space-y-2">
+                {cat.subcategories?.map((sub) => (
+                    <Label
+                        key={sub.id}
+                        className="flex items-center gap-2 cursor-pointer ml-6"
+                    >
+                        <Checkbox
+                            checked={selectedCategory.includes(sub.id)}
+                            onCheckedChange={() => handleCategoryToggle(sub.id)}
+                        />
+                        {t(`category.${sub.id}`)}
+                    </Label>
+                ))}
+            </AccordionContent>
         </AccordionItem>
-      );
-      
-      
+    );
 
     return (
         <Accordion type="multiple" className="w-full space-y-1">

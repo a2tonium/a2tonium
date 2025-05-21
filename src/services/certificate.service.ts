@@ -4,8 +4,12 @@ import {
     MAX_FAILURES,
     QuizAnswers,
     RETRY_DELAY,
-} from "@/types/courseData";
-import { fetchAndClassifyCourses, getAllGrades, getCertificateData } from "@/lib/ton.lib";
+} from "@/types/course.types";
+import {
+    fetchAndClassifyCourses,
+    getAllGrades,
+    getCertificateData,
+} from "@/lib/ton.lib";
 import { ipfsToHttp } from "@/utils/ton.utils";
 import { Address } from "@ton/core";
 
@@ -108,15 +112,15 @@ export async function getCertificate(
             }
 
             if (!res.ok) {
-                console.warn(`Non-OK response (${res.status}) for: ${certificateAddress}`);
+                console.warn(
+                    `Non-OK response (${res.status}) for: ${certificateAddress}`
+                );
                 break;
             }
 
             const metadata = await res.json();
 
-            if (
-                !metadata?.name
-            ) {
+            if (!metadata?.name) {
                 console.warn("Incomplete metadata for:", certificateAddress);
                 break;
             }
@@ -129,7 +133,7 @@ export async function getCertificate(
                 courseAddress: collectionAddress,
                 ownerAddress: ownerAddress,
                 attributes: metadata.attributes,
-                grades: metadata.quizGrades
+                grades: metadata.quizGrades,
             };
         } catch (err: unknown) {
             if (err instanceof Error && err.message.includes("429")) {
@@ -137,9 +141,14 @@ export async function getCertificate(
                 console.warn(
                     `429 Too Many Requests for ${certificateAddress} (attempt ${attempts})`
                 );
-                await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
+                await new Promise((resolve) =>
+                    setTimeout(resolve, RETRY_DELAY)
+                );
             } else {
-                console.warn(`Non-retryable error for ${certificateAddress}:`, err);
+                console.warn(
+                    `Non-retryable error for ${certificateAddress}:`,
+                    err
+                );
                 break;
             }
         }
@@ -154,7 +163,7 @@ export async function getQuizGrades(
     userAddress: string,
     courseAddress: string,
     courseOwnerAddress: string
-): Promise<QuizAnswers[]>  {
+): Promise<QuizAnswers[]> {
     const { notCompleted } = await fetchAndClassifyCourses(userAddress);
 
     const matchedNFT = notCompleted.find(

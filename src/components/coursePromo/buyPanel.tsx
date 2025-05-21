@@ -1,7 +1,7 @@
 import { Separator } from "@/components/ui/separator";
-import { CoursePromoInterface } from "@/types/courseData";
+import { CoursePromoInterface } from "@/types/course.types";
 import { BuyDialog } from "@/components/coursePromo/buyDialog";
-import { getAttribute } from "@/utils/courseAttributes";
+import { getAttribute } from "@/utils/course.attributes.utils";
 
 interface BuyPanelProps {
     course: CoursePromoInterface;
@@ -43,7 +43,10 @@ export function BuyPanel({ course, courseAddress }: BuyPanelProps) {
                             This course includes
                         </h4>
                         <p className="text-sm text-gray-700 mt-1">
-                            <strong>{getAttribute(course.attributes, "lessons")}</strong> lessons
+                            <strong>
+                                {getAttribute(course.attributes, "lessons")}
+                            </strong>{" "}
+                            lessons
                         </p>
                         <p className="text-sm text-gray-700">
                             <strong>{course.modules.length}</strong> modules and

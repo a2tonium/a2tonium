@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { CourseAttribute } from "@/types/courseData";
+import { CourseAttribute } from "@/types/course.types";
 
 interface CertificateAttributesProps {
     attributes: CourseAttribute;

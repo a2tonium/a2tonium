@@ -9,7 +9,7 @@ import { StepTwo } from "@/pages/teach/createCourse/stepTwo";
 import { StepThree } from "@/pages/teach/createCourse/stepThree";
 import { StepFour } from "@/pages/teach/createCourse/stepFour";
 import { StepFive } from "@/pages/teach/createCourse/stepFive";
-import { CourseCreationInterface, VideoCheckState } from "@/types/courseData";
+import { CourseCreationInterface, VideoCheckState } from "@/types/course.types";
 import { EditCourseButton } from "@/components/createCourse/editCourseButton";
 import { isYouTubeVideoAccessible } from "@/lib/youtube.lib";
 import { useCourseDataIfEnrolled } from "@/hooks/useCourseDataIfEnrolled";

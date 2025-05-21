@@ -7,8 +7,14 @@ import {
     useTonWallet,
 } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
-import { Address, Sender, SenderArguments, beginCell, storeStateInit } from "@ton/core";
-import { CustomSender } from "@/types/tonTypes";
+import {
+    Address,
+    Sender,
+    SenderArguments,
+    beginCell,
+    storeStateInit,
+} from "@ton/core";
+import { CustomSender } from "@/types/ton.types";
 
 export const CHAINNET = {
     MAINNET: -239,
@@ -43,7 +49,9 @@ export function useTonConnect(): {
 
     return {
         customSender: {
-            send: async (args: SenderArguments): Promise<SendTransactionResponse | null> => {
+            send: async (
+                args: SenderArguments
+            ): Promise<SendTransactionResponse | null> => {
                 return await tonConnectUI.sendTransaction({
                     messages: [
                         {

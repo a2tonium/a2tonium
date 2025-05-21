@@ -9,7 +9,7 @@ import { StepTwo } from "@/pages/teach/createCourse/stepTwo";
 import { StepThree } from "@/pages/teach/createCourse/stepThree";
 import { StepFour } from "@/pages/teach/createCourse/stepFour";
 import { StepFive } from "@/pages/teach/createCourse/stepFive";
-import { CourseCreationInterface, VideoCheckState } from "@/types/courseData";
+import { CourseCreationInterface, VideoCheckState } from "@/types/course.types";
 import { CreateCourseButton } from "@/components/createCourse/createCourseButton";
 import { isYouTubeVideoAccessible } from "@/lib/youtube.lib";
 import { ErrorPage } from "@/pages/error/error";
@@ -26,8 +26,6 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
     const [isDirty, setIsDirty] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
     const [showDialog, setShowDialog] = useState(false);
-
-    
 
     const totalSteps = 5;
 
@@ -200,7 +198,7 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
         );
     }
 
-    if ((!isProfileLoading && ready) && (profileError || !profileData)) {
+    if (!isProfileLoading && ready && (profileError || !profileData)) {
         return (
             <ErrorPage
                 first={"Profile Not Found"}

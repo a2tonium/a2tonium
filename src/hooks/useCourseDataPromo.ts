@@ -1,9 +1,9 @@
 import useSWR from "swr";
 import { useProfileContract } from "@/hooks/useProfileContract";
-import { CoursePromoInterface } from "@/types/courseData";
+import { CoursePromoInterface } from "@/types/course.types";
 import { fetchCoursePromo } from "@/services/course.service";
 import { fetchProfileData } from "@/services/profile.service";
-import { ProfileDataInterface } from "@/types/profileData";
+import { ProfileDataInterface } from "@/types/profile.types";
 
 interface CoursePromoWithProfile {
     course: CoursePromoInterface | null;
@@ -21,7 +21,10 @@ export function useCourseDataPromo(contractAddress?: string) {
         let profile: ProfileDataInterface | undefined = undefined;
 
         if (ready && course?.ownerAddress) {
-            console.log("Fetching profile data for owner address:", course.ownerAddress);
+            console.log(
+                "Fetching profile data for owner address:",
+                course.ownerAddress
+            );
             profile = await fetchProfileData(course.ownerAddress);
         }
 

@@ -1,6 +1,6 @@
 import { useTonClient } from "@/hooks/useTonClient";
 import { Address, OpenedContract, Sender, toNano } from "@ton/core";
-import { encodeOffChainContent } from "@/utils/encodeOffChainContent.utils";
+import { encodeOffChainContent } from "@/utils/toncrypt.utils";
 import { useEffect, useState } from "react";
 import { ProfileFactory } from "@/wrappers/profileFactory";
 import { Profile } from "@/wrappers/profile";
@@ -68,7 +68,6 @@ export function useProfileContract() {
     //     console.log("data", data);
     //     return data;
     // };
-    
 
     const updateProfileContract = async (
         sender: Sender,
@@ -86,11 +85,7 @@ export function useProfileContract() {
         const profileAddr = await getProfileAddress(sender.address!.toString());
         console.log("profileAddr", profileAddr);
         const profile = client?.open(
-            Profile.fromAddress(
-                Address.parse(
-                    profileAddr!
-                )
-            )
+            Profile.fromAddress(Address.parse(profileAddr!))
         ) as OpenedContract<Profile>;
 
         if (!profileFactory || !profile) {
@@ -103,13 +98,13 @@ export function useProfileContract() {
                 value: toNano("0.03"),
             },
             {
-            $$type: 'Transfer',
-            query_id: 0n,
-            new_owner: null,
-            response_destination: null,
-            custom_payload: PROFILE_CONTENT,
-            forward_amount: null,
-            forward_payload: null,
+                $$type: "Transfer",
+                query_id: 0n,
+                new_owner: null,
+                response_destination: null,
+                custom_payload: PROFILE_CONTENT,
+                forward_amount: null,
+                forward_payload: null,
             }
         );
     };

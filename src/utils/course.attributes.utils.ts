@@ -1,8 +1,9 @@
-import { CourseAttribute } from "@/types/courseData";
+import { CourseAttribute } from "@/types/course.types";
 
-
-
-export function getAttribute(attributes: CourseAttribute | undefined, key: string): string {
+export function getAttribute(
+    attributes: CourseAttribute | undefined,
+    key: string
+): string {
     if (Array.isArray(attributes)) {
         const found = attributes.find(
             (attr) => attr.trait_type.toLowerCase() === key.toLowerCase()

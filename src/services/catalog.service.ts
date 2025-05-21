@@ -1,10 +1,11 @@
-import { CatalogCourseInterface } from "@/types/courseData";
+import { CatalogCourseInterface } from "@/types/course.types";
 
 const mockData: CatalogCourseInterface[] = [
     {
-        courseAddress: "0:c4e8e20e802afd8b1fd347ad0c63662ab7dae4ef53ca7380a5ab5280b7464d98",
+        courseAddress:
+            "0:c4e8e20e802afd8b1fd347ad0c63662ab7dae4ef53ca7380a5ab5280b7464d98",
         authorAddress: "0QA8-SVqn4H2dew-CzMrfzpqg2ReIQSYCFxkzpr4ZnwcunaS",
-        title: 'Изучаем Arduino',
+        title: "Изучаем Arduino",
         author: "Кантемир Курашинов",
         price: 15,
         duration: 50,
@@ -14,11 +15,12 @@ const mockData: CatalogCourseInterface[] = [
         difficulty: "Intermediate",
         categories: ["programming"],
         date: "2024-11-15",
-      },
-      {
-        courseAddress: "0:c4e8e20e802afd8b1fd347ad0c63662ab7dae4ef53ca7380a5ab5280b7464d98",
+    },
+    {
+        courseAddress:
+            "0:c4e8e20e802afd8b1fd347ad0c63662ab7dae4ef53ca7380a5ab5280b7464d98",
         authorAddress: "0QA8-SVqn4H2dew-CzMrfzpqg2ReIQSYCFxkzpr4ZnwcunaS",
-        title: 'ЕГЭ по математике 2025: годовой курс',
+        title: "ЕГЭ по математике 2025: годовой курс",
         author: "Тимур Гуев",
         price: 10,
         duration: 25,
@@ -28,11 +30,12 @@ const mockData: CatalogCourseInterface[] = [
         difficulty: "Beginner",
         categories: ["graphic-design", "arts-design"],
         date: "2024-10-10",
-      },
-      {
-        courseAddress: "0:c4e8e20e802afd8b1fd347ad0c63662ab7dae4ef53ca7380a5ab5280b7464d98",
+    },
+    {
+        courseAddress:
+            "0:c4e8e20e802afd8b1fd347ad0c63662ab7dae4ef53ca7380a5ab5280b7464d98",
         authorAddress: "0QA8-SVqn4H2dew-CzMrfzpqg2ReIQSYCFxkzpr4ZnwcunaS",
-        title: 'Продвинутый SQL',
+        title: "Продвинутый SQL",
         author: "Shultais Education",
         price: 17,
         duration: 18,
@@ -42,11 +45,12 @@ const mockData: CatalogCourseInterface[] = [
         difficulty: "Beginner",
         categories: ["finance", "personal-development"],
         date: "2024-09-22",
-      },
-      {
-        courseAddress: "0:c4e8e20e802afd8b1fd347ad0c63662ab7dae4ef53ca7380a5ab5280b7464d98",
+    },
+    {
+        courseAddress:
+            "0:c4e8e20e802afd8b1fd347ad0c63662ab7dae4ef53ca7380a5ab5280b7464d98",
         authorAddress: "0QA8-SVqn4H2dew-CzMrfzpqg2ReIQSYCFxkzpr4ZnwcunaS",
-        title: 'Академия продаж. Менеджер по продажам',
+        title: "Академия продаж. Менеджер по продажам",
         author: "Сергей Шинкарский",
         price: 40,
         duration: 60,
@@ -56,11 +60,12 @@ const mockData: CatalogCourseInterface[] = [
         difficulty: "Beginner",
         categories: ["ai", "computer-science"],
         date: "2025-01-03",
-      },
-      {
-        courseAddress: "0:c4e8e20e802afd8b1fd347ad0c63662ab7dae4ef53ca7380a5ab5280b7464d98",
+    },
+    {
+        courseAddress:
+            "0:c4e8e20e802afd8b1fd347ad0c63662ab7dae4ef53ca7380a5ab5280b7464d98",
         authorAddress: "0QA8-SVqn4H2dew-CzMrfzpqg2ReIQSYCFxkzpr4ZnwcunaS",
-        title: 'PRO Go. Алгоритмы и структуры данных',
+        title: "PRO Go. Алгоритмы и структуры данных",
         author: "PRO Go",
         price: 29,
         duration: 35,
@@ -70,11 +75,12 @@ const mockData: CatalogCourseInterface[] = [
         difficulty: "Intermediate",
         categories: ["project-mgmt", "business"],
         date: "2024-12-18",
-      },
-      {
-        courseAddress: "0:c4e8e20e802afd8b1fd347ad0c63662ab7dae4ef53ca7380a5ab5280b7464d98",
+    },
+    {
+        courseAddress:
+            "0:c4e8e20e802afd8b1fd347ad0c63662ab7dae4ef53ca7380a5ab5280b7464d98",
         authorAddress: "0QA8-SVqn4H2dew-CzMrfzpqg2ReIQSYCFxkzpr4ZnwcunaS",
-        title: 'Microservices - паттерны и практика построения микросервисов',
+        title: "Microservices - паттерны и практика построения микросервисов",
         author: "Антон Ларичев",
         price: 32,
         duration: 42,
@@ -84,11 +90,12 @@ const mockData: CatalogCourseInterface[] = [
         difficulty: "Expert",
         categories: ["programming", "technology"],
         date: "2025-01-20",
-      },
-      {
-        courseAddress: "0:c4e8e20e802afd8b1fd347ad0c63662ab7dae4ef53ca7380a5ab5280b7464d98",
+    },
+    {
+        courseAddress:
+            "0:c4e8e20e802afd8b1fd347ad0c63662ab7dae4ef53ca7380a5ab5280b7464d98",
         authorAddress: "0QA8-SVqn4H2dew-CzMrfzpqg2ReIQSYCFxkzpr4ZnwcunaS",
-        title: 'Разработка приложений с Flutter и Dart для IOS и Android',
+        title: "Разработка приложений с Flutter и Dart для IOS и Android",
         author: "TechTutors Team",
         price: 20,
         duration: 20,
@@ -98,11 +105,12 @@ const mockData: CatalogCourseInterface[] = [
         difficulty: "Beginner",
         categories: ["history", "academic-subjects", "databases"],
         date: "2024-11-01",
-      },
-      {
-        courseAddress: "0:c4e8e20e802afd8b1fd347ad0c63662ab7dae4ef53ca7380a5ab5280b7464d98",
+    },
+    {
+        courseAddress:
+            "0:c4e8e20e802afd8b1fd347ad0c63662ab7dae4ef53ca7380a5ab5280b7464d98",
         authorAddress: "0QA8-SVqn4H2dew-CzMrfzpqg2ReIQSYCFxkzpr4ZnwcunaS",
-        title: 'Командная строка Linux',
+        title: "Командная строка Linux",
         author: "Fedor Ivanov",
         price: 22,
         duration: 30,
@@ -112,7 +120,7 @@ const mockData: CatalogCourseInterface[] = [
         difficulty: "Intermediate",
         categories: ["databases", "programming"],
         date: "2024-12-05",
-      },
+    },
     //   {
     //     courseAddress: "0:c4e8e20e802afd8b1fd347ad0c63662ab7dae4ef53ca7380a5ab5280b7464d98",
     //     authorAddress: "0QA8-SVqn4H2dew-CzMrfzpqg2ReIQSYCFxkzpr4ZnwcunaS",
@@ -141,7 +149,7 @@ const mockData: CatalogCourseInterface[] = [
     //     categories: ["math", "computer-science"],
     //     date: "2025-02-01",
     //   },
-    
+
     //   // 10 more, similar structure:
     //   {
     //     courseAddress: "0:c4e8e20e802afd8b1fd347ad0c63662ab7dae4ef53ca7380a5ab5280b7464d98",

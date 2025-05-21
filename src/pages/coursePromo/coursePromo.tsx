@@ -14,7 +14,7 @@ import { useCourseDataPromo } from "@/hooks/useCourseDataPromo";
 import { StatBadge } from "@/components/coursePromo/statBadge";
 import { useCategoryNames } from "@/hooks/useCategoryNames";
 import { LessonVideo } from "@/components/lessonVideo/lessonVideo";
-import { getAttribute } from "@/utils/courseAttributes";
+import { getAttribute } from "@/utils/course.attributes.utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
 
@@ -63,8 +63,8 @@ export function CoursePromo() {
                     <img
                         className="absolute top-1/2 left-1/2 w-full h-full object-cover transform -translate-x-1/2 -translate-y-1/2 scale-125 blur-[10px]"
                         src={`https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${course.image.substring(
-                                7
-                            )}`}
+                            7
+                        )}`}
                         alt="Course Background"
                     />
                 )}

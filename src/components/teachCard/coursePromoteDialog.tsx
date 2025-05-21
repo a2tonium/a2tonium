@@ -7,8 +7,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { getAttribute } from "@/utils/courseAttributes";
-import { CourseDeployedInterface } from "@/types/courseData";
+import { getAttribute } from "@/utils/course.attributes.utils";
+import { CourseDeployedInterface } from "@/types/course.types";
 import { useToast } from "@/hooks/use-toast";
 import { promoteCourse } from "@/services/course.service";
 import { useCourseContract } from "@/hooks/useCourseContract";

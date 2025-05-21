@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { X, CirclePlus } from "lucide-react";
-import { CourseCreationInterface } from "@/types/courseData";
+import { CourseCreationInterface } from "@/types/course.types";
 
 // ============= 1) Zod-схема для вопросов квиза ============
 const singleQuizSchema = z.object({
@@ -37,7 +37,9 @@ const stepThreeSchema = z.object({
 
 interface StepThreeProps {
     courseData: CourseCreationInterface;
-    setCourseData: React.Dispatch<React.SetStateAction<CourseCreationInterface>>;
+    setCourseData: React.Dispatch<
+        React.SetStateAction<CourseCreationInterface>
+    >;
     setValidationStatus: React.Dispatch<
         React.SetStateAction<{
             stepOne: boolean;

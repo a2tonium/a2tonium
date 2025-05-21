@@ -8,10 +8,10 @@ import {
     NFTResponse,
     QuizAnswers,
     RETRY_DELAY,
-} from "@/types/courseData";
+} from "@/types/course.types";
 import { Certificate } from "@/wrappers/certificate";
 import { Course } from "@/wrappers/course";
-import { EventsResponse } from "../types/tonTypes";
+import { EventsResponse } from "../types/ton.types";
 
 export async function getCourseData(contractAddress: string): Promise<{
     collectionContent: string;

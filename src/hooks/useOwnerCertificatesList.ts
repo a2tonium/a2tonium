@@ -1,6 +1,6 @@
 import useSWR from "swr";
 import { listCertificates } from "@/services/certificate.service";
-import { CertificateInterface } from "@/types/courseData";
+import { CertificateInterface } from "@/types/course.types";
 
 export function useOwnerCertificateList(certificateAddr?: string) {
     const fetcher = async (): Promise<CertificateInterface[]> => {

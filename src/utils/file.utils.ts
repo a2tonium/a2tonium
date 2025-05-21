@@ -2,7 +2,7 @@ import {
     CourseAttributesInterface,
     CourseCreationInterface,
     CourseDeployedInterface,
-} from "@/types/courseData";
+} from "@/types/course.types";
 
 export function base64ToFile(base64: string, filename: string): File {
     let mime = "image/png";
@@ -31,7 +31,7 @@ export function base64ToFile(base64: string, filename: string): File {
 }
 
 export const base64ToUint8Array = (base64: string): Uint8Array =>
-    Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+    Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
 
 export function formatFilename(courseName: string): string {
     return courseName
@@ -44,7 +44,9 @@ export function formatFilename(courseName: string): string {
 export async function getBase64FromImageURL(imageUrl: string): Promise<string> {
     let url = imageUrl;
     if (imageUrl.startsWith("ipfs://")) {
-        url = `https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${imageUrl.slice(7)}`;
+        url = `https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${imageUrl.slice(
+            7
+        )}`;
     }
     const response = await fetch(url);
     const blob = await response.blob();
@@ -128,7 +130,8 @@ export const reformatToCourseCreation = async (
                     : [];
                 break;
             case "Lessons":
-                acc.lessons = typeof value === "number" ? value : parseInt(value);
+                acc.lessons =
+                    typeof value === "number" ? value : parseInt(value);
                 break;
             case "Language":
                 acc.language = String(value);
@@ -171,7 +174,10 @@ export const reformatToCourseCreation = async (
         courseCompletion: [
             {
                 ...courseCompletion[0],
-                certificate: (await getBase64FromImageURL(courseCompletion[0]?.certificate)) || "",
+                certificate:
+                    (await getBase64FromImageURL(
+                        courseCompletion[0]?.certificate
+                    )) || "",
             },
         ],
         attributes: parsedAttributes,
@@ -184,7 +190,7 @@ export const reformatToCourseCreation = async (
                 videoId: giveFullYoutubeLink(lesson.videoId),
             })),
             quiz: {
-                correct_answers:  "",
+                correct_answers: "",
                 questions: module.quiz.questions,
             },
         })),

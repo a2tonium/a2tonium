@@ -2,11 +2,11 @@ import { extractYoutubeVideoId } from "@/utils/youtube.utils";
 import {
     createPinataInstance,
     findPinataGateway,
-} from "@/lib/pinata/pinataClient.lib";
+} from "@/lib/pinata/pinata.client.lib";
 import {
     uploadCourseDataToPinata,
     uploadImagesToPinata,
-} from "@/lib/pinata/pinataUploader.lib";
+} from "@/lib/pinata/pinata.uploader.lib";
 import {
     CourseCreationInterface,
     CourseDeployedInterface,
@@ -16,9 +16,9 @@ import {
     OwnerCoursePreview,
     QuizAnswers,
     RETRY_DELAY,
-} from "@/types/courseData";
+} from "@/types/course.types";
 import { encryptCourseAnswers } from "@/utils/crypt.utils";
-import { CustomSender } from "@/types/tonTypes";
+import { CustomSender } from "@/types/ton.types";
 import { SendTransactionResponse } from "@tonconnect/ui-react";
 import { Address, Sender } from "@ton/core";
 import {
@@ -157,8 +157,14 @@ export async function fetchCourseIfEnrolled(
     ownedCourses: string[]
 ): Promise<{ data: CourseDeployedInterface; cost: string }> {
     const enrolledCourses = await getEnrolledCourseAddresses(userAddress);
-    console.log("owned: ",ownedCourses.includes(Address.parse(contractAddress).toString()))
-    console.log("enrolled: ",enrolledCourses.includes(Address.parse(contractAddress).toString()))
+    console.log(
+        "owned: ",
+        ownedCourses.includes(Address.parse(contractAddress).toString())
+    );
+    console.log(
+        "enrolled: ",
+        enrolledCourses.includes(Address.parse(contractAddress).toString())
+    );
     if (
         !ownedCourses.includes(Address.parse(contractAddress).toString()) &&
         !enrolledCourses.includes(Address.parse(contractAddress).toString())
@@ -169,7 +175,7 @@ export async function fetchCourseIfEnrolled(
         throw new Error("Access denied");
     }
     const { collectionContent, cost } = await getCourseData(contractAddress);
-    
+
     const data = await fetch(collectionContent).then((res) => res.json());
 
     return { data, cost };
@@ -179,10 +185,20 @@ export async function fetchCourseIfEnrolledWithGrades(
     userAddress: string,
     contractAddress: string,
     ownedCourses: string[]
-): Promise<{ data: CourseDeployedInterface; cost: string; grades: QuizAnswers[] }> {
+): Promise<{
+    data: CourseDeployedInterface;
+    cost: string;
+    grades: QuizAnswers[];
+}> {
     const enrolledCourses = await getEnrolledCourseAddresses(userAddress);
-    console.log("owned: ",ownedCourses.includes(Address.parse(contractAddress).toString()))
-    console.log("enrolled: ",enrolledCourses.includes(Address.parse(contractAddress).toString()))
+    console.log(
+        "owned: ",
+        ownedCourses.includes(Address.parse(contractAddress).toString())
+    );
+    console.log(
+        "enrolled: ",
+        enrolledCourses.includes(Address.parse(contractAddress).toString())
+    );
     if (
         !ownedCourses.includes(Address.parse(contractAddress).toString()) &&
         !enrolledCourses.includes(Address.parse(contractAddress).toString())
@@ -192,10 +208,16 @@ export async function fetchCourseIfEnrolledWithGrades(
         );
         throw new Error("Access denied");
     }
-    const { collectionContent, cost, ownerAddress } = await getCourseData(contractAddress);
+    const { collectionContent, cost, ownerAddress } = await getCourseData(
+        contractAddress
+    );
 
     const data = await fetch(collectionContent).then((res) => res.json());
-    const grades = await getQuizGrades(userAddress, contractAddress, ownerAddress);
+    const grades = await getQuizGrades(
+        userAddress,
+        contractAddress,
+        ownerAddress
+    );
     console.log("grades", grades);
     return { data, cost, grades };
 }
@@ -219,7 +241,7 @@ export async function listEnrolledCourses(
     userAddress: string
 ): Promise<EnrolledCoursePreview[]> {
     const courseAddrs = await getEnrolledCourseAddresses(userAddress);
-    
+
     if (!courseAddrs || courseAddrs.length === 0) {
         return [];
     }
@@ -448,17 +470,19 @@ export async function sendAnswersToQuiz(
     }
     const nftAddress = Address.parse(matchedNFT.address).toString();
     console.log("NFT Address:", nftAddress);
-    const {encryptedMessage, senderPublicKey} = await encryptCourseAnswers(
+    const { encryptedMessage, senderPublicKey } = await encryptCourseAnswers(
         answers,
         ownerPublicKey
     );
-    await answerQuiz(nftAddress, BigInt(quizId!), encryptedMessage, senderPublicKey);
-
+    await answerQuiz(
+        nftAddress,
+        BigInt(quizId!),
+        encryptedMessage,
+        senderPublicKey
+    );
 
     console.log("Student is enrolled in:", matchedNFT);
-
 }
-
 
 export async function issueCertificateService(
     courseAddress: string,

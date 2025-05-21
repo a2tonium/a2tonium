@@ -1,6 +1,6 @@
 import useSWR from "swr";
 import { useProfileContract } from "@/hooks/useProfileContract";
-import { ProfileDataInterface } from "@/types/profileData";
+import { ProfileDataInterface } from "@/types/profile.types";
 import { fetchProfileData } from "@/services/profile.service";
 
 export function useProfileData(walletAddr: string) {

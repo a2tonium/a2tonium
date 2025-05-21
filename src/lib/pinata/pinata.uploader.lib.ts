@@ -1,12 +1,12 @@
 import { PinataSDK } from "pinata";
-import { CourseDeployedInterface } from "@/types/courseData";
+import { CourseDeployedInterface } from "@/types/course.types";
 import {
     base64ToFile,
     formatFilename,
     getBase64FromImageURL,
     isBase64,
 } from "@/utils/file.utils";
-import { ProfileDataInterface } from "@/types/profileData";
+import { ProfileDataInterface } from "@/types/profile.types";
 
 export async function uploadImageToPinata(
     type: string,

@@ -6,7 +6,7 @@ import {
     ProfileDataInterface,
     ProfileWithWalletDataInterface,
     WalletDataInterface,
-} from "@/types/profileData";
+} from "@/types/profile.types";
 import { CreateProfileDialog } from "@/components/profile/createProfileDialog";
 import { Button } from "@/components/ui/button";
 import { SocialLinksGroup } from "@/components/profile/socialLinksGroup";
@@ -20,7 +20,11 @@ interface ProfileTableProps {
     isOwnerAddress: boolean;
 }
 
-export function ProfileTable({ walletData, profileData, isOwnerAddress }: ProfileTableProps) {
+export function ProfileTable({
+    walletData,
+    profileData,
+    isOwnerAddress,
+}: ProfileTableProps) {
     const isMobile = useIsMobile();
     const [copied, setCopied] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
@@ -117,34 +121,36 @@ export function ProfileTable({ walletData, profileData, isOwnerAddress }: Profil
                         <div className="w-full flex md:justify-end">
                             <Avatar className="w-[150px] h-[150px] rounded-2xl">
                                 <img
-                                    src={`https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${userData.image.substring(7)}`}
+                                    src={`https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${userData.image.substring(
+                                        7
+                                    )}`}
                                     alt="Profile avatar"
                                     className="w-full h-full object-cover rounded-2xl"
                                 />
                             </Avatar>
                         </div>
                         {isOwnerAddress && (
-                        /* Edit Profile Button */
-                        <div>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => setOpenDialog(true)}
-                                className="w-[150px] p-2.5 mt-2 gap-1.5 flex items-center border-goluboy text-goluboy 
+                            /* Edit Profile Button */
+                            <div>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => setOpenDialog(true)}
+                                    className="w-[150px] p-2.5 mt-2 gap-1.5 flex items-center border-goluboy text-goluboy 
                                 hover:border-blue-500 hover:text-blue-500 transition-colors duration-200 rounded-2xl"
-                            >
-                                <span className="m-0 p-0 font-semibold text-xs sm:text-sm flex items-center gap-2">
-                                    <span>{"Edit Profile"}</span>
-                                    <User className="w-4 h-4" />
-                                </span>
-                            </Button>
+                                >
+                                    <span className="m-0 p-0 font-semibold text-xs sm:text-sm flex items-center gap-2">
+                                        <span>{"Edit Profile"}</span>
+                                        <User className="w-4 h-4" />
+                                    </span>
+                                </Button>
 
-                            <EditProfileDialog
-                                open={openDialog}
-                                onOpenChange={setOpenDialog}
-                                initialData={userData}
-                            />
-                        </div>
+                                <EditProfileDialog
+                                    open={openDialog}
+                                    onOpenChange={setOpenDialog}
+                                    initialData={userData}
+                                />
+                            </div>
                         )}
                     </div>
                 )}

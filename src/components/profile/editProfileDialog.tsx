@@ -20,9 +20,9 @@ import {
 } from "@/components/profile/selectSocialLinks";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
-import { checkPinataConnection } from "@/lib/pinata/pinataClient.lib";
+import { checkPinataConnection } from "@/lib/pinata/pinata.client.lib";
 import { updateProfile } from "@/services/profile.service";
-import { ProfileWithWalletDataInterface } from "@/types/profileData";
+import { ProfileWithWalletDataInterface } from "@/types/profile.types";
 import { useProfileContract } from "@/hooks/useProfileContract";
 import { useTonConnect } from "@/hooks/useTonConnect";
 
@@ -79,7 +79,7 @@ export function EditProfileDialog({
 }: EditProfileDialogProps) {
     const { toast } = useToast();
     const { updateProfileContract } = useProfileContract();
-    const {sender} = useTonConnect();
+    const { sender } = useTonConnect();
     const [form, setForm] = useState({
         image: initialData.image || "",
         name: initialData.name || "",
@@ -131,7 +131,6 @@ export function EditProfileDialog({
         }
 
         try {
-
             await updateProfile(sender, form, updateProfileContract);
             setUpdated(true);
             setTimeout(() => {
@@ -144,7 +143,6 @@ export function EditProfileDialog({
                 description: `Your profile was updated successfully`,
                 className: "bg-green-500 text-white border-none rounded-[2vw]",
             });
-
         } catch (error) {
             console.error("Error updating profile:", error);
             toast({
@@ -172,7 +170,9 @@ export function EditProfileDialog({
                                     form.image.startsWith("data:image")
                                         ? form.image // New image (base64)
                                         : form.image
-                                        ? `https://ipfs.io/ipfs/${form.image.substring(7)}` // Old image (CID)
+                                        ? `https://ipfs.io/ipfs/${form.image.substring(
+                                              7
+                                          )}` // Old image (CID)
                                         : ""
                                 }
                                 onChange={(val) => {

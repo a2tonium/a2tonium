@@ -5,7 +5,7 @@ import { useCatalogCourses } from "@/hooks/useCatalogCourses";
 import { ErrorPage } from "@/pages/error/error";
 import { SortButton } from "@/components/catalog/sortButton";
 import { FilterCourses } from "@/components/catalog/filterCourses";
-import { FilterType } from "@/types/courseData";
+import { FilterType } from "@/types/course.types";
 import { filterAndSortCourses } from "@/utils/catalog.utils";
 
 export function Catalog() {

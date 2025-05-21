@@ -1,7 +1,7 @@
 import React from "react";
 // import { Navigate } from "react-router-dom";
 import { useTonConnect } from "@/hooks/useTonConnect";
-import { MainLayout } from "@/layouts/mainLayout";
+import { MainLayout } from "@/layouts/main.layout";
 import { UserNotAuthorized } from "@/pages/error/userNotAuthorized";
 
 interface ProtectedRouteProps {

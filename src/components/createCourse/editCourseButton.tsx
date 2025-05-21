@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
-import { CourseCreationInterface } from "@/types/courseData";
+import { CourseCreationInterface } from "@/types/course.types";
 import { useToast } from "@/hooks/use-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { editCourse } from "@/services/course.service";
@@ -26,7 +26,7 @@ interface CreateCourseLogicProps {
     coursePrice: string;
     limitedVideos: string[];
     courseAddress: string;
-    ownerPublicKey: string
+    ownerPublicKey: string;
 }
 
 const buySchema = z.object({
@@ -43,7 +43,7 @@ export function EditCourseButton({
     coursePrice,
     limitedVideos,
     courseAddress,
-    ownerPublicKey
+    ownerPublicKey,
 }: CreateCourseLogicProps & {
     open: boolean;
     onOpenChange: (open: boolean) => void;

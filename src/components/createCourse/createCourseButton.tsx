@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
-import { CourseCreationInterface } from "@/types/courseData";
+import { CourseCreationInterface } from "@/types/course.types";
 import { useToast } from "@/hooks/use-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { createCourse } from "@/services/course.service";
@@ -25,7 +25,7 @@ interface CreateCourseLogicProps {
     jwt: string | null;
     coursePrice: string;
     limitedVideos: string[];
-    ownerPublicKey: string
+    ownerPublicKey: string;
 }
 
 const buySchema = z.object({
@@ -41,7 +41,7 @@ export function CreateCourseButton({
     jwt,
     coursePrice,
     limitedVideos,
-    ownerPublicKey
+    ownerPublicKey,
 }: CreateCourseLogicProps & {
     open: boolean;
     onOpenChange: (open: boolean) => void;
@@ -51,7 +51,7 @@ export function CreateCourseButton({
     const { toast } = useToast();
 
     const navigate = useNavigate();
-    
+
     const [accepted, setAccepted] = useState(false);
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -72,8 +72,16 @@ export function CreateCourseButton({
         setIsSuccess(false);
 
         try {
-            const txResult = await createCourse(course, jwt ?? "", ownerPublicKey,publicKey, customSender, coursePrice, createCourseContract, limitedVideos);
-
+            const txResult = await createCourse(
+                course,
+                jwt ?? "",
+                ownerPublicKey,
+                publicKey,
+                customSender,
+                coursePrice,
+                createCourseContract,
+                limitedVideos
+            );
 
             if (txResult?.boc) {
                 setIsSuccess(true);

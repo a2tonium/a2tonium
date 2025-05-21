@@ -7,7 +7,7 @@ import {
     AccordionTrigger,
     AccordionContent,
 } from "@/components/ui/accordion";
-import { CourseCreationInterface } from "@/types/courseData";
+import { CourseCreationInterface } from "@/types/course.types";
 import { StatBadge } from "@/components/coursePromo/statBadge";
 import { useCategoryNamesSample } from "@/hooks/useCategoryNames";
 import { LessonVideo } from "@/components/lessonVideo/lessonVideo";

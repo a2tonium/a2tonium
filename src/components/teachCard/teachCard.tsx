@@ -9,7 +9,7 @@ import {
 import { EllipsisVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { CourseDeployedInterface } from "@/types/courseData";
+import { CourseDeployedInterface } from "@/types/course.types";
 import { CoursePromoteDialog } from "@/components/teachCard/coursePromoteDialog";
 import { CourseWithdrawDialog } from "@/components/teachCard/courseWithdrawDialog";
 

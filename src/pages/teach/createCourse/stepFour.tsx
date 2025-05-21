@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
-import { CourseCreationInterface } from "@/types/courseData";
+import { CourseCreationInterface } from "@/types/course.types";
 import { ImageDropzone } from "@/components/createCourse/imageDropzone";
 import { PriceInput } from "@/components/createCourse/priceInput";
 
 interface StepFourProps {
     courseData: CourseCreationInterface;
-    setCourseData: React.Dispatch<React.SetStateAction<CourseCreationInterface>>;
+    setCourseData: React.Dispatch<
+        React.SetStateAction<CourseCreationInterface>
+    >;
     setValidationStatus: React.Dispatch<
         React.SetStateAction<{
             stepOne: boolean;
@@ -67,7 +69,6 @@ export function StepFour({
 
         validate();
     }, [coursePrice, courseData, setValidationStatus]);
-
 
     return (
         <div className="space-y-6">

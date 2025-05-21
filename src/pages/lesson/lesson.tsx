@@ -5,7 +5,7 @@ import { LessonVideo } from "@/components/lessonVideo/lessonVideo";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ModuleInterfaceNew, LessonInterface } from "@/types/courseData";
+import { ModuleInterfaceNew, LessonInterface } from "@/types/course.types";
 import { LessonSkeleton } from "@/components/lesson/lessonSkeleton";
 import { ErrorPage } from "@/pages/error/error";
 import { useCourseDataIfEnrolled } from "@/hooks/useCourseDataIfEnrolled";

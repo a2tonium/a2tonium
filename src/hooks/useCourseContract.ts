@@ -10,8 +10,8 @@ import {
     Sender,
     toNano,
 } from "@ton/core";
-import { encodeOffChainContent } from "@/utils/encodeOffChainContent.utils";
-import { CustomSender } from "@/types/tonTypes";
+import { encodeOffChainContent } from "@/utils/toncrypt.utils";
+import { CustomSender } from "@/types/ton.types";
 import { SendTransactionResponse } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
 import { Certificate } from "../wrappers/certificate";
@@ -294,7 +294,9 @@ export function useCourseContract() {
     const getAddressBalance = async (address: string): Promise<string> => {
         try {
             const response = await fetch(
-                `https://testnet.tonapi.io/v2/accounts/${Address.parse(address).toRawString()}`
+                `https://testnet.tonapi.io/v2/accounts/${Address.parse(
+                    address
+                ).toRawString()}`
             );
             console.log("addres", Address.parse(address).toRawString());
             if (!response.ok)

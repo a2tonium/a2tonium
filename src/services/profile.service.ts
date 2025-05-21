@@ -1,18 +1,15 @@
 import {
     createPinataInstance,
     findPinataGateway,
-} from "@/lib/pinata/pinataClient.lib";
+} from "@/lib/pinata/pinata.client.lib";
 import {
     uploadImageToPinata,
     uploadProfileDataToPinata,
-} from "@/lib/pinata/pinataUploader.lib";
+} from "@/lib/pinata/pinata.uploader.lib";
 
-import { ProfileDataInterface } from "@/types/profileData";
+import { ProfileDataInterface } from "@/types/profile.types";
 import { Sender } from "@ton/core";
-import {
-    getProfileData,
-    getTonWalletData,
-} from "@/lib/ton.lib";
+import { getProfileData, getTonWalletData } from "@/lib/ton.lib";
 
 export async function createProfile(
     sender: Sender,

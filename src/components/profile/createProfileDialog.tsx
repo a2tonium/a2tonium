@@ -20,9 +20,9 @@ import {
 } from "@/components/profile/selectSocialLinks";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
-import { checkPinataConnection } from "@/lib/pinata/pinataClient.lib";
+import { checkPinataConnection } from "@/lib/pinata/pinata.client.lib";
 import { createProfile } from "@/services/profile.service";
-import { ProfileDataInterface } from "@/types/profileData";
+import { ProfileDataInterface } from "@/types/profile.types";
 import { useProfileContract } from "@/hooks/useProfileContract";
 import { useTonConnect } from "@/hooks/useTonConnect";
 

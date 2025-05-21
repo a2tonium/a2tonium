@@ -10,13 +10,15 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { CourseCreationInterface } from "@/types/courseData";
+import { CourseCreationInterface } from "@/types/course.types";
 import { CategorySelect } from "@/components/createCourse/categorySelect";
 import { ImageDropzone } from "@/components/createCourse/imageDropzone";
 
 interface StepOneProps {
     courseData: CourseCreationInterface;
-    setCourseData: React.Dispatch<React.SetStateAction<CourseCreationInterface>>;
+    setCourseData: React.Dispatch<
+        React.SetStateAction<CourseCreationInterface>
+    >;
     setValidationStatus: React.Dispatch<
         React.SetStateAction<{
             stepOne: boolean;
@@ -102,7 +104,6 @@ export function StepOne({
                 if (!promoVideoValid) {
                     errorMessages.video =
                         "Promo video URL must be a valid YouTube link";
-
                 }
 
                 setErrors(errorMessages);

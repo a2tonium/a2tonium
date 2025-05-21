@@ -3,8 +3,11 @@ import { useProfileContract } from "@/hooks/useProfileContract";
 import { getCertificate } from "@/services/certificate.service";
 import { fetchCoursePromo } from "@/services/course.service";
 import { fetchProfileData } from "@/services/profile.service";
-import { CertificateCompletionInterface, CoursePromoInterface } from "@/types/courseData";
-import { ProfileDataInterface } from "@/types/profileData";
+import {
+    CertificateCompletionInterface,
+    CoursePromoInterface,
+} from "@/types/course.types";
+import { ProfileDataInterface } from "@/types/profile.types";
 
 interface CertificateDataBundle {
     certificate: CertificateCompletionInterface | null;
@@ -16,7 +19,8 @@ export function useCertificateData(certificateAddr?: string) {
     const { ready } = useProfileContract();
 
     const fetcher = async (): Promise<CertificateDataBundle> => {
-        if (!certificateAddr) return { certificate: null, course: null, profile: undefined };
+        if (!certificateAddr)
+            return { certificate: null, course: null, profile: undefined };
 
         const certificate = await getCertificate(certificateAddr);
 
