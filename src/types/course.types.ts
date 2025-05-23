@@ -1,5 +1,5 @@
 export const MAX_FAILURES = 10;
-export const RETRY_DELAY = 2000;
+export const RETRY_DELAY = 3000;
 
 export interface QuestionInterface {
     id: string;

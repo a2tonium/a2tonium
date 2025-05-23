@@ -13,6 +13,7 @@ import { SocialLinksGroup } from "@/components/profile/socialLinksGroup";
 import { Avatar } from "@/components/ui/avatar";
 import { EditProfileDialog } from "@/components/profile/editProfileDialog";
 import { useTranslation } from "react-i18next";
+import { getLink } from "@/utils/ton.utils";
 
 interface ProfileTableProps {
     isProfile?: boolean;
@@ -119,9 +120,7 @@ export function ProfileTable({
                         <div className="w-full flex md:justify-end">
                             <Avatar className="w-[150px] h-[150px] rounded-2xl">
                                 <img
-                                    src={`https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${userData.image.substring(
-                                        7
-                                    )}`}
+                                    src={getLink(userData.image)}
                                     alt="Profile avatar"
                                     className="w-full h-full object-cover rounded-2xl"
                                 />
@@ -161,10 +160,10 @@ export function ProfileTable({
                         type="button"
                         variant="outline"
                         onClick={() => setOpenDialog(true)}
-                        className="w-[150px] p-2.5 mt-2 gap-1.5 flex items-center border-goluboy text-goluboy 
+                        className="w-auto p-2.5 mt-2 gap-1.5 flex items-center border-goluboy text-goluboy 
                                 hover:border-blue-500 hover:text-blue-500 transition-colors duration-200 rounded-2xl"
                     >
-                        <span className="m-0 p-0 font-semibold text-xs sm:text-sm flex items-center gap-2">
+                        <span className="mx-2 p-2 font-semibold text-xs sm:text-sm flex items-center gap-2">
                             <span>{t("profileTable.createProfile")}</span>
                             <User className="w-4 h-4" />
                         </span>

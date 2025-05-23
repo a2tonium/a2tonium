@@ -18,6 +18,7 @@ import { getAttribute } from "@/utils/course.attributes.utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
 import { useTranslation } from "react-i18next";
+import { getLink } from "@/utils/ton.utils";
 
 export function CoursePromo() {
     const { t } = useTranslation();
@@ -50,9 +51,7 @@ export function CoursePromo() {
             <div className="relative mx-auto h-[120px] sm:h-[160px] md:h-[200px] w-full sm:w-[96%] rounded-[2vw] overflow-hidden">
                 <img
                     className="absolute top-1/2 left-1/2 w-full h-full object-cover transform -translate-x-1/2 -translate-y-1/2"
-                    src={`https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${(
-                        course.cover_image || course.image
-                    ).substring(7)}`}
+                    src={getLink(course.cover_image || course.image)}
                     alt={t("promo.courseBackgroundAlt")}
                 />
             </div>
@@ -61,9 +60,7 @@ export function CoursePromo() {
                 <div className="flex -mt-[43px] sm:-mt-[52px] md:-mt-[58px] relative flex-col sm:flex-row items-start pl-[15px] sm:pl-[20px] md:pl-[25px] lg:pl-[35px]">
                     <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 bg-white-900 shadow-md rounded-xl overflow-hidden border border-[3px]">
                         <img
-                            src={`https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${course.image.substring(
-                                7
-                            )}`}
+                            src={getLink(course.image)}
                             alt={t("promo.courseImageAlt")}
                             className="w-full h-full object-cover"
                         />
@@ -150,9 +147,7 @@ export function CoursePromo() {
                                         {profileData?.image ? (
                                             <Avatar className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden">
                                                 <img
-                                                    src={`https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${profileData.image.substring(
-                                                        7
-                                                    )}`}
+                                                    src={getLink(profileData.image)}
                                                     alt="Author Avatar"
                                                     className="object-cover w-full h-full"
                                                 />

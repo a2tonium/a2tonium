@@ -34,7 +34,6 @@ export async function getCourseData(contractAddress: string): Promise<{
             const address = data.stack[3].cell;
             const cell = Cell.fromBoc(Buffer.from(address, "hex"))[0];
             const ownerAddress = cell.beginParse().loadAddress().toString();
-            console.log("ownerAddress", ownerAddress);
 
             const cost = fromNano(hexToDecimal(data.stack[4].num));
 
@@ -55,7 +54,6 @@ export async function getCertificateData(certificateAddress: string): Promise<{
     ownerAddress: string;
     collectionAddress: string;
 }> {
-    console.log("certificateAddressAAAAAAAAAAA", certificateAddress);
     const url = `https://testnet.tonapi.io/v2/blockchain/accounts/${Address.parse(
         certificateAddress
     ).toString()}/methods/get_nft_data`;
@@ -63,7 +61,6 @@ export async function getCertificateData(certificateAddress: string): Promise<{
     try {
         const response = await fetch(url);
         const data = await response.json();
-        console.log("dataBBBBBBBBBBBBBBB", data);
         if (data.success) {
             // Extract collection data from the 'decoded' field
             const collectionContent = getLink(
@@ -72,17 +69,11 @@ export async function getCertificateData(certificateAddress: string): Promise<{
             const ownerAddress = Address.parse(
                 data.decoded.owner_address
             ).toString();
-            console.log("ownerAddress", ownerAddress);
 
             const collectionAddress = Address.parse(
                 data.decoded.collection_address
             ).toString();
-            console.log(
-                "ALLL DATA",
-                collectionContent,
-                ownerAddress,
-                collectionAddress
-            );
+
             return { collectionContent, ownerAddress, collectionAddress };
         } else {
             throw new Error(
@@ -107,7 +98,6 @@ export async function getProfileItemsAddresses(): Promise<
         if (!Array.isArray(data.nft_items)) {
             throw new Error("nft_items is not an array");
         }
-        console.log("data.nft_items", data.nft_items);
         return data.nft_items.map(
             (item: { address: string; owner: { address: string } }) => ({
                 address: item.address,
@@ -121,9 +111,7 @@ export async function getProfileItemsAddresses(): Promise<
 }
 
 export async function getProfileData(ownerAddress: string) {
-    console.log("matched");
     const profileAddrs = await getProfileItemsAddresses();
-    console.log("profileAddrs", profileAddrs);
     try {
         const matched = profileAddrs.find(
             (item) =>
@@ -154,9 +142,7 @@ export async function getProfileData(ownerAddress: string) {
 }
 
 export async function getProfileAddress(ownerAddress: string) {
-    console.log("matched");
     const profileAddrs = await getProfileItemsAddresses();
-    console.log("profileAddrs", profileAddrs);
     try {
         const matched = profileAddrs.find(
             (item) =>
@@ -293,14 +279,12 @@ export async function getOwnedCourseAddresses(
             const url = `https://testnet.tonapi.io/v2/blockchain/accounts/${courseContract.address.toString()}/methods/get_course_data`;
 
             const response = await fetch(url);
-            console.log(response.status);
 
             if (response.status === 429) {
                 throw new Error(`Too many requests: ${response.status}`);
             }
 
             const data = await response.json();
-            console.log("data", data);
 
             if (data.success) {
                 ownedCoursesSet.add(
@@ -430,7 +414,6 @@ async function fetchNFTs(walletAddress: string): Promise<NFTItem[]> {
             if (!response.ok)
                 throw new Error(`Failed to fetch NFTs: ${response.status}`);
             const data: NFTResponse = (await response.json()) as NFTResponse;
-            console.log("dataAAAAAAAAAAAAAAAAA", data.nft_items);
             return data.nft_items;
         } catch (error) {
             attempts++;

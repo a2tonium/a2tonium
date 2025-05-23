@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { CourseDeployedInterface } from "@/types/course.types";
 import { CoursePromoteDialog } from "@/components/teachCard/coursePromoteDialog";
 import { CourseWithdrawDialog } from "@/components/teachCard/courseWithdrawDialog";
-import { ipfsToHttp } from "@/utils/ton.utils";
+import { getLink } from "@/utils/ton.utils";
 import { useTranslation } from "react-i18next";
 
 interface TeachCardProps {
@@ -24,7 +24,7 @@ interface TeachCardProps {
 export function TeachCard({ course, courseAddress, cost }: TeachCardProps) {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const image = ipfsToHttp(course.image);
+    const image = getLink(course.image);
     const [isPromoteOpen, setPromoteOpen] = React.useState(false);
     const [isWithdrawOpen, setWithdrawOpen] = React.useState(false);
 

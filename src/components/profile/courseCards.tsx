@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import type { OwnerCoursePreview } from "@/types/course.types";
 import { useTranslation } from "react-i18next";
+import { getLink } from "@/utils/ton.utils";
 
 interface CourseCardsProps {
     courses: OwnerCoursePreview[];
@@ -30,9 +31,7 @@ export function CourseCards({ courses }: CourseCardsProps) {
                         <CardContent className="p-0">
                             <div className="aspect-square w-full overflow-hidden">
                                 <img
-                                    src={`https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${course.course.image.substring(
-                                        7
-                                    )}`}
+                                    src={getLink(course.course.image)}
                                     alt={course.course.name}
                                     className="h-full w-full object-cover transform transition-transform duration-300 ease-in-out hover:scale-105"
                                 />

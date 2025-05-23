@@ -27,7 +27,7 @@ import {
     getEnrolledCourseAddresses,
     getOwnedCourseAddresses,
 } from "@/lib/ton.lib";
-import { ipfsToHttp } from "@/utils/ton.utils";
+import { getLink } from "@/utils/ton.utils";
 import { getQuizGrades } from "./certificate.service";
 
 export async function createCourse(
@@ -263,7 +263,7 @@ export async function listEnrolledCourses(
                 previews.push({
                     courseAddress: Address.parse(addr).toString(),
                     title: course.name,
-                    image: ipfsToHttp(course.image),
+                    image: getLink(course.image),
                 });
 
                 break; // success, break retry loop

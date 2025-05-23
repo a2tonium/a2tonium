@@ -10,6 +10,7 @@ import {
 import { ProfileDataInterface } from "@/types/profile.types";
 import { Sender } from "@ton/core";
 import { getProfileData, getTonWalletData } from "@/lib/ton.lib";
+import { getLink } from "@/utils/ton.utils";
 
 export async function createProfile(
     sender: Sender,
@@ -40,7 +41,6 @@ export async function createProfile(
     );
 
     const cleaned = reformatProfileImage(profileData, imageUrl);
-
 
     const profileUrl = await uploadProfileDataToPinata(cleaned, pinata);
 
@@ -77,7 +77,6 @@ export async function updateProfile(
 
     const cleaned = reformatProfileImage(profileData, imageUrl);
 
-
     const profileUrl = await uploadProfileDataToPinata(cleaned, pinata);
 
     await updateProfileData(sender, profileUrl);
@@ -95,7 +94,7 @@ export async function fetchProfileData(ownerAddress: string) {
             return undefined;
         }
         const profileData: ProfileDataInterface = await fetch(
-            `https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${ipfsLink}`
+            getLink(ipfsLink)
         ).then((res) => res.json());
 
         return profileData;
@@ -200,7 +199,6 @@ export function reformatProfileImage(
     profile: ProfileDataInterface,
     imageUrl: string
 ): ProfileDataInterface {
-
     const formatted: ProfileDataInterface = {
         ...profile,
         image: `ipfs://${imageUrl}`,

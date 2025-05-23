@@ -8,6 +8,7 @@ import { ShareButtonCertificate } from "@/components/certificate/shareButton";
 import { useState } from "react";
 import { CertificateGrades } from "@/components/certificate/certificateGrades";
 import { useTranslation } from "react-i18next";
+import { getLink } from "@/utils/ton.utils"
 
 export function Certificate() {
     const { certificateAddr } = useParams();
@@ -68,9 +69,7 @@ export function Certificate() {
                             className="flex items-center space-x-2 group"
                         >
                             <img
-                                src={`https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${course.image.substring(
-                                    7
-                                )}`}
+                                src={getLink(course.image)}
                                 alt="Course"
                                 className="w-6 h-6 rounded object-cover"
                             />

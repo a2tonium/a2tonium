@@ -11,8 +11,6 @@ export const encryptCourseAnswers = async (
     message: string,
     recipientPublicKey: string // Public key of the recipient
 ): Promise<{ encryptedMessage: string; senderPublicKey: string }> => {
-    console.log("Encrypting messageAAAAAAAAAAAAA:", message);
-    console.log("Recipient Public Key:", recipientPublicKey);
     const uintRecidentPublicKey = base64ToUint8Array(recipientPublicKey);
     const keyPair = nacl.box.keyPair();
     const senderPrivateKey = keyPair.secretKey; // Private key of the sender

@@ -10,7 +10,7 @@ import {
     getAllGrades,
     getCertificateData,
 } from "@/lib/ton.lib";
-import { ipfsToHttp } from "@/utils/ton.utils";
+import { getLink } from "@/utils/ton.utils";
 import { Address } from "@ton/core";
 
 export async function listCertificates(
@@ -60,7 +60,7 @@ export async function listCertificates(
                 result.push({
                     certificateAddress: certAddress,
                     title: metadata.name,
-                    image: ipfsToHttp(metadata.image),
+                    image: getLink(metadata.image),
                 });
 
                 break;
@@ -128,7 +128,7 @@ export async function getCertificate(
             return {
                 certificateAddress: certificateAddress,
                 name: metadata.name,
-                image: ipfsToHttp(metadata.image),
+                image: getLink(metadata.image),
                 description: metadata.description,
                 courseAddress: collectionAddress,
                 ownerAddress: ownerAddress,

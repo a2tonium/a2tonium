@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/sidebar";
 import { CourseDeployedInterface, QuizAnswers } from "@/types/course.types";
 import { useTranslation } from "react-i18next";
+import { getLink } from "../../utils/ton.utils";
 
 export function CourseSidebar({
     courseData,
@@ -52,9 +53,7 @@ export function CourseSidebar({
                     <Avatar className="w-24 h-24 rounded-lg overflow-hidden">
                         <AvatarImage
                             className="w-full h-full object-cover"
-                            src={`https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/${courseData.image.substring(
-                                7
-                            )}`}
+                            src={getLink(courseData.image)}
                             alt={courseData.name}
                         />
                         <AvatarFallback>EC</AvatarFallback>
