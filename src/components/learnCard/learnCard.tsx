@@ -19,7 +19,7 @@ export const LearnCard: React.FC<LearnCardProps> = ({
     const { t } = useTranslation();
 
     const handleCardClick = () => {
-        navigate(`/course/${courseAddress}`);
+        navigate(`/course/${courseAddress}/syllabus`);
     };
 
     const handleLessonsClick = (e: React.MouseEvent) => {

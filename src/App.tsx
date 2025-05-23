@@ -48,7 +48,7 @@ export default function App() {
                             </Route>
 
                             <Route path="course/:courseAddress">
-                                <Route index element={<Navigate to="syllabus" replace />} />
+                                <Route index element={<Navigate to="promo" replace />} />
                                 <Route path="promo" element={<MainLayout><CoursePromo /></MainLayout>} />
                                 <Route path="syllabus" element={ <ProtectedRoute><MainLayout><Syllabus /></MainLayout></ProtectedRoute> } />
                                 <Route path="quizzes" element={ <ProtectedRoute><MainLayout><Quizzes /></MainLayout></ProtectedRoute> } />
