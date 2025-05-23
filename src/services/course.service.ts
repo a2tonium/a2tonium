@@ -350,6 +350,7 @@ export async function reformatCourseData(
     ownerPublicKey: string,
     limitedVideos: string[]
 ): Promise<CourseDeployedInterface> {
+    console.log(walletPublicKey)
     const formatted: CourseDeployedInterface = {
         ...course,
         image: imageUrl,
