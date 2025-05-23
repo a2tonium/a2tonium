@@ -65,7 +65,6 @@ export async function createCourse(
         limitedVideos
     );
 
-    console.log("cleaned", cleaned);
     const courseURL = await uploadCourseDataToPinata(cleaned, pinata);
     return await createCourseContract(sender, courseURL, coursePrice);
 }
@@ -107,7 +106,6 @@ export async function editCourse(
         limitedVideos
     );
 
-    console.log("cleaned", cleaned);
     const courseURL = await uploadCourseDataToPinata(cleaned, pinata);
     await updateCourseContract(sender, courseURL, courseAddress, coursePrice);
 }
@@ -157,14 +155,7 @@ export async function fetchCourseIfEnrolled(
     ownedCourses: string[]
 ): Promise<{ data: CourseDeployedInterface; cost: string }> {
     const enrolledCourses = await getEnrolledCourseAddresses(userAddress);
-    console.log(
-        "owned: ",
-        ownedCourses.includes(Address.parse(contractAddress).toString())
-    );
-    console.log(
-        "enrolled: ",
-        enrolledCourses.includes(Address.parse(contractAddress).toString())
-    );
+
     if (
         !ownedCourses.includes(Address.parse(contractAddress).toString()) &&
         !enrolledCourses.includes(Address.parse(contractAddress).toString())
@@ -191,14 +182,7 @@ export async function fetchCourseIfEnrolledWithGrades(
     grades: QuizAnswers[];
 }> {
     const enrolledCourses = await getEnrolledCourseAddresses(userAddress);
-    console.log(
-        "owned: ",
-        ownedCourses.includes(Address.parse(contractAddress).toString())
-    );
-    console.log(
-        "enrolled: ",
-        enrolledCourses.includes(Address.parse(contractAddress).toString())
-    );
+
     if (
         !ownedCourses.includes(Address.parse(contractAddress).toString()) &&
         !enrolledCourses.includes(Address.parse(contractAddress).toString())
@@ -218,7 +202,7 @@ export async function fetchCourseIfEnrolledWithGrades(
         contractAddress,
         ownerAddress
     );
-    console.log("grades", grades);
+
     return { data, cost, grades };
 }
 
@@ -418,22 +402,18 @@ export async function reformatCourseData(
         };
     });
 
-    // Удалим лишний пробел в конце (опционально)
     allAnswers = allAnswers.trim();
-    console.log("allAnswers", allAnswers);
+
     formatted.attributes = formatted.attributes.map((attr) =>
         attr.trait_type === "Lessons"
             ? { ...attr, value: String(lessonCount) }
             : attr
     );
 
-    // Encrypt all answers
     const { encryptedMessage, senderPublicKey } = await encryptCourseAnswers(
         allAnswers,
         ownerPublicKey
     );
-    console.log("1", walletPublicKey);
-    console.log("2", senderPublicKey);
 
     formatted.quiz_answers.encrypted_answers = encryptedMessage;
     formatted.quiz_answers.sender_public_key = senderPublicKey;
@@ -469,7 +449,7 @@ export async function sendAnswersToQuiz(
         throw new Error("Access denied");
     }
     const nftAddress = Address.parse(matchedNFT.address).toString();
-    console.log("NFT Address:", nftAddress);
+
     const { encryptedMessage, senderPublicKey } = await encryptCourseAnswers(
         answers,
         ownerPublicKey
@@ -480,8 +460,6 @@ export async function sendAnswersToQuiz(
         encryptedMessage,
         senderPublicKey
     );
-
-    console.log("Student is enrolled in:", matchedNFT);
 }
 
 export async function issueCertificateService(
@@ -512,12 +490,6 @@ export async function issueCertificateService(
         throw new Error("Access denied");
     }
     const nftAddress = Address.parse(matchedNFT.address).toString();
-    console.log("NFT Address:", nftAddress);
+
     await issueCertficate(nftAddress, quizId, rating, review);
-
-    // теперь matchedNFT содержит нужный NFTItem
-    // можно продолжать, например:
-    console.log("Student is enrolled in:", matchedNFT);
-
-    // TODO: отправить ответы и т.п.
 }

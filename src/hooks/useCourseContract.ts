@@ -1,5 +1,4 @@
 import { useTonClient } from "@/hooks/useTonClient";
-// import { useAsyncInitialize } from "@/hooks/useAsyncInitialize";
 import { Course } from "@/wrappers/course";
 import { useTonConnect } from "@/hooks/useTonConnect";
 import {
@@ -20,6 +19,7 @@ import { CoursePromotionFactory } from "../wrappers/coursePromotionFactory";
 export function useCourseContract() {
     const { client } = useTonClient();
     const { address, sender } = useTonConnect();
+
     const [ready, setReady] = useState(false);
 
     useEffect(() => {
@@ -27,23 +27,6 @@ export function useCourseContract() {
             setReady(true);
         }
     }, [client]);
-    // const courseContract = useAsyncInitialize(async () => {
-    //     if (!client) return;
-    //     let i = 0n;
-    //     let course;
-    //     for (; i < 3n; i++) {
-    //         course = client.open(
-    //             await Course.fromInit(Address.parse(address), i)
-    //         ) as OpenedContract<Course>;
-    //         try {
-    //             await client.open(course).getGetCourseData();
-    //         } catch (e) {
-    //             console.error("Error opening course contract", e);
-    //             break;
-    //         }
-    //     }
-    //     return course;
-    // }, [client]);
 
     const getFirstUninitCourseContract = async () => {
         if (!client) return;
@@ -91,7 +74,6 @@ export function useCourseContract() {
         courseURL: string,
         coursePrice: string
     ): Promise<SendTransactionResponse | null> => {
-        console.log("IN CREATE COURSE CONTRACT");
         const courseContract = await getFirstUninitCourseContract();
         if (!courseContract) {
             console.error("Course contract not found");
@@ -102,11 +84,6 @@ export function useCourseContract() {
             .storeRef(encodeOffChainContent(`ipfs://${courseURL}`))
             .storeCoins(toNano(coursePrice))
             .endCell();
-
-        console.log(courseContract!.address.toString());
-        console.log(courseContract!.init);
-
-        console.log("courseContract", courseContract);
         return await sender.send({
             to: courseContract!.address,
             value: toNano("0.05"),
@@ -147,7 +124,7 @@ export function useCourseContract() {
     const enrollToCourseContract = async (
         sender: Sender,
         courseAddress: string,
-        IIN: string,
+        IIC: string,
         gmail: string,
         courseCost: string
     ) => {
@@ -167,7 +144,7 @@ export function useCourseContract() {
             {
                 $$type: "Enrollment",
                 student_info: beginCell()
-                    .storeStringTail(`${IIN} | ${gmail}`)
+                    .storeStringTail(`${IIC} | ${gmail}`)
                     .endCell(),
             }
         );
@@ -210,7 +187,6 @@ export function useCourseContract() {
             return;
         }
 
-        console.log("encrypted_answers", encrypted_answers);
         await certificateContract.send(
             sender,
             {
@@ -242,9 +218,6 @@ export function useCourseContract() {
             console.error("Course contract not found");
             return;
         }
-
-        console.log("rating", rating);
-        console.log("comment", review);
 
         await certificateContract.send(
             sender,
@@ -298,7 +271,6 @@ export function useCourseContract() {
                     address
                 ).toRawString()}`
             );
-            console.log("addres", Address.parse(address).toRawString());
             if (!response.ok)
                 throw new Error(`HTTP error! status: ${response.status}`);
 

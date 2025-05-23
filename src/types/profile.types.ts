@@ -7,7 +7,6 @@ export interface ProfileDataInterface {
         trait_type: string;
         value: string;
     }[];
-    
 }
 
 export interface ProfileWithWalletDataInterface {
@@ -20,7 +19,6 @@ export interface ProfileWithWalletDataInterface {
         trait_type: string;
         value: string;
     }[];
-    
 }
 
 export interface WalletDataInterface {

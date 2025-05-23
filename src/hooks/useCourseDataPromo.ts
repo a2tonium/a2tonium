@@ -17,14 +17,9 @@ export function useCourseDataPromo(contractAddress?: string) {
         if (!contractAddress) return { course: null, profile: undefined };
 
         const course = await fetchCoursePromo(contractAddress);
-        console.log("Fetched course promo data:", course);
         let profile: ProfileDataInterface | undefined = undefined;
 
         if (ready && course?.ownerAddress) {
-            console.log(
-                "Fetching profile data for owner address:",
-                course.ownerAddress
-            );
             profile = await fetchProfileData(course.ownerAddress);
         }
 

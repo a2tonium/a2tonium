@@ -19,6 +19,7 @@ import { useTonConnect } from "@/hooks/useTonConnect";
 import { Check } from "lucide-react";
 import { Spinner } from "@/components/ui/kibo-ui/spinner";
 import { useCourseContract } from "@/hooks/useCourseContract";
+import { useTranslation } from "react-i18next";
 
 interface CreateCourseLogicProps {
     course: CourseCreationInterface;
@@ -27,12 +28,6 @@ interface CreateCourseLogicProps {
     limitedVideos: string[];
     ownerPublicKey: string;
 }
-
-const buySchema = z.object({
-    accepted: z.literal(true, {
-        errorMap: () => ({ message: "You must accept the terms." }),
-    }),
-});
 
 export function CreateCourseButton({
     course,
@@ -49,13 +44,18 @@ export function CreateCourseButton({
     const { createCourseContract } = useCourseContract();
     const { customSender, publicKey } = useTonConnect();
     const { toast } = useToast();
-
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     const [accepted, setAccepted] = useState(false);
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+    const buySchema = z.object({
+        accepted: z.literal(true, {
+            errorMap: () => ({ message: t("createCourse.error.mustAccept") }),
+        }),
+    });
 
     const handleCreateCourse = async (publicKey: string) => {
         const result = buySchema.safeParse({ accepted });
@@ -88,23 +88,25 @@ export function CreateCourseButton({
                 onOpenChange(false);
                 navigate("/teach");
                 toast({
-                    title: "Successful Course Creation",
-                    description: `You've created the course: ${course.name}`,
+                    title: t("createCourse.success.title"),
+                    description: t("createCourse.success.desc", {
+                        name: course.name,
+                    }),
                     className:
                         "bg-green-500 text-white rounded-[2vw] border-none",
                 });
             } else {
                 toast({
-                    title: "Cancelled",
-                    description: "Transaction was rejected in Tonkeeper.",
+                    title: t("createCourse.cancelled.title"),
+                    description: t("createCourse.cancelled.desc"),
                     variant: "destructive",
                 });
             }
         } catch (error) {
             console.error("Error creating course:", error);
             toast({
-                title: "Error",
-                description: "Failed to create course.",
+                title: t("createCourse.fail.title"),
+                description: t("createCourse.fail.desc"),
                 variant: "destructive",
             });
         } finally {
@@ -116,7 +118,7 @@ export function CreateCourseButton({
         <Dialog open={open} onOpenChange={() => onOpenChange(false)}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Create Course</DialogTitle>
+                    <DialogTitle>{t("createCourse.dialogTitle")}</DialogTitle>
                 </DialogHeader>
                 {/* Course Info Summary */}
                 <div className="bg-gray-200 p-4 rounded-xl shadow-sm space-y-2 mb-4">
@@ -125,11 +127,15 @@ export function CreateCourseButton({
                     </h3>
                     <div className="text-sm text-gray-600">
                         <p>
-                            <span className="font-medium">Language:</span>{" "}
+                            <span className="font-medium">
+                                {t("createCourse.language")}:
+                            </span>{" "}
                             {course.attributes.language}
                         </p>
                         <p>
-                            <span className="font-medium">Modules:</span>{" "}
+                            <span className="font-medium">
+                                {t("createCourse.modules")}:
+                            </span>{" "}
                             {course.modules.length}
                         </p>
                     </div>
@@ -146,12 +152,12 @@ export function CreateCourseButton({
                             onCheckedChange={() => setAccepted(!accepted)}
                         />
                         <Label htmlFor="accept" className="text-sm">
-                            I accept the{" "}
+                            {t("createCourse.accept")}{" "}
                             <Link
                                 to="/tearms-conditions"
                                 className="text-blue-500 hover:underline underline-offset-2"
                             >
-                                terms and conditions
+                                {t("createCourse.terms")}
                             </Link>
                         </Label>
                     </div>
@@ -164,7 +170,7 @@ export function CreateCourseButton({
                         className="font-semibold rounded-2xl bg-goluboy hover:bg-blue-500 text-white flex items-center gap-2"
                         disabled={isLoading || !accepted}
                     >
-                        Create Course
+                        {t("createCourse.button")}
                         {isLoading ? (
                             <Spinner className="animate-spin w-4 h-4" />
                         ) : isSuccess ? (

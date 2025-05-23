@@ -11,31 +11,8 @@ import { isYouTubeVideoAccessible } from "@/lib/youtube.lib";
 import { extractYoutubeVideoId } from "@/utils/youtube.utils";
 import { Spinner } from "@/components/ui/kibo-ui/spinner";
 import { VideoPreviewDialog } from "@/components/createCourse/videoPreviewDialog";
+import { useTranslation } from "react-i18next";
 
-// 1) Валидация урока
-const lessonSchema = z.object({
-    title: z.string().min(5, "Lesson title must be at least 5 characters"),
-    videoId: z.string().url("Must be a valid YouTube link"),
-});
-
-// 2) Валидация модуля
-const moduleSchema = z.object({
-    title: z.string().min(5, "Module title must be at least 5 characters"),
-    lessons: z
-        .array(lessonSchema)
-        .min(1, "Must have at least 1 lesson")
-        .max(10, "Max 10 lessons in one module"),
-});
-
-// 3) Валидация шагa Two
-const stepTwoSchema = z.object({
-    modules: z
-        .array(moduleSchema)
-        .min(1, "You must have at least 1 module")
-        .max(10, "You cannot have more than 10 modules"),
-});
-
-// Типы пропсов
 interface StepTwoProps {
     courseData: CourseCreationInterface;
     setCourseData: React.Dispatch<
@@ -53,7 +30,6 @@ interface StepTwoProps {
     videoCheckState: VideoCheckState;
     setVideoCheckState: React.Dispatch<React.SetStateAction<VideoCheckState>>;
 
-    // Логика табов для модулей
     activeModuleIndex: number;
     setActiveModuleIndex: (index: number) => void;
     limitedVideos: string[];
@@ -72,7 +48,8 @@ export function StepTwo({
     limitedVideos,
     setLimitedVideos,
 }: StepTwoProps) {
-    // Ошибки вида errors[moduleIndex][lessonIndex] = { title?: string; videoUrl?: string }
+    const { t } = useTranslation();
+
     const [errors, setErrors] = useState<
         Record<
             number,
@@ -84,7 +61,25 @@ export function StepTwo({
     >({});
 
     const [previewVideoId, setPreviewVideoId] = useState<string | null>(null);
+    const lessonSchema = z.object({
+        title: z.string().min(5, t("stepTwo.error.lessonTitle")),
+        videoId: z.string().url(t("stepTwo.error.videoUrl")),
+    });
 
+    const moduleSchema = z.object({
+        title: z.string().min(5, t("stepTwo.error.moduleTitle")),
+        lessons: z
+            .array(lessonSchema)
+            .min(1, t("stepTwo.error.minLessons"))
+            .max(10, t("stepTwo.error.maxLessons")),
+    });
+
+    const stepTwoSchema = z.object({
+        modules: z
+            .array(moduleSchema)
+            .min(1, t("stepTwo.error.minModules"))
+            .max(10, t("stepTwo.error.maxModules")),
+    });
     useEffect(() => {
         const validate = async () => {
             const result = await stepTwoSchema.safeParseAsync({
@@ -223,7 +218,7 @@ export function StepTwo({
                 },
             ],
         }));
-        setActiveModuleIndex(courseData.modules.length); // переходим на новую вкладку
+        setActiveModuleIndex(courseData.modules.length);
     };
 
     const handleRemoveModule = (index: number) => {
@@ -300,7 +295,6 @@ export function StepTwo({
                 },
             }));
 
-            // Проверка только одного видео
             const [isValid, isLimited] = await isYouTubeVideoAccessible(value);
             if (isLimited) {
                 const videoIdOnly = extractYoutubeVideoId(value);
@@ -321,7 +315,6 @@ export function StepTwo({
                 },
             }));
 
-            // Обновление ошибок по видео
             setErrors((prev) => ({
                 ...prev,
                 [moduleIndex]: {
@@ -343,7 +336,7 @@ export function StepTwo({
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold">Course Modules</h2>
+                <h2 className="text-xl font-semibold">{t("stepTwo.title")}</h2>
                 <Button
                     onClick={handleAddModule}
                     type="button"
@@ -353,11 +346,12 @@ export function StepTwo({
                     disabled={courseData.modules.length >= 10}
                 >
                     <CirclePlus style={{ width: "20px", height: "20px" }} />
-                    <span className="font-semibold">Add Module</span>
+                    <span className="font-semibold">
+                        {t("stepTwo.addModule")}
+                    </span>
                 </Button>
             </div>
 
-            {/* Tabs для переключения между модулями */}
             <Tabs
                 defaultValue="module-0"
                 value={`module-${activeModuleIndex}`}
@@ -418,7 +412,7 @@ export function StepTwo({
                         <div className="space-y-4 p-4 rounded-xl relative">
                             {/* Название модуля */}
                             <div className="mb-2">
-                                <Label>Module Title</Label>
+                                <Label>{t("stepTwo.moduleTitle")}</Label>
                                 <Input
                                     value={mod.title}
                                     onChange={(e) =>
@@ -449,7 +443,7 @@ export function StepTwo({
                             {/* Уроки */}
                             <div className="mt-4 space-y-3">
                                 <h3 className="font-medium">
-                                    Lessons in this Module
+                                    {t("stepTwo.lessonsInModule")}
                                 </h3>
                                 {mod.lessons.map((lesson, lessonIndex) => (
                                     <div
@@ -477,9 +471,9 @@ export function StepTwo({
 
                                         {/* Lesson Title */}
                                         <div className="mb-2">
-                                            <Label>
-                                                Lesson Title {lessonIndex + 1}
-                                            </Label>
+                                            <Label>{`${t(
+                                                "stepTwo.lessonTitle"
+                                            )} ${lessonIndex + 1}`}</Label>
                                             <Input
                                                 value={lesson.title}
                                                 onChange={(e) =>
@@ -491,7 +485,9 @@ export function StepTwo({
                                                         limitedVideos
                                                     )
                                                 }
-                                                placeholder="Enter lesson title"
+                                                placeholder={t(
+                                                    "stepTwo.enterLessonTitle"
+                                                )}
                                                 maxLength={120}
                                                 className="rounded-2xl mt-1"
                                             />
@@ -513,7 +509,9 @@ export function StepTwo({
 
                                         {/* Lesson Video URL */}
                                         <div>
-                                            <Label>YouTube URL</Label>
+                                            <Label>
+                                                {t("stepTwo.youtubeUrl")}
+                                            </Label>
                                             <div className="flex flex-col md:flex-row md:items-center md:space-x-2 space-y-2 md:space-y-0">
                                                 <Input
                                                     value={lesson.videoId}
@@ -526,7 +524,9 @@ export function StepTwo({
                                                             limitedVideos
                                                         )
                                                     }
-                                                    placeholder="https://youtube.com/..."
+                                                    placeholder={t(
+                                                        "stepTwo.enterYoutubeUrl"
+                                                    )}
                                                     className="rounded-2xl mt-1"
                                                 />
                                                 <Button
@@ -552,7 +552,7 @@ export function StepTwo({
                                                     }
                                                 >
                                                     <span className="font-semibold text-xs sm:text-sm flex items-center gap-2">
-                                                        Preview
+                                                        {t("stepTwo.preview")}
                                                         {videoCheckState?.[
                                                             modIndex
                                                         ]?.[lessonIndex]
@@ -603,7 +603,7 @@ export function StepTwo({
                                             height: "20px",
                                         }}
                                     />
-                                    <span>Add Lesson</span>
+                                    <span>{t("stepTwo.addLesson")}</span>
                                 </Button>
                             </div>
                         </div>

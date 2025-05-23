@@ -1,4 +1,8 @@
+import { useTranslation } from "react-i18next";
+
 export const LevelIndicator = ({ level }: { level: string }) => {
+    const { t } = useTranslation();
+
     let bars = [];
 
     switch (level) {
@@ -28,7 +32,10 @@ export const LevelIndicator = ({ level }: { level: string }) => {
                 ))}
             </div>
             <span className="text-goluboy">
-                <span className="font-semibold">{level}</span> Level
+                <span className="font-semibold">
+                    {t(`catalog.level.${level.toLowerCase()}`)}
+                </span>{" "}
+                {t("promo.level")}
             </span>
         </div>
     );

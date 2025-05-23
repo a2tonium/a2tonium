@@ -13,6 +13,7 @@ import {
 import { CourseCreationInterface } from "@/types/course.types";
 import { CategorySelect } from "@/components/createCourse/categorySelect";
 import { ImageDropzone } from "@/components/createCourse/imageDropzone";
+import { useTranslation } from "react-i18next";
 
 interface StepOneProps {
     courseData: CourseCreationInterface;
@@ -32,24 +33,24 @@ interface StepOneProps {
 }
 
 const schema = z.object({
-    image: z.string().min(1, "Logo is required"),
-    name: z.string().min(5, "Title must be at least 5 characters"),
-    description: z.string().min(5, "Description must be at least 5 characters"),
+    image: z.string().min(1, "stepOne.error.required"), // "Logo is required"
+    name: z.string().min(5, "stepOne.error.name"),
+    description: z.string().min(5, "stepOne.error.description"),
     video: z.preprocess((val) => {
         if (typeof val === "string" && val.trim() === "") return undefined;
         return val;
-    }, z.string().url("Must be a valid YouTube link").optional()),
+    }, z.string().url("stepOne.error.video").optional()),
 
     attributes: z.object({
-        workload: z.string().min(5, "Workload description required"),
-        duration: z.string().min(5, "Duration description required"),
-        learn: z.string().min(5, "This field is required"),
-        about: z.string().min(5, "About section must have details"),
-        gains: z.string().min(5, "This field is required"),
-        requirements: z.string().min(5, "Specify any requirements"),
-        category: z.array(z.string()).min(1, "Select at least one category"),
+        workload: z.string().min(5, "stepOne.error.workload"),
+        duration: z.string().min(5, "stepOne.error.duration"),
+        learn: z.string().min(5, "stepOne.error.required"),
+        about: z.string().min(5, "stepOne.error.about"),
+        gains: z.string().min(5, "stepOne.error.required"),
+        requirements: z.string().min(5, "stepOne.error.requirements"),
+        category: z.array(z.string()).min(1, "stepOne.error.category"),
         level: z.enum(["Beginner", "Intermediate", "Expert"], {
-            errorMap: () => ({ message: "Please select a valid level" }),
+            errorMap: () => ({ message: "stepOne.error.level" }),
         }),
         language: z.enum(
             [
@@ -68,7 +69,7 @@ const schema = z.object({
                 "Italian",
             ],
             {
-                errorMap: () => ({ message: "Please select a language" }),
+                errorMap: () => ({ message: "stepOne.error.language" }),
             }
         ),
     }),
@@ -81,6 +82,7 @@ export function StepOne({
     showErrors,
     promoVideoValid,
 }: StepOneProps) {
+    const { t } = useTranslation();
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     useEffect(() => {
@@ -94,16 +96,14 @@ export function StepOne({
                         issue.path[0] === "attributes" &&
                         typeof issue.path[1] === "string"
                     ) {
-                        // Ошибки внутри attributes
-                        errorMessages[issue.path[1]] = issue.message;
+                        errorMessages[issue.path[1]] = t(issue.message);
                     } else if (typeof issue.path[0] === "string") {
-                        // Ошибки на первом уровне
-                        errorMessages[issue.path[0]] = issue.message;
+                        errorMessages[issue.path[0]] = t(issue.message);
                     }
                 });
+
                 if (!promoVideoValid) {
-                    errorMessages.video =
-                        "Promo video URL must be a valid YouTube link";
+                    errorMessages.video = t("stepOne.error.video");
                 }
 
                 setErrors(errorMessages);
@@ -111,8 +111,7 @@ export function StepOne({
             } else {
                 if (!promoVideoValid) {
                     const errorMessages: Record<string, string> = {};
-                    errorMessages.video =
-                        "Promo video URL must be a valid YouTube link";
+                    errorMessages.video = t("stepOne.error.video");
                     setErrors(errorMessages);
                     setValidationStatus((prev) => ({
                         ...prev,
@@ -125,7 +124,7 @@ export function StepOne({
             }
         };
         validate();
-    }, [courseData, promoVideoValid, setValidationStatus]);
+    }, [courseData, promoVideoValid, setValidationStatus, t]);
 
     const handleInputChange = (field: string, value: string) => {
         setCourseData((prev) => ({ ...prev, [field]: value }));
@@ -144,17 +143,14 @@ export function StepOne({
     return (
         <div className="space-y-2">
             <h2 className="text-xl font-semibold mb-6 text-gray-800">
-                Course Information
+                {t("stepOne.title")}
             </h2>
-            {/* Logo Upload */}
+
             <div>
                 <div className="flex sm:flex-row flex-col sm:items-center mb-4 gap-5">
                     <div>
-                        <Label
-                            htmlFor="title"
-                            className="mb-2 block text-sm font-medium"
-                        >
-                            Course Logo
+                        <Label className="mb-2 block text-sm font-medium">
+                            {t("stepOne.logo")}
                         </Label>
                         <ImageDropzone
                             value={courseData.image}
@@ -166,13 +162,10 @@ export function StepOne({
                             }
                         />
                     </div>
-                    {/* Cover Image Upload */}
+
                     <div>
-                        <Label
-                            htmlFor="title"
-                            className="mb-2 block text-sm font-medium"
-                        >
-                            Cover Image (optional)
+                        <Label className="mb-2 block text-sm font-medium">
+                            {t("stepOne.coverImage")}
                         </Label>
                         <ImageDropzone
                             value={courseData.cover_image}
@@ -185,28 +178,26 @@ export function StepOne({
                         />
                         {showErrors && errors.cover_image && (
                             <p className="text-red-500 text-xs mt-1">
-                                {errors.cover_image}
+                                {t(errors.cover_image)}
                             </p>
                         )}
                     </div>
                 </div>
                 {showErrors && errors.image && (
-                    <p className="text-red-500 text-xs mt-1">{errors.image}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                        {t(errors.image)}
+                    </p>
                 )}
             </div>
 
-            {/* Title */}
             <div className="pt-3">
-                <Label
-                    htmlFor="title"
-                    className="mb-2 block text-sm font-medium"
-                >
-                    Title
+                <Label className="mb-2 block text-sm font-medium">
+                    {t("stepOne.name")}
                 </Label>
                 <Input
                     id="title"
                     className="w-full rounded-2xl border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                    placeholder="Enter course title"
+                    placeholder={t("stepOne.enterTitle")}
                     value={courseData.name}
                     onChange={(e) => handleInputChange("name", e.target.value)}
                     maxLength={64}
@@ -215,7 +206,7 @@ export function StepOne({
                     <div>
                         {showErrors && errors.name && (
                             <p className="text-red-500 text-xs">
-                                {errors.name}
+                                {t(errors.name)}
                             </p>
                         )}
                     </div>
@@ -225,18 +216,14 @@ export function StepOne({
                 </div>
             </div>
 
-            {/* Description */}
             <div>
-                <Label
-                    htmlFor="description"
-                    className="mb-2 block text-sm font-medium"
-                >
-                    Description
+                <Label className="mb-2 block text-sm font-medium">
+                    {t("stepOne.description")}
                 </Label>
                 <Textarea
                     id="description"
                     className="w-full rounded-2xl border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                    placeholder="Enter a short description of the course"
+                    placeholder={t("stepOne.enterDescription")}
                     value={courseData.description}
                     onChange={(e) =>
                         handleInputChange("description", e.target.value)
@@ -247,7 +234,7 @@ export function StepOne({
                     <div>
                         {showErrors && errors.description && (
                             <p className="text-red-500 text-xs">
-                                {errors.description}
+                                {t(errors.description)}
                             </p>
                         )}
                     </div>
@@ -256,27 +243,25 @@ export function StepOne({
                     </div>
                 </div>
             </div>
+
             <div>
-                <Label
-                    htmlFor="promoVideo"
-                    className="mb-2 block text-sm font-medium"
-                >
-                    Promo Video URL(optional)
+                <Label className="mb-2 block text-sm font-medium">
+                    {t("stepOne.video")}
                 </Label>
                 <Input
                     id="promoVideo"
                     value={courseData.video}
                     onChange={(e) => handleInputChange("video", e.target.value)}
-                    placeholder="https://youtube.com/..."
+                    placeholder={t("stepOne.enterVideo")}
                     className="rounded-2xl mt-1"
                 />
                 {showErrors && errors.video && (
-                    <p className="text-red-500 text-xs">{errors.video}</p>
+                    <p className="text-red-500 text-xs">{t(errors.video)}</p>
                 )}
             </div>
             {/* Course Category */}
             <div className="pb-4 space-y-1">
-                <Label>Course Category</Label>
+                <Label>{t("stepOne.category")}</Label>
                 <CategorySelect
                     selected={courseData.attributes.category}
                     setSelected={(newCategories) =>
@@ -290,12 +275,13 @@ export function StepOne({
                     }
                 />
                 {showErrors && errors.category && (
-                    <p className="text-red-500 text-xs">{errors.category}</p>
+                    <p className="text-red-500 text-xs">{t(errors.category)}</p>
                 )}
             </div>
+
             {/* Course Level */}
             <div className="pb-4 w-[80%] sm:w-[30%] md:w-[20%]">
-                <Label>Course Level</Label>
+                <Label>{t("stepOne.level")}</Label>
                 <Select
                     value={courseData.attributes.level}
                     onValueChange={(val) =>
@@ -303,7 +289,7 @@ export function StepOne({
                     }
                 >
                     <SelectTrigger className="mt-1 rounded-2xl">
-                        <SelectValue placeholder="Select Level" />
+                        <SelectValue placeholder={t("stepOne.selectLevel")} />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="Beginner">Beginner</SelectItem>
@@ -315,14 +301,14 @@ export function StepOne({
                 </Select>
                 {showErrors && !courseData.attributes.level && (
                     <p className="text-red-500 text-sm mt-1">
-                        Level is required
+                        {t("stepOne.error.level")}
                     </p>
                 )}
             </div>
 
             {/* Course Language */}
             <div className="pb-4 w-[80%] sm:w-[30%] md:w-[20%]">
-                <Label>Course Language</Label>
+                <Label>{t("stepOne.language")}</Label>
                 <Select
                     value={courseData.attributes.language}
                     onValueChange={(val) =>
@@ -330,7 +316,9 @@ export function StepOne({
                     }
                 >
                     <SelectTrigger className="mt-1 rounded-2xl">
-                        <SelectValue placeholder="Select Language" />
+                        <SelectValue
+                            placeholder={t("stepOne.selectLanguage")}
+                        />
                     </SelectTrigger>
                     <SelectContent>
                         {[
@@ -356,22 +344,23 @@ export function StepOne({
                 </Select>
                 {showErrors && !courseData.attributes.language && (
                     <p className="text-red-500 text-sm mt-1">
-                        Language is required
+                        {t("stepOne.error.language")}
                     </p>
                 )}
             </div>
+
             {/* Recommended Workload */}
             <div>
                 <Label
                     htmlFor="workload"
                     className="mb-2 block text-sm font-medium"
                 >
-                    Recommended Workload
+                    {t("stepOne.workload")}
                 </Label>
                 <Input
                     id="workload"
                     className="w-full rounded-2xl"
-                    placeholder="e.g., 10 hours per week"
+                    placeholder={t("stepOne.enterWorkload")}
                     value={courseData.attributes.workload}
                     onChange={(e) =>
                         handleAttributeInputChange("workload", e.target.value)
@@ -382,7 +371,7 @@ export function StepOne({
                     <div>
                         {showErrors && errors.workload && (
                             <p className="text-red-500 text-xs">
-                                {errors.workload}
+                                {t(errors.workload)}
                             </p>
                         )}
                     </div>
@@ -391,18 +380,19 @@ export function StepOne({
                     </div>
                 </div>
             </div>
+
             {/* Duration */}
             <div>
                 <Label
-                    htmlFor="workload"
+                    htmlFor="duration"
                     className="mb-2 block text-sm font-medium"
                 >
-                    Duration
+                    {t("stepOne.duration")}
                 </Label>
                 <Input
                     id="duration"
                     className="w-full rounded-2xl"
-                    placeholder="e.g., 56 hours"
+                    placeholder={t("stepOne.enterDuration")}
                     value={courseData.attributes.duration}
                     onChange={(e) =>
                         handleAttributeInputChange("duration", e.target.value)
@@ -413,7 +403,7 @@ export function StepOne({
                     <div>
                         {showErrors && errors.duration && (
                             <p className="text-red-500 text-xs">
-                                {errors.duration}
+                                {t(errors.duration)}
                             </p>
                         )}
                     </div>
@@ -429,12 +419,12 @@ export function StepOne({
                     htmlFor="learning"
                     className="mb-2 block text-sm font-medium"
                 >
-                    What You Will Learn
+                    {t("stepOne.learn")}
                 </Label>
                 <Textarea
                     id="learning"
                     className="w-full rounded-2xl"
-                    placeholder="List key learnings from this course"
+                    placeholder={t("stepOne.enterLearn")}
                     value={courseData.attributes.learn}
                     onChange={(e) =>
                         handleAttributeInputChange("learn", e.target.value)
@@ -445,7 +435,7 @@ export function StepOne({
                     <div>
                         {showErrors && errors.learn && (
                             <p className="text-red-500 text-xs">
-                                {errors.learn}
+                                {t(errors.learn)}
                             </p>
                         )}
                     </div>
@@ -461,12 +451,12 @@ export function StepOne({
                     htmlFor="about"
                     className="mb-2 block text-sm font-medium"
                 >
-                    About the Course
+                    {t("stepOne.about")}
                 </Label>
                 <Textarea
                     id="about"
                     className="w-full rounded-2xl"
-                    placeholder="Enter detailed information about the course"
+                    placeholder={t("stepOne.enterAbout")}
                     value={courseData.attributes.about}
                     onChange={(e) =>
                         handleAttributeInputChange("about", e.target.value)
@@ -477,7 +467,7 @@ export function StepOne({
                     <div>
                         {showErrors && errors.about && (
                             <p className="text-red-500 text-xs">
-                                {errors.about}
+                                {t(errors.about)}
                             </p>
                         )}
                     </div>
@@ -493,12 +483,12 @@ export function StepOne({
                     htmlFor="gains"
                     className="mb-2 block text-sm font-medium"
                 >
-                    What You Will Gain
+                    {t("stepOne.gains")}
                 </Label>
                 <Textarea
                     id="gains"
                     className="w-full rounded-2xl"
-                    placeholder="List benefits and skills gained from this course"
+                    placeholder={t("stepOne.enterGains")}
                     value={courseData.attributes.gains}
                     onChange={(e) =>
                         handleAttributeInputChange("gains", e.target.value)
@@ -509,7 +499,7 @@ export function StepOne({
                     <div>
                         {showErrors && errors.gains && (
                             <p className="text-red-500 text-xs">
-                                {errors.gains}
+                                {t(errors.gains)}
                             </p>
                         )}
                     </div>
@@ -525,12 +515,12 @@ export function StepOne({
                     htmlFor="requirements"
                     className="mb-2 block text-sm font-medium"
                 >
-                    Initial Requirements
+                    {t("stepOne.requirements")}
                 </Label>
                 <Textarea
                     id="requirements"
                     className="w-full rounded-2xl"
-                    placeholder="Specify prerequisites for enrolling in this course"
+                    placeholder={t("stepOne.enterRequirements")}
                     value={courseData.attributes.requirements}
                     onChange={(e) =>
                         handleAttributeInputChange(
@@ -544,7 +534,7 @@ export function StepOne({
                     <div>
                         {showErrors && errors.requirements && (
                             <p className="text-red-500 text-xs">
-                                {errors.requirements}
+                                {t(errors.requirements)}
                             </p>
                         )}
                     </div>

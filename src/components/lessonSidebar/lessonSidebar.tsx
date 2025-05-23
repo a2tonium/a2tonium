@@ -58,9 +58,7 @@ export function LessonSidebar({
                         activeLessonId={activeLessonId}
                     />
                 </SidebarContent>
-                {/* <SidebarFooter>
-                <NavUser user={data.user} />
-                </SidebarFooter> */}
+
             </Sidebar>
         </div>
     );

@@ -1,6 +1,8 @@
 import { useTranslation } from "react-i18next";
 
-export function useCategoryNames(categoryValue: string | null | undefined): string[] {
+export function useCategoryNames(
+    categoryValue: string | null | undefined
+): string[] {
     const { t } = useTranslation();
 
     if (!categoryValue || typeof categoryValue !== "string") {

@@ -2,6 +2,7 @@ import { Separator } from "@/components/ui/separator";
 import { CoursePromoInterface } from "@/types/course.types";
 import { BuyDialog } from "@/components/coursePromo/buyDialog";
 import { getAttribute } from "@/utils/course.attributes.utils";
+import { useTranslation } from "react-i18next";
 
 interface BuyPanelProps {
     course: CoursePromoInterface;
@@ -9,6 +10,8 @@ interface BuyPanelProps {
 }
 
 export function BuyPanel({ course, courseAddress }: BuyPanelProps) {
+    const { t } = useTranslation();
+
     return (
         <div
             className="w-full md:w-[35%] md:sticky md:top-20 h-fit bg-white p-2 md:p-6 
@@ -18,7 +21,7 @@ export function BuyPanel({ course, courseAddress }: BuyPanelProps) {
             <div className="w-[90%] sm:w-[60%] md:w-full mx-auto">
                 <div className="w-full">
                     <h3 className="text-xl font-bold text-gray-800">
-                        {course.cost} TON
+                        {course.cost} {t("catalog.ton")}
                     </h3>
                     <BuyDialog courseAddress={courseAddress} course={course} />
 
@@ -26,7 +29,7 @@ export function BuyPanel({ course, courseAddress }: BuyPanelProps) {
 
                     <div className="hidden md:block">
                         <h3 className="text-md font-semibold text-gray-800">
-                            You can learn right away
+                            {t("promo.learnImmediately")}
                         </h3>
                         <p className="text-sm text-gray-800 underline">
                             {getAttribute(course.attributes, "workload")}
@@ -40,23 +43,23 @@ export function BuyPanel({ course, courseAddress }: BuyPanelProps) {
                     {/* Course Includes */}
                     <div className="bg-gray-100 px-2 md:p-4 rounded-lg">
                         <h4 className="text-md font-semibold text-gray-800 hidden md:block">
-                            This course includes
+                            {t("promo.includesTitle")}
                         </h4>
                         <p className="text-sm text-gray-700 mt-1">
                             <strong>
                                 {getAttribute(course.attributes, "lessons")}
                             </strong>{" "}
-                            lessons
+                            {t("promo.includesLessons")}
                         </p>
                         <p className="text-sm text-gray-700">
-                            <strong>{course.modules.length}</strong> modules and
-                            quizzes
+                            <strong>{course.modules.length}</strong>{" "}
+                            {t("promo.includesModules")}
                         </p>
                         <a
                             href="#course-content"
                             className="text-blue-600 hover:underline mt-2 block text-sm"
                         >
-                            View course content
+                            {t("promo.viewContent")}
                         </a>
                     </div>
                 </div>

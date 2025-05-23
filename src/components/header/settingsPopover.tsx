@@ -12,7 +12,7 @@ import { useTonConnect } from "@/hooks/useTonConnect";
 
 export const SettingsPopover: React.FC = () => {
     const { t, i18n } = useTranslation();
-    const [theme, setTheme] = useState<string>("system"); // Default to system theme
+    const [theme, setTheme] = useState<string>("system"); 
     const [selectedLang, setSelectedLang] = useState<string>(
         i18n.language || "en"
     );
@@ -22,7 +22,6 @@ export const SettingsPopover: React.FC = () => {
 
     const changeTheme = (newTheme: string) => {
         setTheme(newTheme);
-        // Update your theme logic here (e.g., apply theme class to the body)
         document.documentElement.setAttribute("data-theme", newTheme);
     };
 

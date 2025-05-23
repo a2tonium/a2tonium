@@ -25,6 +25,7 @@ import { createProfile } from "@/services/profile.service";
 import { ProfileDataInterface } from "@/types/profile.types";
 import { useProfileContract } from "@/hooks/useProfileContract";
 import { useTonConnect } from "@/hooks/useTonConnect";
+import { useTranslation } from "react-i18next";
 
 const SOCIAL_PREFIX_MAP: Record<string, string> = {
     Telegram: "t.me/",
@@ -35,37 +36,6 @@ const SOCIAL_PREFIX_MAP: Record<string, string> = {
     Facebook: "www.facebook.com/",
 };
 
-const socialLinkSchema = z
-    .object({
-        type: z.string().min(1),
-        value: z.string().min(1),
-    })
-    .superRefine((data, ctx) => {
-        const { type, value } = data;
-        if (type === "Email" || type === "Other") return;
-        const requiredPrefix = SOCIAL_PREFIX_MAP[type];
-        const normalized = value.replace(/^https?:\/\//, "");
-        if (!normalized.startsWith(requiredPrefix)) {
-            ctx.addIssue({
-                path: ["value"],
-                message: `Link must start with "${requiredPrefix}"`,
-                code: z.ZodIssueCode.custom,
-            });
-        }
-    });
-
-const profileSchema = z.object({
-    image: z.string().min(1, "Avatar is required"),
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    description: z
-        .string()
-        .min(1, "Description is required")
-        .max(256, "Description too long")
-        .optional(),
-    social_links: z.array(socialLinkSchema).max(10),
-    jwt: z.string().min(10, "JWT is too short"),
-});
-
 interface CreateProfileDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
@@ -75,6 +45,7 @@ export function CreateProfileDialog({
     open,
     onOpenChange,
 }: CreateProfileDialogProps) {
+    const { t } = useTranslation();
     const { enrollToProfileContract } = useProfileContract();
     const { sender } = useTonConnect();
     const { toast } = useToast();
@@ -96,6 +67,39 @@ export function CreateProfileDialog({
     const handleSocialLinksChange = (links: SocialLink[]) => {
         setForm((prev) => ({ ...prev, social_links: links }));
     };
+
+    const socialLinkSchema = z
+        .object({
+            type: z.string().min(1),
+            value: z.string().min(1),
+        })
+        .superRefine((data, ctx) => {
+            const { type, value } = data;
+            if (type === "Email" || type === "Other") return;
+            const requiredPrefix = SOCIAL_PREFIX_MAP[type];
+            const normalized = value.replace(/^https?:\/\//, "");
+            if (!normalized.startsWith(requiredPrefix)) {
+                ctx.addIssue({
+                    path: ["value"],
+                    message: t("createProfileDialog.invalidLink", {
+                        prefix: requiredPrefix,
+                    }),
+                    code: z.ZodIssueCode.custom,
+                });
+            }
+        });
+
+    const profileSchema = z.object({
+        image: z.string().min(1, t("createProfileDialog.avatarRequired")),
+        name: z.string().min(2, t("createProfileDialog.nameMin")),
+        description: z
+            .string()
+            .min(1, t("createProfileDialog.descRequired"))
+            .max(256, t("createProfileDialog.descTooLong"))
+            .optional(),
+        social_links: z.array(socialLinkSchema).max(10),
+        jwt: z.string().min(10, t("createProfileDialog.jwtShort")),
+    });
 
     const showErrors = (
         result: z.SafeParseReturnType<
@@ -125,7 +129,7 @@ export function CreateProfileDialog({
         const isJwtValid = await checkPinataConnection(form.jwt);
         if (!isJwtValid) {
             setFormErrors({
-                jwt: "Invalid JWT or failed connection to Pinata",
+                jwt: t("createProfileDialog.jwtInvalid"),
             });
             setIsLoading(false);
             return;
@@ -140,15 +144,17 @@ export function CreateProfileDialog({
                 onOpenChange(false);
             }, 1500);
             toast({
-                title: "Profile Created",
-                description: `You've created the profile: ${form.name}`,
+                title: t("createProfileDialog.successTitle"),
+                description: t("createProfileDialog.successDesc", {
+                    name: form.name,
+                }),
                 className: "bg-green-500 text-white rounded-[2vw] border-none",
             });
         } catch (error) {
             console.error("Error creating profile:", error);
             toast({
-                title: "Error",
-                description: "Failed to create profile.",
+                title: t("createProfileDialog.errorTitle"),
+                description: t("createProfileDialog.errorDesc"),
                 variant: "destructive",
             });
         } finally {
@@ -160,12 +166,12 @@ export function CreateProfileDialog({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle>Create Profile</DialogTitle>
+                    <DialogTitle>{t("createProfileDialog.title")}</DialogTitle>
                 </DialogHeader>
                 <ScrollArea className="h-[71vh] pr-4">
                     <div className="space-y-4 pb-4">
                         <div>
-                            <Label>Avatar</Label>
+                            <Label>{t("createProfileDialog.avatar")}</Label>
                             <ImageDropzone
                                 value={form.image}
                                 onChange={(val) => handleChange("image", val)}
@@ -177,7 +183,7 @@ export function CreateProfileDialog({
                             )}
                         </div>
                         <div>
-                            <Label>Name</Label>
+                            <Label>{t("createProfileDialog.name")}</Label>
                             <Input
                                 value={form.name}
                                 className="rounded-2xl"
@@ -192,7 +198,9 @@ export function CreateProfileDialog({
                             )}
                         </div>
                         <div>
-                            <Label>Description</Label>
+                            <Label>
+                                {t("createProfileDialog.description")}
+                            </Label>
                             <Textarea
                                 value={form.description}
                                 maxLength={256}
@@ -211,7 +219,9 @@ export function CreateProfileDialog({
                             )}
                         </div>
                         <div>
-                            <Label>Social Links</Label>
+                            <Label>
+                                {t("createProfileDialog.socialLinks")}
+                            </Label>
                             <SelectSocialLink
                                 links={form.social_links}
                                 onChange={handleSocialLinksChange}
@@ -251,12 +261,12 @@ export function CreateProfileDialog({
                         {created ? (
                             <>
                                 <Check className="w-4 h-4" />
-                                Created
+                                {t("createProfileDialog.created")}
                             </>
                         ) : isLoading ? (
-                            "Creating..."
+                            t("createProfileDialog.creating")
                         ) : (
-                            "Create"
+                            t("createProfileDialog.create")
                         )}
                     </Button>
                 </DialogFooter>

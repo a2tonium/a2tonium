@@ -1,5 +1,11 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 import { LessonVideo } from "@/components/lessonVideo/lessonVideo";
+import { useTranslation } from "react-i18next";
 
 interface VideoPreviewDialogProps {
     videoId: string;
@@ -7,13 +13,19 @@ interface VideoPreviewDialogProps {
     onClose: () => void;
 }
 
-export function VideoPreviewDialog({ videoId, open, onClose }: VideoPreviewDialogProps) {
+export function VideoPreviewDialog({
+    videoId,
+    open,
+    onClose,
+}: VideoPreviewDialogProps) {
+    const { t } = useTranslation();
+
     return (
         <Dialog open={open} onOpenChange={onClose}>
             <DialogContent className="max-w-4xl p-0 bg-white rounded-2xl">
                 <DialogHeader className="p-4 border-b">
                     <DialogTitle className="flex justify-between items-center">
-                        Video Preview
+                        {t("videoPreview.title")}
                     </DialogTitle>
                 </DialogHeader>
 

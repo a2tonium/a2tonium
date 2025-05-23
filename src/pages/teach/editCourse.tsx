@@ -16,11 +16,12 @@ import { useCourseDataIfEnrolled } from "@/hooks/useCourseDataIfEnrolled";
 import { useParams } from "react-router-dom";
 import { ErrorPage } from "@/pages/error/error";
 import { reformatToCourseCreation } from "@/utils/file.utils";
+import { useTranslation } from "react-i18next";
 
 export function EditCourse() {
     const { courseAddress } = useParams();
     const { data, error, isLoading } = useCourseDataIfEnrolled(courseAddress);
-
+    const { t } = useTranslation();
     const [isDirty, setIsDirty] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
     const [showDialog, setShowDialog] = useState(false);
@@ -127,7 +128,7 @@ export function EditCourse() {
     useEffect(() => {
         const check = async () => {
             if (!courseData.video?.trim()) {
-                setPromoVideoValid(true); // optional field
+                setPromoVideoValid(true); 
                 return;
             }
 
@@ -166,7 +167,9 @@ export function EditCourse() {
             <div className="flex items-center justify-center min-h-screen bg-white">
                 <div className="flex flex-col items-center space-y-4">
                     <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full" />
-                    <p className="text-gray-700 font-medium">Please wait</p>
+                    <p className="text-gray-700 font-medium">
+                        {t("editCourse.loading")}
+                    </p>
                 </div>
             </div>
         );
@@ -176,17 +179,17 @@ export function EditCourse() {
         if (error.message === "Access denied") {
             return (
                 <ErrorPage
-                    first={"Access Denied"}
-                    second={"You are not enrolled in this course."}
-                    third={"Please check your course list."}
+                    first={t("editCourse.error.access")}
+                    second={t("editCourse.error.enrolled")}
+                    third={t("editCourse.error.checkList")}
                 />
             );
         } else {
             return (
                 <ErrorPage
-                    first={"Courses Not Found"}
-                    second={"We couldn't find your courses."}
-                    third={"Please try again later."}
+                    first={t("editCourse.error.notFound")}
+                    second={t("editCourse.error.cantFind")}
+                    third={t("editCourse.error.tryLater")}
                 />
             );
         }
@@ -330,7 +333,9 @@ export function EditCourse() {
                             className="flex justify-center items-center"
                             style={{ width: "18px", height: "18px" }}
                         />
-                        <span className="m-0 p-0 font-semibold">Previous</span>
+                        <span className="m-0 p-0 font-semibold">
+                            {t("createCourse.previous")}
+                        </span>
                     </Button>
 
                     <Button
@@ -349,8 +354,8 @@ export function EditCourse() {
                     >
                         <span className="font-semibold">
                             {currentStep !== totalSteps
-                                ? "Next"
-                                : "Edit Course"}
+                                ? t("createCourse.next")
+                                : t("createCourse.create")}
                         </span>
                         <ChevronRight
                             className="flex justify-center items-center"

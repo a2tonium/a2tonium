@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { CourseCreationInterface } from "@/types/course.types";
@@ -22,15 +23,6 @@ interface StepFourProps {
     setCoursePrice: React.Dispatch<React.SetStateAction<number>>;
 }
 
-// Zod schema matching data in courseData
-const schema = z.object({
-    price: z
-        .number()
-        .min(1, "Price must be at least 1 TON")
-        .max(999999, "Price is too high"),
-    certificate: z.string().min(1, "Certificate image is required"),
-});
-
 export function StepFour({
     courseData,
     setCourseData,
@@ -38,12 +30,21 @@ export function StepFour({
     setCoursePrice,
     coursePrice,
 }: StepFourProps) {
+    const { t } = useTranslation();
+
+    const schema = z.object({
+        price: z
+            .number()
+            .min(1, t("stepFour.error.priceMin"))
+            .max(999999, t("stepFour.error.priceMax")),
+        certificate: z.string().min(1, t("stepFour.error.certificate")),
+    });
+
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [preview, setPreview] = useState(
         courseData.courseCompletion[0]?.certificate || ""
     );
 
-    // Validate on change of price or certificate
     useEffect(() => {
         const validate = () => {
             const result = schema.safeParse({
@@ -74,7 +75,7 @@ export function StepFour({
         <div className="space-y-6">
             <div className="space-y-6">
                 <h2 className="text-xl font-semibold text-gray-800">
-                    Pricing & Certificates
+                    {t("stepFour.title")}
                 </h2>
 
                 {/* Course Price */}
@@ -83,22 +84,12 @@ export function StepFour({
                         htmlFor="price"
                         className="block text-sm font-medium"
                     >
-                        Course Price (TON)
+                        {t("stepFour.priceLabel")}
                     </Label>
                     <PriceInput value={coursePrice} onChange={setCoursePrice} />
-                    {/* <Input
-                        id="price"
-                        type="number"
-                        min="1"
-                        step="0.1"
-                        className="w-full rounded-2xl"
-                        placeholder="Enter price in TON"
-                        value={coursePrice}
-                        onChange={handlePriceChange}
-                    /> */}
                     {errors.price && (
                         <p className="text-red-500 text-xs mt-1">
-                            {errors.price}
+                            {t(errors.price)}
                         </p>
                     )}
                 </div>
@@ -110,7 +101,7 @@ export function StepFour({
                     htmlFor="certificateFile"
                     className="block text-sm font-medium"
                 >
-                    Custom certificate image (optional, JPG/PNG/WebP, max 5MB)
+                    {t("stepFour.certificateLabel")}
                 </Label>
 
                 <ImageDropzone
@@ -129,11 +120,11 @@ export function StepFour({
                     }}
                     maxWidth="160px"
                     maxHeight="160px"
-                    aspectHint="JPG/PNG image, max 4MB"
+                    aspectHint={t("stepFour.certificateHint")}
                 />
                 {errors.certificate && (
                     <p className="text-red-500 text-xs mt-1">
-                        {errors.certificate}
+                        {t(errors.certificate)}
                     </p>
                 )}
             </div>

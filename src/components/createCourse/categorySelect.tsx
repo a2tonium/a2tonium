@@ -89,7 +89,6 @@ export const CategorySelect = ({
         setSelected([...selected, value]);
     };
 
-
     const toggleExpand = (categoryId: string) => {
         setExpandedCategories((prev) =>
             prev.includes(categoryId)
@@ -217,9 +216,7 @@ export const CategorySelect = ({
                 />
                 <TagsList>
                     <TagsEmpty>
-                        {newTag.trim() && (
-                            null
-                        )}
+                        {newTag.trim() && null}
                         {!newTag.trim() && "No categories found."}
                     </TagsEmpty>
                     <TagsGroup>

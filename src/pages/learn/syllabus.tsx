@@ -1,4 +1,3 @@
-// import { Check } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -8,8 +7,10 @@ import { ErrorPage } from "@/pages/error/error";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useCourseDataIfEnrolledWithGrades } from "@/hooks/useCourseDataIfEnrolledWithGrades";
+import { useTranslation } from "react-i18next";
 
 export function Syllabus() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { courseAddress } = useParams();
     const {
@@ -18,7 +19,6 @@ export function Syllabus() {
         isLoading,
     } = useCourseDataIfEnrolledWithGrades(courseAddress);
 
-    // Функция перехода к конкретному уроку
     const handleLessonClick = (lessonId: string) => {
         navigate(`../lesson/${lessonId}`);
     };
@@ -31,23 +31,22 @@ export function Syllabus() {
         if (error.message === "Access denied") {
             return (
                 <ErrorPage
-                    first={"Access Denied"}
-                    second={"You are not enrolled in this course."}
-                    third={"Please check your course list."}
+                    first={t("syllabus.accessDenied.title")}
+                    second={t("syllabus.accessDenied.message")}
+                    third={t("syllabus.accessDenied.retry")}
                 />
             );
         } else {
             return (
                 <ErrorPage
-                    first={"Courses Not Found"}
-                    second={"We couldn't find your courses."}
-                    third={"Please try again later."}
+                    first={t("syllabus.error.title")}
+                    second={t("syllabus.error.message")}
+                    third={t("syllabus.error.retry")}
                 />
             );
         }
     }
 
-    // 3) If loading or no data => skeleton
     if (isLoading || !course) {
         return <SyllabusSkeleton />;
     }
@@ -64,7 +63,7 @@ export function Syllabus() {
                     <div className="flex items-center gap-2 mb-4">
                         <SidebarTrigger className="block min-[1000px]:hidden pl-3" />
                         <h2 className="text-xl sm:text-2xl font-bold">
-                            Syllabus
+                            {t("syllabus.title")}
                         </h2>
                     </div>
 
@@ -76,7 +75,6 @@ export function Syllabus() {
 
                             return (
                                 <div key={mIndex}>
-                                    {/* Module Card (Clickable) */}
                                     <Card
                                         onClick={() =>
                                             handleModuleClick(firstLessonId)
@@ -109,15 +107,18 @@ export function Syllabus() {
                                                         className={`text-xs sm:text-sm mr-2 ${gradeColorClass}`}
                                                     >
                                                         {gradeStr
-                                                            ? `Grade: ${gradeStr}`
-                                                            : "Not completed"}
+                                                            ? `${t(
+                                                                  "syllabus.grade"
+                                                              )}: ${gradeStr}`
+                                                            : t(
+                                                                  "syllabus.notCompleted"
+                                                              )}
                                                     </span>
                                                 );
                                             })()}
                                         </div>
                                     </Card>
 
-                                    {/* Lessons */}
                                     {mod.lessons.map((lesson, lIndex) => {
                                         const isLast =
                                             lIndex === mod.lessons.length - 1;

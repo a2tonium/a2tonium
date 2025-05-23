@@ -11,15 +11,15 @@ export function useTonClient() {
             if (!network) {
                 return ;
             }
-            console.log("tonClient");
 
             const tonClient = new TonClient({
                 endpoint: await getHttpEndpoint({
                     network: "testnet",
                 }),
             });
-            console.log("tonClient", tonClient);
             return tonClient;
         }, [network]),
     };
 }
+
+

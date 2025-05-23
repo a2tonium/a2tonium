@@ -24,9 +24,7 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({
     };
 
     return (
-        <div
-            className={`flex flex-col min-h-screen bg-white`}
-        >
+        <div className={`flex flex-col min-h-screen bg-white`}>
             {/* Header */}
             <Header className="w-full h-13 bg-white" />
 
@@ -39,7 +37,9 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({
             </main>
 
             {/* Footer */}
-            <Footer className={`px-4 max-w-screen-xl  ${getCustomCSSFooter()}`} />
+            <Footer
+                className={`px-4 max-w-screen-xl  ${getCustomCSSFooter()}`}
+            />
         </div>
     );
 };

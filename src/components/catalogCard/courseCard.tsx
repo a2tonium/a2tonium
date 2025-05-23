@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Star, User, Clock } from "lucide-react";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "react-i18next";
 
 interface CourseCardProps {
     title: string;
@@ -26,7 +27,9 @@ export const CourseCard: React.FC<CourseCardProps> = ({
     authorAddress,
     users,
 }) => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
+
     const handleCardClick = () => {
         navigate(`/course/${courseAddress}/promo`);
     };
@@ -44,7 +47,6 @@ export const CourseCard: React.FC<CourseCardProps> = ({
         >
             {/* Main Content */}
             <div className="flex flex-1">
-                {/* Left Section */}
                 <div className="flex-1">
                     <CardTitle className="text-sm md:text-base line-clamp-2 mb-1 hover:underline">
                         {title}
@@ -56,8 +58,6 @@ export const CourseCard: React.FC<CourseCardProps> = ({
                         {author}
                     </CardDescription>
                 </div>
-
-                {/* Right Image */}
                 <div className="w-16 h-16 lg:w-24 lg:h-24 flex-shrink-0 ml-4">
                     <img
                         src={image}
@@ -79,14 +79,14 @@ export const CourseCard: React.FC<CourseCardProps> = ({
                 </div>
                 <div className="flex items-center space-x-1">
                     <Clock className="w-4 h-4 text-gray-500 hover:text-blue-500 transition duration-200" />
-                    <span>{duration} hours</span>
+                    <span>{t("catalog.duration", { count: duration })}</span>
                 </div>
             </div>
 
             {/* Footer Section */}
             <div className="flex items-center space-x-2">
                 <span className="text-sm md:text-lg text-blue-500 font-bold">
-                    {price} TON
+                    {price} {t("catalog.ton")}
                 </span>
             </div>
         </Card>

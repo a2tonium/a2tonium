@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface ErrorPageProps {
     first: string;
@@ -8,13 +9,15 @@ interface ErrorPageProps {
 }
 
 export function ErrorPage({ first, second, third }: ErrorPageProps) {
+    const { t } = useTranslation();
+
     return (
         <div className="min-h-[710px] flex flex-col justify-center items-center bg-white text-center rounded-[2vw] md:border-[6px] border-gray-200">
             <div className="flex flex-col md:flex-row md:items-start items-center md:space-x-10">
                 <div className="">
                     <img
                         src="/images/toncoin.png"
-                        alt="Wallet Not Found"
+                        alt={"error"}
                         className="w-[200px] md:w-[250px] md:w-[300px] md:my-10"
                     />
                 </div>
@@ -31,7 +34,7 @@ export function ErrorPage({ first, second, third }: ErrorPageProps) {
 
                     <Link to="/">
                         <Button className="bg-goluboy hover:bg-blue-600 text-white px-6 py-2 rounded-2xl font-semibold">
-                            Go Back Home
+                            {t("error.goHome")}
                         </Button>
                     </Link>
                 </div>

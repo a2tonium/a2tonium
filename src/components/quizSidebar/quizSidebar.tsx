@@ -52,9 +52,6 @@ export function QuizSidebar({ data, ...props }: QuizSidebarProps) {
                 <SidebarContent>
                     <SidebarMain quizzes={data.quizzes} />
                 </SidebarContent>
-                {/* <SidebarFooter>
-                <NavUser user={data.user} />
-                </SidebarFooter> */}
             </Sidebar>
         </div>
     );

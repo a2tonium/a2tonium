@@ -77,13 +77,12 @@ export function FilterCourses({
 
     return (
         <Accordion type="multiple" className="w-full space-y-1">
-            {/* Difficulty */}
             <AccordionItem value="difficulty">
                 <AccordionTrigger className="hover:underline font-semibold text-sm">
-                    Difficulty
+                    {t("catalog.filter.difficulty")}
                 </AccordionTrigger>
                 <AccordionContent className="space-y-2 pt-2">
-                    {["Beginner", "Intermediate", "Advanced"].map((level) => (
+                    {["beginner", "intermediate", "advanced"].map((level) => (
                         <Label
                             key={level}
                             className="flex items-center gap-2 cursor-pointer"
@@ -94,16 +93,15 @@ export function FilterCourses({
                                     handleFilterChange("difficulty", level)
                                 }
                             />
-                            {level}
+                            {t(`catalog.level.${level}`)}
                         </Label>
                     ))}
                 </AccordionContent>
             </AccordionItem>
 
-            {/* Rating */}
             <AccordionItem value="rating">
                 <AccordionTrigger className="hover:underline font-semibold text-sm">
-                    Rating
+                    {t("catalog.filter.rating")}
                 </AccordionTrigger>
                 <AccordionContent className="space-y-2 pt-2">
                     {[4, 4.5, 5].map((r) => (
@@ -117,16 +115,15 @@ export function FilterCourses({
                                     handleFilterChange("rating", r)
                                 }
                             />
-                            {r}+ stars
+                            {t("catalog.stars", { count: r })}
                         </Label>
                     ))}
                 </AccordionContent>
             </AccordionItem>
 
-            {/* Price */}
             <AccordionItem value="price">
                 <AccordionTrigger className="hover:underline font-semibold text-sm">
-                    Price
+                    {t("catalog.filter.price")}
                 </AccordionTrigger>
                 <AccordionContent className="space-y-2 pt-2">
                     {[50, 100].map((p) => (
@@ -140,18 +137,17 @@ export function FilterCourses({
                                     handleFilterChange("price", p)
                                 }
                             />
-                            Under {p} TON
+                            {t("catalog.price.under", { value: p })}
                         </Label>
                     ))}
                 </AccordionContent>
             </AccordionItem>
 
-            {/* Categories */}
             <AccordionItem value="category">
                 <AccordionTrigger className="hover:underline font-semibold text-sm">
-                    Category
+                    {t("catalog.filter.category")}
                 </AccordionTrigger>
-                <AccordionContent className="">
+                <AccordionContent>
                     <Accordion type="multiple" className="w-full space-y-1">
                         {categoryData.map(renderCategoryGroup)}
                     </Accordion>

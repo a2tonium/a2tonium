@@ -25,4 +25,4 @@ export function CourseCardSkeleton() {
             <Skeleton className="h-6 w-1/4 rounded-md mt-4" /> {/* Price */}
         </Card>
     );
-};
+}

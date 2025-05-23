@@ -39,7 +39,6 @@ export function useTonConnect(): {
     const [ready, setReady] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const isConnectionRestored = useIsConnectionRestored();
-    // console.log("wallet", wallet,"isConnectionRestored", isConnectionRestored, "isConnected", isConnected);
     useEffect(() => {
         if (isConnectionRestored) {
             setIsConnected(!!wallet);

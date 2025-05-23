@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export interface SocialLink {
     type: string;
@@ -33,6 +34,8 @@ interface SelectSocialLinkProps {
 }
 
 export function SelectSocialLink({ links, onChange }: SelectSocialLinkProps) {
+    const { t } = useTranslation();
+
     const handleUpdate = (
         index: number,
         field: keyof SocialLink,
@@ -68,11 +71,15 @@ export function SelectSocialLink({ links, onChange }: SelectSocialLinkProps) {
                             }
                         >
                             <SelectTrigger className="w-1/3 rounded-2xl">
-                                <SelectValue placeholder="Type" />
+                                <SelectValue
+                                    placeholder={t("selectSocialLink.type")}
+                                />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
-                                    <SelectLabel>Social</SelectLabel>
+                                    <SelectLabel>
+                                        {t("selectSocialLink.social")}
+                                    </SelectLabel>
                                     {SOCIAL_OPTIONS.map((opt) => (
                                         <SelectItem
                                             key={opt.value}
@@ -92,7 +99,7 @@ export function SelectSocialLink({ links, onChange }: SelectSocialLinkProps) {
                                     ? SOCIAL_OPTIONS.find(
                                           (o) => o.value === link.type
                                       )?.prefix + "username"
-                                    : "put any link"
+                                    : t("selectSocialLink.anyLink")
                             }
                             value={link.value}
                             onChange={(e) =>
@@ -118,7 +125,7 @@ export function SelectSocialLink({ links, onChange }: SelectSocialLinkProps) {
                     onClick={handleAdd}
                     className="w-full mt-2 rounded-2xl border-goluboy text-goluboy hover:border-blue-500 hover:text-blue-500 flex items-center gap-2"
                 >
-                    Add Link
+                    {t("selectSocialLink.addLink")}
                 </Button>
             )}
         </div>

@@ -9,44 +9,7 @@ import {
     useSidebar,
 } from "@/components/ui/sidebar";
 import { CourseDeployedInterface, QuizAnswers } from "@/types/course.types";
-
-const data = [
-    {
-        title: "Content",
-        url: "#",
-        icon: BookOpenText,
-        isActive: true,
-        items: [
-            {
-                title: "Syllabus",
-                url: "../syllabus",
-            },
-            {
-                title: "Quizzes",
-                url: "../quizzes",
-            },
-        ],
-    },
-    //   {
-    //     title: "Settings",
-    //     url: "#",
-    //     icon: Settings,
-    //     items: [
-    //       {
-    //         title: "Publication",
-    //         url: "#",
-    //       },
-    //       {
-    //         title: "Price",
-    //         url: "#",
-    //       },
-    //       {
-    //         title: "Certificates",
-    //         url: "#",
-    //       },
-    //     ],
-    // }
-];
+import { useTranslation } from "react-i18next";
 
 export function CourseSidebar({
     courseData,
@@ -57,10 +20,29 @@ export function CourseSidebar({
     grades: QuizAnswers[];
 }) {
     const { isMobile } = useSidebar();
+    const { t } = useTranslation();
+
+    const data = [
+        {
+            title: t("courseSidebar.content"),
+            url: "#",
+            icon: BookOpenText,
+            isActive: true,
+            items: [
+                {
+                    title: t("courseSidebar.syllabus"),
+                    url: "../syllabus",
+                },
+                {
+                    title: t("courseSidebar.quizzes"),
+                    url: "../quizzes",
+                },
+            ],
+        },
+    ];
 
     return (
         <div className="bg-white rounded-l-2xl m-0 sm:mt-5 sm:ml-5">
-            {isMobile}
             <Sidebar
                 collapsible={isMobile ? "icon" : "none"}
                 {...props}
@@ -90,9 +72,6 @@ export function CourseSidebar({
                         grades={grades}
                     />
                 </SidebarContent>
-                {/* <SidebarFooter>
-                <NavUser user={data.user} />
-                </SidebarFooter> */}
             </Sidebar>
         </div>
     );

@@ -12,13 +12,14 @@ import { useCourseContract } from "@/hooks/useCourseContract";
 import { useToast } from "@/hooks/use-toast";
 import { useTonConnect } from "@/hooks/useTonConnect";
 import { sendAnswersToQuiz } from "@/services/course.service";
+import { useTranslation } from "react-i18next";
 
 export function QuizAttempt() {
+    const { t } = useTranslation();
     const { quizId, courseAddress } = useParams<{
         quizId: string;
         courseAddress: string;
     }>();
-
     const navigate = useNavigate();
     const {
         data: course,
@@ -50,16 +51,13 @@ export function QuizAttempt() {
             e.preventDefault();
             e.returnValue = "";
         };
-
         window.addEventListener("beforeunload", handleBeforeUnload);
         return () =>
             window.removeEventListener("beforeunload", handleBeforeUnload);
     }, []);
 
     const handleBack = () => {
-        const confirmExit = window.confirm(
-            "Are you sure you want to leave? Your answers will be lost."
-        );
+        const confirmExit = window.confirm(t("quizAttempt.confirmLeave"));
         if (confirmExit) navigate(-1);
     };
 
@@ -68,18 +66,18 @@ export function QuizAttempt() {
             <ErrorPage
                 first={
                     error.message === "Access denied"
-                        ? "Access Denied"
-                        : "Course Not Found"
+                        ? t("quizAttempt.accessDenied.title")
+                        : t("quizAttempt.error.title")
                 }
                 second={
                     error.message === "Access denied"
-                        ? "You are not enrolled in this course."
-                        : "We couldn't find your course."
+                        ? t("quizAttempt.accessDenied.message")
+                        : t("quizAttempt.error.message")
                 }
                 third={
                     error.message === "Access denied"
-                        ? "Please check your course list."
-                        : "Please try again later."
+                        ? t("quizAttempt.accessDenied.retry")
+                        : t("quizAttempt.error.retry")
                 }
             />
         );
@@ -90,20 +88,21 @@ export function QuizAttempt() {
             <div className="flex items-center justify-center min-h-screen bg-white">
                 <div className="flex flex-col items-center space-y-4">
                     <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full" />
-                    <p className="text-gray-700 font-medium">Please wait</p>
+                    <p className="text-gray-700 font-medium">
+                        {t("quizAttempt.loading")}
+                    </p>
                 </div>
             </div>
         );
     }
 
     const currentModule = course.data?.modules.find((m) => m.id === quizId);
-
     if (!currentModule) {
         return (
             <ErrorPage
-                first="Quiz Not Found"
-                second="This quiz does not exist in the course."
-                third="Please contact support if you think this is a mistake."
+                first={t("quizAttempt.notFound.title")}
+                second={t("quizAttempt.notFound.message")}
+                third={t("quizAttempt.notFound.retry")}
             />
         );
     }
@@ -116,8 +115,6 @@ export function QuizAttempt() {
             updated[questionIndex] = optionIndex;
             return updated;
         });
-
-        // Убираем ошибку, если пользователь ответил на вопрос
         setErrors((prev) => prev.filter((e) => e !== questionIndex));
     };
 
@@ -125,7 +122,6 @@ export function QuizAttempt() {
         const missing = selectedAnswers
             .map((ans, i) => (ans === -1 ? i : -1))
             .filter((i) => i !== -1) as number[];
-
         if (missing.length > 0) {
             setErrors(missing);
             return;
@@ -133,10 +129,6 @@ export function QuizAttempt() {
 
         setErrors([]);
         try {
-            console.log(
-                "Submitting quiz...",
-                convertAnswerToString(selectedAnswers)
-            );
             await sendAnswersToQuiz(
                 courseAddress!,
                 studentAddress,
@@ -146,16 +138,16 @@ export function QuizAttempt() {
                 answerQuiz
             );
             toast({
-                title: "Successful Quiz Submission",
-                description: `Wait for the teacher to check your answers.`,
+                title: t("quizAttempt.success.title"),
+                description: t("quizAttempt.success.description"),
                 className: "bg-green-500 text-white rounded-[2vw] border-none",
             });
             navigate(-1);
         } catch (error) {
-            console.error("Error creating course:", error);
+            console.error("Error submitting quiz:", error);
             toast({
-                title: "Error",
-                description: "Failed to submit quiz.",
+                title: t("quizAttempt.errorSubmit.title"),
+                description: t("quizAttempt.errorSubmit.description"),
                 variant: "destructive",
             });
         }
@@ -174,14 +166,15 @@ export function QuizAttempt() {
                         className="flex items-center text-blue-700 hover:underline space-x-1 text-sm font-semibold"
                     >
                         <ArrowLeft className="w-[18px] h-[18px]" />
-                        <span>Back</span>
+                        <span>{t("quizAttempt.back")}</span>
                     </button>
                     <div>
                         <p className="text-md font-semibold text-gray-900">
                             {currentModule.title}
                         </p>
                         <p className="text-gray-500 text-xs">
-                            Quiz • {questions.length} Questions
+                            {t("quizAttempt.quiz")} • {questions.length}{" "}
+                            {t("quizAttempt.questions")}
                         </p>
                     </div>
                 </div>
@@ -223,7 +216,7 @@ export function QuizAttempt() {
                         </RadioGroup>
                         {errors.includes(questionIndex) && (
                             <p className="text-sm text-red-500 mt-2">
-                                Please select an answer
+                                {t("quizAttempt.selectAnswer")}
                             </p>
                         )}
                     </Card>
@@ -237,7 +230,7 @@ export function QuizAttempt() {
                     onClick={handleSubmit}
                     className="font-bold bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-xl"
                 >
-                    Submit
+                    {t("quizAttempt.submit")}
                 </Button>
             </div>
         </div>

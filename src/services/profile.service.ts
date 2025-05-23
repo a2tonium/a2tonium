@@ -41,7 +41,7 @@ export async function createProfile(
 
     const cleaned = reformatProfileImage(profileData, imageUrl);
 
-    console.log("cleaned", cleaned);
+
     const profileUrl = await uploadProfileDataToPinata(cleaned, pinata);
 
     await enrollToProfileContract(sender, profileUrl);
@@ -77,7 +77,7 @@ export async function updateProfile(
 
     const cleaned = reformatProfileImage(profileData, imageUrl);
 
-    console.log("cleaned", cleaned);
+
     const profileUrl = await uploadProfileDataToPinata(cleaned, pinata);
 
     await updateProfileData(sender, profileUrl);
@@ -89,7 +89,7 @@ export async function fetchProfileData(ownerAddress: string) {
         const profileLink = await getProfileData(ownerAddress);
 
         const ipfsLink = profileLink?.slice(8);
-        console.log("Link:", ipfsLink);
+
         if (!ipfsLink) {
             console.warn("No IPFS link found for profile data");
             return undefined;
@@ -200,7 +200,7 @@ export function reformatProfileImage(
     profile: ProfileDataInterface,
     imageUrl: string
 ): ProfileDataInterface {
-    console.log("formatted", profile);
+
     const formatted: ProfileDataInterface = {
         ...profile,
         image: `ipfs://${imageUrl}`,

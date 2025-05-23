@@ -5,12 +5,12 @@ import LanguageDetector from "i18next-browser-languagedetector";
 
 i18n.use(HttpBackend)
     .use(LanguageDetector)
-    .use(initReactI18next) 
+    .use(initReactI18next)
     .init({
-        fallbackLng: "en", 
+        fallbackLng: "en",
         debug: true,
         backend: {
-            loadPath: "/locales/{{lng}}/translation.json", 
+            loadPath: "/locales/{{lng}}/translation.json",
         },
         interpolation: {
             escapeValue: false,

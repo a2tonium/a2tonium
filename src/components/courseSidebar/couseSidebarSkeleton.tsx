@@ -38,15 +38,6 @@ export function CourseSidebarSkeleton() {
                         </div>
                     </div>
 
-                    {/* Optionally repeat another group if needed */}
-                    {/* <div className="space-y-2">
-            <Skeleton className="w-24 h-4 mb-2" />
-            <div className="pl-2 space-y-2">
-              <Skeleton className="w-20 h-3" />
-              <Skeleton className="w-16 h-3" />
-              <Skeleton className="w-14 h-3" />
-            </div>
-          </div> */}
                 </SidebarContent>
             </Sidebar>
         </div>

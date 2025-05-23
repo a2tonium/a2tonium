@@ -18,18 +18,21 @@ import { issueCertificateService } from "@/services/course.service";
 import { useCourseContract } from "@/hooks/useCourseContract";
 import { useParams } from "react-router-dom";
 import { useTonConnect } from "@/hooks/useTonConnect";
+import { useTranslation } from "react-i18next";
 
 export function CertificateDialog({
     trigger,
-    quizId
+    quizId,
 }: {
     trigger: React.ReactNode;
     quizId: string;
 }) {
+    const { t } = useTranslation();
     const { issueCertificate } = useCourseContract();
     const { courseAddress } = useParams();
     const { address: studentAddress } = useTonConnect();
     const { toast } = useToast();
+
     const [open, setOpen] = useState(false);
     const [rating, setRating] = useState(0);
     const [review, setReview] = useState("");
@@ -39,17 +42,17 @@ export function CertificateDialog({
 
     const handleGetCertificate = async () => {
         if (rating === 0) {
-            setError("Please provide a rating.");
+            setError(t("getCertificate.error.noRating"));
             return;
         }
 
         if (review.trim() === "") {
-            setError("Comment is required.");
+            setError(t("getCertificate.error.noComment"));
             return;
         }
 
         if (review.length > 256) {
-            setError("Comment cannot exceed 256 characters.");
+            setError(t("getCertificate.error.commentTooLong"));
             return;
         }
 
@@ -57,7 +60,6 @@ export function CertificateDialog({
         setError("");
 
         try {
-
             await issueCertificateService(
                 courseAddress!,
                 studentAddress,
@@ -68,8 +70,8 @@ export function CertificateDialog({
             );
             setSuccess(true);
             toast({
-                title: "Certificate Granted",
-                description: "Thank you for your feedback!",
+                title: t("getCertificate.toast.title"),
+                description: t("getCertificate.toast.description"),
                 className: "bg-green-500 text-white rounded-[2vw]",
             });
             setTimeout(() => {
@@ -78,7 +80,7 @@ export function CertificateDialog({
                 setSubmitting(false);
             }, 1500);
         } catch (e) {
-            setError("Something went wrong. Try again.");
+            setError(t("getCertificate.error.general"));
             setSubmitting(false);
             console.error("Error submitting certificate:", e);
         }
@@ -89,11 +91,13 @@ export function CertificateDialog({
             <DialogTrigger asChild>{trigger}</DialogTrigger>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Get Certificate</DialogTitle>
+                    <DialogTitle>{t("getCertificate.title")}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-6 pt-4">
                     <div className="space-y-2">
-                        <Label id="rating-label">Rate this course</Label>
+                        <Label id="rating-label">
+                            {t("getCertificate.ratingLabel")}
+                        </Label>
                         <div className="flex justify-center">
                             <Rating
                                 value={rating}
@@ -104,9 +108,9 @@ export function CertificateDialog({
                         </div>
                     </div>
                     <div>
-                        <Label>Write short Review</Label>
+                        <Label>{t("getCertificate.commentLabel")}</Label>
                         <Textarea
-                            placeholder="Share your thoughts..."
+                            placeholder={t("getCertificate.commentPlaceholder")}
                             value={review}
                             onChange={(e) => setReview(e.target.value)}
                             maxLength={256}
@@ -127,12 +131,12 @@ export function CertificateDialog({
                         {success ? (
                             <>
                                 <Check className="w-4 h-4" />
-                                Submitted
+                                {t("getCertificate.submitted")}
                             </>
                         ) : submitting ? (
-                            "Submitting..."
+                            t("getCertificate.submitting")
                         ) : (
-                            "Get Certificate"
+                            t("getCertificate.button")
                         )}
                     </Button>
                 </DialogFooter>

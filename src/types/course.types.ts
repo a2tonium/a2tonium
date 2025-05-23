@@ -106,8 +106,6 @@ export interface CertificateFullInterface {
     }[];
 }
 
-
-
 export type CourseAttribute = {
     trait_type: string;
     value: string;

@@ -8,6 +8,7 @@ import { checkPinataConnection } from "@/lib/pinata/pinata.client.lib";
 import { CourseCreationInterface } from "@/types/course.types";
 import { extractYoutubeVideoId } from "@/utils/youtube.utils";
 import { Spinner } from "@/components/ui/kibo-ui/spinner";
+import { useTranslation } from "react-i18next";
 
 interface StepFiveProps {
     courseData: CourseCreationInterface;
@@ -39,9 +40,10 @@ export function StepFive({
     publicKey,
     setPublicKey,
 }: StepFiveProps) {
+    const { t } = useTranslation();
     const stepFiveSchema = z.object({
-        jwt: z.string().min(10, "JWT слишком короткий"),
-        publicKey: z.string().min(10, "Public Key слишком короткий"),
+        jwt: z.string().min(10, t("stepFive.error.jwtShort")),
+        publicKey: z.string().min(10, t("stepFive.error.publicKeyShort")),
     });
     const [jwtError, setJwtError] = useState<string | null>(null);
     const [publicKeyError, setPublicKeyError] = useState<string | null>(null);
@@ -57,11 +59,9 @@ export function StepFive({
                 courseDataTemp.video = extractedVideoId;
             }
         }
-        // 1) Сохраняем courseData (например, в sessionStorage)
         sessionStorage.setItem("promoData", JSON.stringify(courseDataTemp));
         sessionStorage.setItem("priceData", JSON.stringify(coursePrice));
 
-        // 2) Открываем новую вкладку на URL /teach/courses/create/coursePromo
         window.open("/teach/create/coursePromo", "_blank");
     };
 
@@ -88,9 +88,7 @@ export function StepFive({
 
         const isConnected = await checkPinataConnection(jwt);
         if (!isConnected) {
-            setJwtError(
-                "Ошибка: JWT недействителен или нет соединения с Pinata"
-            );
+            setJwtError(t("stepFive.pinata.jwtError"));
             setIsLoading(false);
             return;
         }
@@ -103,7 +101,9 @@ export function StepFive({
         <div className="space-y-2">
             <div>
                 <div className="bg-gray-100 p-4 rounded-xl shadow-md">
-                    <h3 className="text-lg font-semibold">Checklist</h3>
+                    <h3 className="text-lg font-semibold">
+                        {t("stepFive.checklist")}
+                    </h3>
                     <ul className="mt-3 space-y-2 text-md font-medium">
                         <li
                             onClick={() => setCurrentStep(1)}
@@ -114,7 +114,7 @@ export function StepFive({
                             ) : (
                                 <X className="text-red-500 w-5 h-5 mr-2" />
                             )}
-                            Course Information
+                            {t("stepFive.info")}
                         </li>
                         <li
                             onClick={() => setCurrentStep(2)}
@@ -125,7 +125,7 @@ export function StepFive({
                             ) : (
                                 <X className="text-red-500 w-5 h-5 mr-2" />
                             )}
-                            Lessons
+                            {t("stepFive.lessons")}
                         </li>
                         <li
                             onClick={() => setCurrentStep(3)}
@@ -136,7 +136,7 @@ export function StepFive({
                             ) : (
                                 <X className="text-red-500 w-5 h-5 mr-2" />
                             )}
-                            Quizzes
+                            {t("stepFive.quizzes")}
                         </li>
                         <li
                             onClick={() => setCurrentStep(4)}
@@ -147,7 +147,7 @@ export function StepFive({
                             ) : (
                                 <X className="text-red-500 w-5 h-5 mr-2" />
                             )}
-                            Price & Certificate
+                            {t("stepFive.pricing")}
                         </li>
                     </ul>
                 </div>
@@ -168,14 +168,14 @@ export function StepFive({
                         }
                     >
                         <span className="m-0 p-0 font-semibold text-xs sm:text-sm">
-                            Promo Page
+                            {t("stepFive.promoPage")}
                         </span>
                     </Button>
                 </div>
             </div>
             <div className="pt-4">
                 <h1 className="text-lg mb-5 md:text-xl font-bold">
-                    Pinata Cloud and Public Key Information
+                    {t("stepFive.pinata.title")}
                 </h1>
 
                 <div className="space-y-4">
@@ -185,7 +185,7 @@ export function StepFive({
                             htmlFor="jwt"
                             className="block text-sm font-medium text-gray-700"
                         >
-                            JWT
+                            {t("stepFive.pinata.jwt")}
                         </Label>
                         <Input
                             id="jwt"
@@ -201,7 +201,7 @@ export function StepFive({
                             className={`mt-1 block w-full rounded-2xl border p-2 shadow-sm sm:text-sm ${
                                 jwtError ? "border-red-500" : "border-gray-300"
                             }`}
-                            placeholder="Введите ваш JWT"
+                            placeholder={t("stepFive.pinata.jwtPlaceholder")}
                         />
                         {jwtError && (
                             <p className="text-red-500 text-xs mt-1">
@@ -215,7 +215,7 @@ export function StepFive({
                         htmlFor="publicKey"
                         className="block text-sm font-medium text-gray-700"
                     >
-                        Public Key
+                        {t("stepFive.pinata.publicKey")}
                     </Label>
                     <Input
                         id="publicKey"
@@ -232,7 +232,7 @@ export function StepFive({
                                 ? "border-red-500"
                                 : "border-gray-300"
                         }`}
-                        placeholder="Введите ваш Public Key"
+                        placeholder={t("stepFive.pinata.publicKeyPlaceholder")}
                     />
                     {jwtError && (
                         <p className="text-red-500 text-xs mt-1">
@@ -250,7 +250,7 @@ export function StepFive({
                         disabled={jwt === "" || publicKey === ""}
                     >
                         <span className="m-0 p-0 font-semibold text-xs sm:text-sm flex items-center gap-2">
-                            Check
+                            {t("stepFive.pinata.check")}
                             {isLoading ? (
                                 <Spinner className="w-4 h-4 text-blue-500" />
                             ) : isValidJwt ? (
@@ -264,12 +264,12 @@ export function StepFive({
 
                 <div className="flex justify-between text-gray-500 text-xs mt-4">
                     <span>
-                        More about creating a course in our{" "}
+                        {t("stepFive.pinata.helpText")}
                         <a
                             href="/cources/tutorial"
                             className="text-blue-500 hover:underline"
                         >
-                            Help Center
+                            {t("stepFive.pinata.helpLink")}
                         </a>
                     </span>
                 </div>

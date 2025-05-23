@@ -9,7 +9,6 @@ export function useClientProfileData() {
     const { ready } = useProfileContract();
 
     const fetcher = async (): Promise<ProfileDataInterface | undefined> => {
-        console.log("Fetching profile data for address:", address);
         if (!ready || !address) return undefined;
         return await fetchProfileData(address);
     };

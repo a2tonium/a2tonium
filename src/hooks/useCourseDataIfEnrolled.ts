@@ -13,7 +13,6 @@ export function useCourseDataIfEnrolled(contractAddress?: string) {
     }> => {
         if (!userAddress || !contractAddress) return { data: null, cost: "" };
         const ownerCourseAddresses = await getOwnedCourseAddresses(userAddress);
-        console.log(ownerCourseAddresses);
         return await fetchCourseIfEnrolled(
             userAddress,
             contractAddress,

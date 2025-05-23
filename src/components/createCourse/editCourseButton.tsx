@@ -19,6 +19,7 @@ import { useTonConnect } from "@/hooks/useTonConnect";
 import { Check } from "lucide-react";
 import { Spinner } from "@/components/ui/kibo-ui/spinner";
 import { useCourseContract } from "@/hooks/useCourseContract";
+import { useTranslation } from "react-i18next";
 
 interface CreateCourseLogicProps {
     course: CourseCreationInterface;
@@ -28,12 +29,6 @@ interface CreateCourseLogicProps {
     courseAddress: string;
     ownerPublicKey: string;
 }
-
-const buySchema = z.object({
-    accepted: z.literal(true, {
-        errorMap: () => ({ message: "You must accept the terms." }),
-    }),
-});
 
 export function EditCourseButton({
     course,
@@ -51,6 +46,7 @@ export function EditCourseButton({
     const { updateCourseContract } = useCourseContract();
     const { sender, publicKey } = useTonConnect();
     const { toast } = useToast();
+    const { t } = useTranslation();
 
     const navigate = useNavigate();
 
@@ -58,6 +54,12 @@ export function EditCourseButton({
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+
+    const buySchema = z.object({
+        accepted: z.literal(true, {
+            errorMap: () => ({ message: t("editCourse.error.mustAccept") }),
+        }),
+    });
 
     const handleCreateCourse = async (publicKey: string) => {
         const result = buySchema.safeParse({ accepted });
@@ -90,15 +92,17 @@ export function EditCourseButton({
             onOpenChange(false);
             navigate("/teach");
             toast({
-                title: "Successful Course Edition",
-                description: `You've edited the course: ${course.name}`,
+                title: t("editCourse.success.title"),
+                description: t("editCourse.success.desc", {
+                    name: course.name,
+                }),
                 className: "bg-green-500 text-white rounded-[2vw] border-none",
             });
         } catch (error) {
             console.error("Error editing the course:", error);
             toast({
-                title: "Error",
-                description: "Failed to edit the course.",
+                title: t("editCourse.fail.title"),
+                description: t("editCourse.fail.desc"),
                 variant: "destructive",
             });
         } finally {
@@ -110,7 +114,7 @@ export function EditCourseButton({
         <Dialog open={open} onOpenChange={() => onOpenChange(false)}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Edit Course</DialogTitle>
+                    <DialogTitle>{t("editCourse.dialogTitle")}</DialogTitle>
                 </DialogHeader>
                 {/* Course Info Summary */}
                 <div className="bg-gray-200 p-4 rounded-xl shadow-sm space-y-2 mb-4">
@@ -119,11 +123,15 @@ export function EditCourseButton({
                     </h3>
                     <div className="text-sm text-gray-600">
                         <p>
-                            <span className="font-medium">Language:</span>{" "}
+                            <span className="font-medium">
+                                {t("editCourse.language")}:
+                            </span>{" "}
                             {course.attributes.language}
                         </p>
                         <p>
-                            <span className="font-medium">Modules:</span>{" "}
+                            <span className="font-medium">
+                                {t("editCourse.modules")}:
+                            </span>{" "}
                             {course.modules.length}
                         </p>
                     </div>
@@ -140,12 +148,12 @@ export function EditCourseButton({
                             onCheckedChange={() => setAccepted(!accepted)}
                         />
                         <Label htmlFor="accept" className="text-sm">
-                            I accept the{" "}
+                            {t("editCourse.accept")}{" "}
                             <Link
                                 to="/tearms-conditions"
                                 className="text-blue-500 hover:underline underline-offset-2"
                             >
-                                terms and conditions
+                                {t("editCourse.terms")}
                             </Link>
                         </Label>
                     </div>
@@ -158,7 +166,7 @@ export function EditCourseButton({
                         className="font-semibold rounded-2xl bg-goluboy hover:bg-blue-500 text-white flex items-center gap-2"
                         disabled={isLoading || !accepted}
                     >
-                        Edit Course
+                        {t("editCourse.button")}
                         {isLoading ? (
                             <Spinner className="animate-spin w-4 h-4" />
                         ) : isSuccess ? (

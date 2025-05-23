@@ -1,6 +1,6 @@
-import { TonConnectUIProvider } from "@tonconnect/ui-react";
+import { TonConnectUIProvider } from '@tonconnect/ui-react';
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion"
 import { AnimQuiz } from "@/components/animated/animQuizAttempt";
 
 import { MainLayout } from "@/layouts/main.layout";
@@ -21,185 +21,63 @@ import { CoursePromoSample } from "@/pages/teach/createCourse/coursePromoSample"
 
 import { PageNotFound } from "@/pages/error/pageNotFound";
 import { UserNotAuthorized } from "@/pages/error/userNotAuthorized";
-import { ProtectedRoute } from "@/pages/protectedRoute/protectedRoute";
-import { Certificate } from "@/pages/certificate/certificate";
+import { ProtectedRoute } from '@/pages/protectedRoute/protectedRoute';
+import { Certificate } from '@/pages/certificate/certificate';
+import { ThemeProvider } from '@/components/header/themeProvider';
 
 export default function App() {
     const location = useLocation();
 
     return (
-        <AnimatePresence mode="wait">
-            <TonConnectUIProvider manifestUrl="https://raw.githubusercontent.com/a2tonium/a2tonium/main/public/tonconnect-manifest.json">
-                <Routes location={location} key={location.pathname}>
-                    <Route index element={<Navigate to="catalog" replace />} />
-                    <Route
-                        path="catalog"
-                        element={<MainLayout children={<Catalog />} />}
-                    />
+        <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+            <AnimatePresence mode="wait">
+                <TonConnectUIProvider manifestUrl="https://raw.githubusercontent.com/a2tonium/a2tonium/main/public/tonconnect-manifest.json">
+                        <Routes location={location} key={location.pathname}>
+                            <Route index element={<Navigate to="catalog" replace />} />
+                            <Route path="catalog" element={ <MainLayout children={<Catalog />} />} />
+                            
+                            <Route path="learn" element={ <ProtectedRoute><MainLayout children={<Learn />}></MainLayout></ProtectedRoute>} />
 
-                    <Route
-                        path="learn"
-                        element={
-                            <ProtectedRoute>
-                                <MainLayout children={<Learn />}></MainLayout>
-                            </ProtectedRoute>
-                        }
-                    />
+                            <Route path="teach" >
+                                <Route index element={ <ProtectedRoute><MainLayout><Teach /></MainLayout></ProtectedRoute> } />
+                                <Route path="create">
+                                    <Route index element={ <ProtectedRoute><MainLayout><CreateCourse children={undefined} /></MainLayout></ProtectedRoute> } />
+                                    <Route path="coursePromo" element={<ProtectedRoute><MainLayout><CoursePromoSample /></MainLayout></ProtectedRoute>} />
+                                </Route>
 
-                    <Route path="teach">
-                        <Route
-                            index
-                            element={
-                                <ProtectedRoute>
-                                    <MainLayout>
-                                        <Teach />
-                                    </MainLayout>
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route path="create">
-                            <Route
-                                index
-                                element={
-                                    <ProtectedRoute>
-                                        <MainLayout>
-                                            <CreateCourse
-                                                children={undefined}
-                                            />
-                                        </MainLayout>
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="coursePromo"
-                                element={
-                                    <ProtectedRoute>
-                                        <MainLayout>
-                                            <CoursePromoSample />
-                                        </MainLayout>
-                                    </ProtectedRoute>
-                                }
-                            />
-                        </Route>
-                    </Route>
+                            </Route>
 
-                    <Route path="course/:courseAddress">
-                        <Route
-                            index
-                            element={<Navigate to="syllabus" replace />}
-                        />
-                        <Route
-                            path="promo"
-                            element={
-                                <MainLayout>
-                                    <CoursePromo />
-                                </MainLayout>
-                            }
-                        />
-                        <Route
-                            path="syllabus"
-                            element={
-                                <ProtectedRoute>
-                                    <MainLayout>
-                                        <Syllabus />
-                                    </MainLayout>
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="quizzes"
-                            element={
-                                <ProtectedRoute>
-                                    <MainLayout>
-                                        <Quizzes />
-                                    </MainLayout>
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route
-                            path="lesson/:lessonId"
-                            element={
-                                <ProtectedRoute>
-                                    <MainLayout>
-                                        <Lesson />
-                                    </MainLayout>
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route path="quiz/:quizId">
-                            <Route
-                                index
-                                element={
-                                    <ProtectedRoute>
-                                        <MainLayout>
-                                            <Quiz />
-                                        </MainLayout>
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="attempt"
-                                element={
-                                    <ProtectedRoute>
-                                        <AnimQuiz>
-                                            <QuizAttempt />
-                                        </AnimQuiz>
-                                    </ProtectedRoute>
-                                }
-                            />
-                        </Route>
-                        <Route
-                            path="edit"
-                            element={
-                                <ProtectedRoute>
-                                    <MainLayout>
-                                        <EditCourse />
-                                    </MainLayout>
-                                </ProtectedRoute>
-                            }
-                        />
-                    </Route>
+                            <Route path="course/:courseAddress">
+                                <Route index element={<Navigate to="syllabus" replace />} />
+                                <Route path="promo" element={<MainLayout><CoursePromo /></MainLayout>} />
+                                <Route path="syllabus" element={ <ProtectedRoute><MainLayout><Syllabus /></MainLayout></ProtectedRoute> } />
+                                <Route path="quizzes" element={ <ProtectedRoute><MainLayout><Quizzes /></MainLayout></ProtectedRoute> } />
+                                <Route path="lesson/:lessonId" element={<ProtectedRoute><MainLayout><Lesson /></MainLayout></ProtectedRoute>} />
+                                <Route path="quiz/:quizId">
+                                    <Route index element={<ProtectedRoute><MainLayout><Quiz /></MainLayout></ProtectedRoute>} />
+                                    <Route path="attempt" element={<ProtectedRoute><AnimQuiz><QuizAttempt /></AnimQuiz></ProtectedRoute>} />
+                                </Route>
+                                <Route path="edit" element={<ProtectedRoute><MainLayout><EditCourse /></MainLayout></ProtectedRoute>} />
+                            </Route>
 
-                    <Route path="user/:walletAddr">
-                        <Route
-                            index
-                            element={
-                                <MainLayout>
-                                    <UserProfile />
-                                </MainLayout>
-                            }
-                        />
-                    </Route>
-
-                    <Route path="certificate/:certificateAddr">
-                        <Route
-                            index
-                            element={
-                                <MainLayout>
-                                    <Certificate />
-                                </MainLayout>
-                            }
-                        />
-                    </Route>
-
-                    <Route
-                        path="/unauthorized"
-                        element={
-                            <MainLayout>
-                                <UserNotAuthorized />
-                            </MainLayout>
-                        }
-                    />
-                    <Route
-                        path="*"
-                        element={
-                            <MainLayout>
-                                <PageNotFound />
-                            </MainLayout>
-                        }
-                    />
-                </Routes>
-            </TonConnectUIProvider>
-        </AnimatePresence>
+                            <Route path="user/:walletAddr">
+                                <Route index element={<MainLayout><UserProfile /></MainLayout>} />
+                            </Route>
+                                
+                            <Route path="certificate/:certificateAddr"> 
+                                <Route index element={<MainLayout><Certificate /></MainLayout>} />
+                            </Route>
+                            
+                            <Route path="/unauthorized" element={<MainLayout><UserNotAuthorized /></MainLayout>} />
+                            <Route path="*" element={<MainLayout><PageNotFound /></MainLayout>} />
+                            
+                        </Routes>
+                </TonConnectUIProvider>
+            </AnimatePresence>
+        </ThemeProvider>
     );
-}
+  };
+  
+  
+
+

@@ -1,16 +1,19 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import type { OwnerCoursePreview } from "@/types/course.types";
+import { useTranslation } from "react-i18next";
 
 interface CourseCardsProps {
     courses: OwnerCoursePreview[];
 }
 
 export function CourseCards({ courses }: CourseCardsProps) {
+    const { t } = useTranslation();
+
     if (!courses || courses.length === 0) {
         return (
             <div className="text-center py-8">
-                <p className="text-gray-500">No courses enrolled yet.</p>
+                <p className="text-gray-500">{t("courseCards.noCourses")}</p>
             </div>
         );
     }

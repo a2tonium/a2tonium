@@ -25,46 +25,7 @@ import { updateProfile } from "@/services/profile.service";
 import { ProfileWithWalletDataInterface } from "@/types/profile.types";
 import { useProfileContract } from "@/hooks/useProfileContract";
 import { useTonConnect } from "@/hooks/useTonConnect";
-
-const SOCIAL_PREFIX_MAP: Record<string, string> = {
-    Telegram: "t.me/",
-    Youtube: "www.youtube.com/user/",
-    Instagram: "www.instagram.com/",
-    X: "x.com/",
-    Linkedin: "www.linkedin.com/in/",
-    Facebook: "www.facebook.com/",
-};
-
-const socialLinkSchema = z
-    .object({
-        type: z.string().min(1),
-        value: z.string().min(1),
-    })
-    .superRefine((data, ctx) => {
-        const { type, value } = data;
-        if (type === "Email" || type === "Other") return;
-        const requiredPrefix = SOCIAL_PREFIX_MAP[type];
-        const normalized = value.replace(/^https?:\/\//, "");
-        if (!normalized.startsWith(requiredPrefix)) {
-            ctx.addIssue({
-                path: ["value"],
-                message: `Link must start with "${requiredPrefix}"`,
-                code: z.ZodIssueCode.custom,
-            });
-        }
-    });
-
-const profileSchema = z.object({
-    image: z.string().min(1, "Avatar is required"),
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    description: z
-        .string()
-        .min(1, "Description is required")
-        .max(256, "Description too long")
-        .optional(),
-    social_links: z.array(socialLinkSchema).max(10),
-    jwt: z.string().min(10, "JWT is too short"),
-});
+import { useTranslation } from "react-i18next";
 
 interface EditProfileDialogProps {
     open: boolean;
@@ -77,6 +38,7 @@ export function EditProfileDialog({
     onOpenChange,
     initialData,
 }: EditProfileDialogProps) {
+    const { t } = useTranslation();
     const { toast } = useToast();
     const { updateProfileContract } = useProfileContract();
     const { sender } = useTonConnect();
@@ -103,6 +65,48 @@ export function EditProfileDialog({
         setForm((prev) => ({ ...prev, social_links: links }));
     };
 
+    const SOCIAL_PREFIX_MAP: Record<string, string> = {
+        Telegram: "t.me/",
+        Youtube: "www.youtube.com/user/",
+        Instagram: "www.instagram.com/",
+        X: "x.com/",
+        Linkedin: "www.linkedin.com/in/",
+        Facebook: "www.facebook.com/",
+    };
+
+    const socialLinkSchema = z
+        .object({
+            type: z.string().min(1),
+            value: z.string().min(1),
+        })
+        .superRefine((data, ctx) => {
+            const { type, value } = data;
+            if (type === "Email" || type === "Other") return;
+            const requiredPrefix = SOCIAL_PREFIX_MAP[type];
+            const normalized = value.replace(/^https?:\/\//, "");
+            if (!normalized.startsWith(requiredPrefix)) {
+                ctx.addIssue({
+                    path: ["value"],
+                    message: t("editProfileDialog.invalidLink", {
+                        prefix: requiredPrefix,
+                    }),
+                    code: z.ZodIssueCode.custom,
+                });
+            }
+        });
+
+    const profileSchema = z.object({
+        image: z.string().min(1, "Avatar is required"),
+        name: z.string().min(2, "Name must be at least 2 characters"),
+        description: z
+            .string()
+            .min(1, "Description is required")
+            .max(256, "Description too long")
+            .optional(),
+        social_links: z.array(socialLinkSchema).max(10),
+        jwt: z.string().min(10, "JWT is too short"),
+    });
+
     const handleUpdate = async () => {
         setIsLoading(true);
         setFormErrors({});
@@ -123,9 +127,7 @@ export function EditProfileDialog({
 
         const isJwtValid = await checkPinataConnection(form.jwt);
         if (!isJwtValid) {
-            setFormErrors({
-                jwt: "Invalid JWT or failed connection to Pinata",
-            });
+            setFormErrors({ jwt: t("editProfileDialog.jwtInvalid") });
             setIsLoading(false);
             return;
         }
@@ -139,15 +141,15 @@ export function EditProfileDialog({
                 setIsLoading(false);
             }, 1500);
             toast({
-                title: "Profile Updated",
-                description: `Your profile was updated successfully`,
+                title: t("editProfileDialog.successTitle"),
+                description: t("editProfileDialog.successDesc"),
                 className: "bg-green-500 text-white border-none rounded-[2vw]",
             });
         } catch (error) {
             console.error("Error updating profile:", error);
             toast({
-                title: "Error",
-                description: "Failed to update profile.",
+                title: t("editProfileDialog.errorTitle"),
+                description: t("editProfileDialog.errorDesc"),
                 variant: "destructive",
             });
         } finally {
@@ -159,25 +161,23 @@ export function EditProfileDialog({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                    <DialogTitle>Edit Profile</DialogTitle>
+                    <DialogTitle>{t("editProfileDialog.title")}</DialogTitle>
                 </DialogHeader>
                 <ScrollArea className="h-[71vh] pr-4">
                     <div className="space-y-4 pb-4">
                         <div>
-                            <Label>Avatar</Label>
+                            <Label>{t("editProfileDialog.avatar")}</Label>
                             <ImageDropzone
                                 value={
                                     form.image.startsWith("data:image")
-                                        ? form.image // New image (base64)
+                                        ? form.image
                                         : form.image
                                         ? `https://ipfs.io/ipfs/${form.image.substring(
                                               7
-                                          )}` // Old image (CID)
+                                          )}`
                                         : ""
                                 }
-                                onChange={(val) => {
-                                    // Если пользователь загружает новое изображение (base64), просто сохраняем как есть.
-                                    // Если пользователь очищает, то `val` === "", сохраняем пустую строку.
+                                onChange={(val) =>
                                     handleChange(
                                         "image",
                                         val.startsWith("data:image")
@@ -186,8 +186,8 @@ export function EditProfileDialog({
                                                   "https://ipfs.io/ipfs/",
                                                   ""
                                               )
-                                    );
-                                }}
+                                    )
+                                }
                             />
                             {formErrors.image && (
                                 <p className="text-red-500 text-xs mt-1">
@@ -196,7 +196,7 @@ export function EditProfileDialog({
                             )}
                         </div>
                         <div>
-                            <Label>Name</Label>
+                            <Label>{t("editProfileDialog.name")}</Label>
                             <Input
                                 value={form.name}
                                 className="rounded-2xl"
@@ -211,7 +211,7 @@ export function EditProfileDialog({
                             )}
                         </div>
                         <div>
-                            <Label>Description</Label>
+                            <Label>{t("editProfileDialog.description")}</Label>
                             <Textarea
                                 value={form.description}
                                 maxLength={256}
@@ -230,7 +230,7 @@ export function EditProfileDialog({
                             )}
                         </div>
                         <div>
-                            <Label>Social Links</Label>
+                            <Label>{t("editProfileDialog.socialLinks")}</Label>
                             <SelectSocialLink
                                 links={form.social_links}
                                 onChange={handleSocialLinksChange}
@@ -269,12 +269,12 @@ export function EditProfileDialog({
                         {updated ? (
                             <>
                                 <Check className="w-4 h-4" />
-                                Updated
+                                {t("editProfileDialog.updated")}
                             </>
                         ) : isLoading ? (
-                            "Saving..."
+                            t("editProfileDialog.saving")
                         ) : (
-                            "Save"
+                            t("editProfileDialog.save")
                         )}
                     </Button>
                 </DialogFooter>

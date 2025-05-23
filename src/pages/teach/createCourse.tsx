@@ -15,6 +15,7 @@ import { isYouTubeVideoAccessible } from "@/lib/youtube.lib";
 import { ErrorPage } from "@/pages/error/error";
 import { useClientProfileData } from "@/hooks/useClientProfileData";
 import { useProfileContract } from "@/hooks/useProfileContract";
+import { useTranslation } from "react-i18next";
 
 export function CreateCourse({ children }: { children: React.ReactNode }) {
     const {
@@ -23,6 +24,8 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
         isLoading: isProfileLoading,
     } = useClientProfileData();
     const { ready } = useProfileContract();
+    const { t } = useTranslation();
+
     const [isDirty, setIsDirty] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
     const [showDialog, setShowDialog] = useState(false);
@@ -164,7 +167,7 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         const check = async () => {
             if (!courseData.video?.trim()) {
-                setPromoVideoValid(true); // optional field
+                setPromoVideoValid(true); 
                 return;
             }
 
@@ -192,7 +195,9 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
             <div className="flex items-center justify-center min-h-screen bg-white">
                 <div className="flex flex-col items-center space-y-4">
                     <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full" />
-                    <p className="text-gray-700 font-medium">Please wait</p>
+                    <p className="text-gray-700 font-medium">
+                        {t("createCourse.loading")}
+                    </p>
                 </div>
             </div>
         );
@@ -201,9 +206,9 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
     if (!isProfileLoading && ready && (profileError || !profileData)) {
         return (
             <ErrorPage
-                first={"Profile Not Found"}
-                second={"You need to create a profile first."}
-                third={"Please create a profile to create a course."}
+                first={t("createCourse.profileNotFound.title")}
+                second={t("createCourse.profileNotFound.subtitle")}
+                third={t("createCourse.profileNotFound.description")}
             />
         );
     }
@@ -301,7 +306,9 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
                             className="flex justify-center items-center"
                             style={{ width: "18px", height: "18px" }}
                         />
-                        <span className="m-0 p-0 font-semibold">Previous</span>
+                        <span className="m-0 p-0 font-semibold">
+                            {t("createCourse.previous")}
+                        </span>
                     </Button>
 
                     <Button
@@ -320,9 +327,10 @@ export function CreateCourse({ children }: { children: React.ReactNode }) {
                     >
                         <span className="font-semibold">
                             {currentStep !== totalSteps
-                                ? "Next"
-                                : "Create Course"}
+                                ? t("createCourse.next")
+                                : t("createCourse.create")}
                         </span>
+
                         <ChevronRight
                             className="flex justify-center items-center"
                             style={{ width: "18px", height: "18px" }}

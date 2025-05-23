@@ -31,12 +31,12 @@ export const Footer: React.FC<FooterProps> = ({ className }) => {
                     <div className="w-full flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-6 md:space-y-0 relative">
                         {/* Left Section */}
                         <div className="flex flex-wrap justify-center md:justify-start space-x-2 sm:space-x-6">
-                            <a
+                            {/* <a
                                 href="/about"
                                 className="text-xs sm:text-sm hover:text-blue-500"
                             >
                                 {t("about")}
-                            </a>
+                            </a> */}
                             <a
                                 href="/learn"
                                 className="text-xs sm:text-sm hover:text-blue-500"

@@ -7,12 +7,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface SearchBarProps {
     className?: string;
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({ className }) => {
+    const { t } = useTranslation();
     const [searchQuery, setSearchQuery] = useState("");
     const navigate = useNavigate();
 
@@ -34,7 +36,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ className }) => {
                 >
                     <Search className="h-5 w-5 text-gray-500" />
                     <span className="hidden sm:inline text-sm text-gray-500">
-                        Search
+                        {t("searchBar.search")}
                     </span>
                 </div>
             </PopoverTrigger>
@@ -45,7 +47,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ className }) => {
                 <div className="flex flex-col px-3 py-2">
                     <Input
                         type="search"
-                        placeholder="Search wallet address..."
+                        placeholder={t("searchBar.placeholder")}
                         value={searchQuery}
                         onChange={handleInputChange}
                         onKeyDown={handleKeyDown}

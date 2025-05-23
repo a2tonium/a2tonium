@@ -8,32 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { X, CirclePlus } from "lucide-react";
 import { CourseCreationInterface } from "@/types/course.types";
-
-// ============= 1) Zod-схема для вопросов квиза ============
-const singleQuizSchema = z.object({
-    // Убрали title, так как «Module Test i»
-    questions: z
-        .array(
-            z.object({
-                text: z
-                    .string()
-                    .min(5, "Question text must be at least 5 characters"),
-                options: z
-                    .array(z.string().min(1, "Option cannot be empty"))
-                    .min(2, "Each question must have at least 2 options"),
-            })
-        )
-        .min(1, "At least one question is required"),
-});
-
-// ============= 2) StepThreeSchema = проверка только тех модулей, где hasQuiz = true ============
-const stepThreeSchema = z.object({
-    modules: z.array(
-        z.object({
-            quiz: singleQuizSchema.optional(),
-        })
-    ),
-});
+import { useTranslation } from "react-i18next";
 
 interface StepThreeProps {
     courseData: CourseCreationInterface;
@@ -49,7 +24,6 @@ interface StepThreeProps {
         }>
     >;
     showErrors: boolean;
-    // Управление вкладками среди hasQuiz-модулей
     activeQuizIndex: number;
     setActiveQuizIndex: (idx: number) => void;
 }
@@ -62,6 +36,7 @@ export function StepThree({
     activeQuizIndex,
     setActiveQuizIndex,
 }: StepThreeProps) {
+    const { t } = useTranslation();
     // Храним ошибки в виде errorMessages[moduleIndex] -> { questions: ... }
     const [errorMessages, setErrorMessages] = useState<
         Record<
@@ -81,17 +56,37 @@ export function StepThree({
 
     const quizModules = courseData.modules;
 
-    // Валидация
+    const singleQuizSchema = z.object({
+        questions: z
+            .array(
+                z.object({
+                    text: z.string().min(5, t("stepThree.error.questionText")),
+                    options: z
+                        .array(
+                            z.string().min(1, t("stepThree.error.optionEmpty"))
+                        )
+                        .min(2, t("stepThree.error.optionMin")),
+                })
+            )
+            .min(1, t("stepThree.error.questionsRequired")),
+    });
+
+    const stepThreeSchema = z.object({
+        modules: z.array(
+            z.object({
+                quiz: singleQuizSchema.optional(),
+            })
+        ),
+    });
+
     useEffect(() => {
         if (quizModules.length === 0) {
-            // Нет ни одного модуля с hasQuiz => считаем stepThree пройденным
             setValidationStatus((prev) => ({ ...prev, stepThree: true }));
             setErrorMessages({});
             return;
         }
 
         const validate = () => {
-            // Подготовим объект для Zod, где для hasQuiz=false замещаем quiz на dummy
             const partial = {
                 modules: courseData.modules.map((mod) => {
                     return {
@@ -104,7 +99,6 @@ export function StepThree({
             const result = stepThreeSchema.safeParse(partial);
 
             if (!result.success) {
-                // Собираем ошибки
                 const tempErrors: Record<
                     number,
                     {
@@ -120,7 +114,6 @@ export function StepThree({
                 > = {};
 
                 for (const issue of result.error.issues) {
-                    // path может быть ["modules", moduleIndex, "quiz", "questions", qIndex, ...]
                     if (issue.path[0] === "modules") {
                         const moduleIndex = Number(issue.path[1]);
                         if (Number.isNaN(moduleIndex)) continue;
@@ -130,7 +123,6 @@ export function StepThree({
                             tempErrors[moduleIndex] = {};
                         }
                         if (issue.path[2] === "quiz") {
-                            // ["modules", mIdx, "quiz", "questions", qIdx, ...]
                             if (issue.path[3] === "questions") {
                                 const qIdx = Number(issue.path[4]);
                                 if (!tempErrors[moduleIndex].questions) {
@@ -141,7 +133,6 @@ export function StepThree({
                                         {};
                                 }
 
-                                // field = issue.path[5] => "questionText", "options", "correctAnswer"
                                 if (issue.path[5] === "text") {
                                     tempErrors[moduleIndex].questions![
                                         qIdx
@@ -177,58 +168,48 @@ export function StepThree({
         validate();
     }, [courseData, quizModules, setValidationStatus]);
 
-    // Если нет hasQuiz-модулей
     if (quizModules.length === 0) {
         return (
             <div className="bg-gray-50 p-4 rounded">
                 <p className="text-sm text-gray-500">
-                    No quizzes available. Enable quizzes in Step 2.
+                    {t("stepThree.noQuizzes")}
                 </p>
             </div>
         );
     }
 
-    // Получаем «список» индексов всех модулей, так как hasQuiz убран
     const moduleIndexesWithQuiz = courseData.modules.map((_, i) => i);
 
-    // Текущий «настоящий» moduleIndex
     const currentModuleIndex = moduleIndexesWithQuiz[activeQuizIndex];
-    // Мог бы быть undefined, если что-то не так, но по логике — не должен
+
     const mod = courseData.modules[currentModuleIndex];
 
-    // quiz может быть undefined, если мы не создали
-    // => создаём на лету, чтобы не упасть
     if (!mod.quiz) {
-        // Создаём пустое quiz
         mod.quiz = { questions: [], correct_answers: "" };
     }
 
-    // Методы редактирования
     const handleAddQuestion = () => {
         const updated = { ...courseData };
         const quiz = updated.modules[currentModuleIndex].quiz;
 
         if (!quiz) {
-            // Если квиза еще нет — создаём новый пустой квиз
             updated.modules[currentModuleIndex].quiz = {
-                correct_answers: "a", // новый квиз — первый вопрос сразу с правильным "a"
+                correct_answers: "a",
                 questions: [
                     {
-                        id: "1", // Поскольку теперь id — number
+                        id: "1",
                         text: "",
                         options: ["", ""],
                     },
                 ],
             };
         } else {
-            // Добавляем новый вопрос
             quiz.questions.push({
-                id: quiz.questions.length.toString(), // id должен быть уникальным числом
+                id: quiz.questions.length.toString(),
                 text: "",
                 options: ["", ""],
             });
 
-            // Добавляем "a" в строку правильных ответов
             quiz.correct_answers += "a";
         }
 
@@ -252,25 +233,20 @@ export function StepThree({
     const handleCorrectAnswerChange = (qIndex: number, optIndex: number) => {
         const updated = { ...courseData };
 
-        // 1. Обновляем правильный ответ в correct_answers
         const currentQuiz = updated.modules[currentModuleIndex].quiz;
 
         if (!currentQuiz) return;
 
         const correctAnswersArray = currentQuiz.correct_answers.split("");
 
-        // 2. Переводим индекс опции в букву: 0 => a, 1 => b, 2 => c, 3 => d
         const optionLetter = String.fromCharCode(97 + optIndex); // 97 = "a"
 
-        // 3. Если раньше было меньше ответов, дополняем
         while (correctAnswersArray.length <= qIndex) {
-            correctAnswersArray.push("a"); // по умолчанию "a"
+            correctAnswersArray.push("a");
         }
 
-        // 4. Меняем букву для конкретного вопроса
         correctAnswersArray[qIndex] = optionLetter;
 
-        // 5. Записываем обратно строку
         currentQuiz.correct_answers = correctAnswersArray.join("");
 
         setCourseData(updated);
@@ -294,30 +270,23 @@ export function StepThree({
         const question = module.quiz.questions[qIndex];
         const quiz = module.quiz;
 
-        // 1. Удаляем опцию из вопросов
         question.options.splice(optIndex, 1);
 
-        // 2. Обновляем correct_answers строку
         const correctAnswersArray = quiz.correct_answers.split("");
 
-        // Убедимся, что индекс правильных ответов существует
         if (correctAnswersArray.length > qIndex) {
             const correctLetter = correctAnswersArray[qIndex];
-            const correctIndex = correctLetter.charCodeAt(0) - 97; // "a" → 0, "b" → 1 и т.д.
+            const correctIndex = correctLetter.charCodeAt(0) - 97;
 
             if (correctIndex === optIndex) {
-                // Если удаляем правильный ответ — ставим дефолтный "a" или другой
                 correctAnswersArray[qIndex] = "a";
             } else if (correctIndex > optIndex) {
-                // Если правильный индекс был после удаленного — сдвигаем на -1
                 correctAnswersArray[qIndex] = String.fromCharCode(
                     97 + (correctIndex - 1)
                 );
             }
-            // Если правильный индекс был до удаленного — ничего не меняем
         }
 
-        // Обновляем строку
         quiz.correct_answers = correctAnswersArray.join("");
 
         setCourseData(updated);
@@ -326,10 +295,11 @@ export function StepThree({
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold">Quiz Builder</h2>
+                <h2 className="text-xl font-semibold">
+                    {t("stepThree.title")}
+                </h2>
             </div>
 
-            {/* Табы = модули, у которых hasQuiz */}
             <Tabs
                 defaultValue="quiz-0"
                 value={`quiz-${activeQuizIndex}`}
@@ -342,7 +312,7 @@ export function StepThree({
                         <div className="flex space-x-0">
                             {moduleIndexesWithQuiz.map((mIndex, tabIndex) => {
                                 const hasErr = !!errorMessages[mIndex];
-                                // Вместо quiz title => "Module Test {tabIndex+1}"
+
                                 return (
                                     <div
                                         key={mIndex}
@@ -356,7 +326,9 @@ export function StepThree({
                                             }`}
                                             value={`quiz-${tabIndex}`}
                                         >
-                                            Module Test {tabIndex + 1}
+                                            {`${t("stepThree.moduleTest")} ${
+                                                tabIndex + 1
+                                            }`}
                                         </TabsTrigger>
                                     </div>
                                 );
@@ -370,7 +342,6 @@ export function StepThree({
                     const moduleErr = errorMessages[mIndex] || {};
                     const quiz = courseData.modules[mIndex].quiz;
                     if (!quiz) {
-                        // если quiz всё ещё undefined, создаём пустой
                         courseData.modules[mIndex].quiz = {
                             correct_answers: "",
                             questions: [],
@@ -381,10 +352,10 @@ export function StepThree({
                     return (
                         <TabsContent key={mIndex} value={`quiz-${tabIndex}`}>
                             <div className="space-y-4">
-                                {/* Нет отдельного поля "quiz title", 
-                    используем "Module Test N" */}
                                 <h3 className="text-lg font-medium">
-                                    Module Test {tabIndex + 1}
+                                    {`${t("stepThree.moduleTest")} ${
+                                        tabIndex + 1
+                                    }`}
                                 </h3>
 
                                 {/* QUESTIONS */}
@@ -396,7 +367,6 @@ export function StepThree({
                                             key={qIndex}
                                             className="p-4 border rounded-xl bg-gray-50 space-y-3 relative"
                                         >
-                                            {/* Удалить вопрос */}
                                             {qz.questions.length > 5 && (
                                                 <Button
                                                     onClick={() =>
@@ -412,9 +382,9 @@ export function StepThree({
                                             )}
 
                                             <div>
-                                                <Label>
-                                                    Question {qIndex + 1}
-                                                </Label>
+                                                <Label>{`${t(
+                                                    "stepThree.question"
+                                                )} ${qIndex + 1}`}</Label>
                                             </div>
 
                                             {/* questionText */}
@@ -427,7 +397,9 @@ export function StepThree({
                                                             e.target.value
                                                         )
                                                     }
-                                                    placeholder="Enter question text"
+                                                    placeholder={t(
+                                                        "stepThree.enterQuestionText"
+                                                    )}
                                                     className="rounded-2xl"
                                                     maxLength={512}
                                                 />
@@ -510,7 +482,9 @@ export function StepThree({
                                                                                 .value
                                                                         )
                                                                     }
-                                                                    placeholder={`Option ${String.fromCharCode(
+                                                                    placeholder={`${t(
+                                                                        "stepThree.option"
+                                                                    )} ${String.fromCharCode(
                                                                         65 +
                                                                             optIndex
                                                                     )}`}
@@ -581,7 +555,9 @@ export function StepThree({
                                                         }}
                                                         className="pt-0 pb-2 mt-2 text-gray-500"
                                                     >
-                                                        Add Option
+                                                        {t(
+                                                            "stepThree.addOption"
+                                                        )}
                                                     </Button>
                                                 </div>
                                             )}
@@ -605,14 +581,13 @@ export function StepThree({
                                         }}
                                     />
                                     <span className="font-semibold">
-                                        Add Question
+                                        {t("stepThree.addQuestion")}
                                     </span>
                                 </Button>
 
                                 <div className="ml-2 flex justify-between text-gray-500 text-xs mt-1">
                                     <span>
-                                        Don't forget to choose the right
-                                        answers!
+                                        {t("stepThree.chooseRightAnswer")}
                                     </span>
                                 </div>
                             </div>

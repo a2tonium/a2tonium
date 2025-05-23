@@ -7,9 +7,11 @@ import { CertificateSkeleton } from "@/components/certificate/certificateSkeleto
 import { ShareButtonCertificate } from "@/components/certificate/shareButton";
 import { useState } from "react";
 import { CertificateGrades } from "@/components/certificate/certificateGrades";
+import { useTranslation } from "react-i18next";
 
 export function Certificate() {
     const { certificateAddr } = useParams();
+    const { t } = useTranslation();
     const [copiedOwner, setCopiedOwner] = useState(false);
     const [copiedCert, setCopiedCert] = useState(false);
 
@@ -19,9 +21,9 @@ export function Certificate() {
     if (error || !data?.certificate) {
         return (
             <ErrorPage
-                first={"Certificate Not Found"}
-                second={"We couldn't find this certificate."}
-                third={"Please double-check the address and try again."}
+                first={t("certificate.error.title")}
+                second={t("certificate.error.message")}
+                third={t("certificate.error.retry")}
             />
         );
     }
@@ -50,14 +52,14 @@ export function Certificate() {
                 <div className="w-1/2">
                     <img
                         src="/images/certificate/sample.png"
-                        alt="Certificate"
+                        alt={t("certificate.alt")}
                         className="w-full rounded-xl object-cover"
                     />
                 </div>
 
                 <div className="flex-1 space-y-4">
                     <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-                        Course Certificate
+                        {t("certificate.title")}
                     </h1>
 
                     {course && (
@@ -84,7 +86,9 @@ export function Certificate() {
                     </p>
 
                     <div className="text-sm sm:text-base">
-                        <span className="text-gray-600">Owner: </span>
+                        <span className="text-gray-600">
+                            {t("certificate.owner")}:{" "}
+                        </span>
                         <div className="space-x-2">
                             <Link
                                 to={`/users/${certificate.ownerAddress}`}
@@ -107,7 +111,9 @@ export function Certificate() {
                     </div>
 
                     <div className="text-sm sm:text-base">
-                        <span className="text-gray-600">Address: </span>
+                        <span className="text-gray-600">
+                            {t("certificate.address")}:{" "}
+                        </span>
                         <div className="space-x-2">
                             <Link
                                 to={`/users/${certificate.certificateAddress}`}
@@ -136,10 +142,7 @@ export function Certificate() {
                     <CertificateAttributes
                         attributes={certificate.attributes}
                     />
-
-                    <CertificateGrades
-                        grades={certificate.grades}
-                    />
+                    <CertificateGrades grades={certificate.grades} />
                 </div>
             </div>
         </div>

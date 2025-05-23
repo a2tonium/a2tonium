@@ -1,17 +1,13 @@
 import useSWR from "swr";
 import { useTonConnect } from "@/hooks/useTonConnect";
-// import { useCourseContract } from "@/hooks/useCourseContract";
 import { listOwnerCourses } from "@/services/course.service";
 import { OwnerCoursePreview } from "@/types/course.types";
 
 export function useClientOwnedCoursesList() {
     const { address } = useTonConnect();
-    // const { getOwnerCourseContractList, ready } = useCourseContract();
 
     const fetcher = async (): Promise<OwnerCoursePreview[]> => {
         if (!address) return [];
-        // const courseAddresses = await getOwnerCourseContractList(address);
-        // if (!courseAddresses) return [];
         return await listOwnerCourses(address);
     };
 

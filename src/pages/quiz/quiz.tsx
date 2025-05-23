@@ -6,12 +6,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import { QuizSkeleton } from "@/components/quiz/quizSkeleton";
 import { useCourseDataIfEnrolledWithGrades } from "@/hooks/useCourseDataIfEnrolledWithGrades";
 import { ErrorPage } from "@/pages/error/error";
+import { useTranslation } from "react-i18next";
 
 export function Quiz() {
+    const { t } = useTranslation();
     const { quizId } = useParams<{ quizId: string }>();
     const navigate = useNavigate();
-
     const { courseAddress } = useParams();
+
     const {
         data: course,
         error,
@@ -22,17 +24,17 @@ export function Quiz() {
         if (error.message === "Access denied") {
             return (
                 <ErrorPage
-                    first={"Access Denied"}
-                    second={"You are not enrolled in this course."}
-                    third={"Please check your course list."}
+                    first={t("quiz.accessDenied.title")}
+                    second={t("quiz.accessDenied.message")}
+                    third={t("quiz.accessDenied.retry")}
                 />
             );
         } else {
             return (
                 <ErrorPage
-                    first={"Courses Not Found"}
-                    second={"We couldn't find your courses."}
-                    third={"Please try again later."}
+                    first={t("quiz.error.title")}
+                    second={t("quiz.error.message")}
+                    third={t("quiz.error.retry")}
                 />
             );
         }
@@ -42,15 +44,7 @@ export function Quiz() {
         return <QuizSkeleton />;
     }
 
-    type QuizItem = {
-        id: string;
-        title: string;
-        completed: boolean;
-        score: number | null;
-        totalQuestions: number;
-    };
-
-    const quizzes: QuizItem[] = course.data!.modules.map((m, index) => {
+    const quizzes = course.data!.modules.map((m, index) => {
         const reversedIndex = course.grades.length - 1 - index;
         const gradeEntry = course.grades[reversedIndex];
         const score = gradeEntry?.quizGrade
@@ -70,23 +64,17 @@ export function Quiz() {
     const currentQuiz = quizzes[currentQuizIndex];
 
     const goQuiz = (index: number) => navigate(`../quiz/${quizzes[index].id}`);
-
-    // Next/Prev quiz logic
     const isFirstQuiz = currentQuizIndex === 0;
     const isLastQuiz = currentQuizIndex === quizzes.length - 1;
 
     const handlePrevQuiz = () => !isFirstQuiz && goQuiz(currentQuizIndex - 1);
     const handleNextQuiz = () => !isLastQuiz && goQuiz(currentQuizIndex + 1);
-
-    const handleQuizButtonClick = () => {
+    const handleQuizButtonClick = () =>
         navigate(currentQuiz.completed ? `review` : `attempt`);
-    };
 
     const sidebarPayload = {
         course: {
-            courseId:
-                // course.id,
-                "1",
+            courseId: "1",
             courseTitle: course.data!.name,
         },
         quizzes,
@@ -95,55 +83,40 @@ export function Quiz() {
     return (
         <SidebarProvider>
             <div className="flex w-full mx-auto bg-white rounded-[2vw] md:border-[6px] border-gray-200">
-                {/* Quiz Sidebar */}
-                <div>
-                    <QuizSidebar data={sidebarPayload} />
-                </div>
-
+                <QuizSidebar data={sidebarPayload} />
                 <div className="hidden md:block w-[0.1px] bg-gray-200" />
-
-                {/* Main Content */}
                 <div className="py-6 flex-grow space-y-20">
-                    {/* Top row: sidebar trigger + quiz title */}
                     <div className="flex items-center mx-4">
                         <SidebarTrigger className="block min-[1000px]:hidden px-3" />
                         <h1 className="pl-3 text-lg sm:text-2xl font-semibold text-gray-800 break-all sm:break-words">
                             {currentQuiz.id}. {currentQuiz.title}
                         </h1>
                     </div>
-                    {/* <Separator className="my-2" /> */}
 
                     <div className="w-[95%] md:w-[80%] mx-auto">
-                        {/* "Assignment details" area */}
-                        <div className="bg-blue-50 p-4 rounded-lg flex flex-col justify-between mb-4 ">
-                            <div className="">
-                                <h2 className="font-semibold mb-1">
-                                    Assignment details
-                                </h2>
-                            </div>
-
-                            {/* Wrap the Attempts and Button inside a flex div */}
+                        <div className="bg-blue-50 p-4 rounded-lg flex flex-col justify-between mb-4">
+                            <h2 className="font-semibold mb-1">
+                                {t("quiz.assignmentDetails")}
+                            </h2>
                             <div className="flex justify-between items-center w-full space-x-20">
                                 <div className="text-xs sm:text-sm text-gray-600">
-                                    <div>Due: -</div>
-                                    <div>Attempts: Unlimited</div>
+                                    <div>{t("quiz.due")}: -</div>
+                                    <div>{t("quiz.attempts")}</div>
                                 </div>
-
                                 <Button
                                     onClick={handleQuizButtonClick}
                                     variant="default"
                                     className="bg-blue-500 hover:bg-blue-600 text-white ml-4 rounded-sm"
                                 >
-                                    Start
+                                    {t("quiz.start")}
                                 </Button>
                             </div>
                         </div>
 
-                        {/* "Your grade" area */}
-                        <div className="border p-4 rounded-lg flex mb-4 ">
+                        <div className="border p-4 rounded-lg flex mb-4">
                             <div className="flex flex-col items-left">
                                 <h3 className="font-semibold mb-1 text-gray-800">
-                                    Your grade
+                                    {t("quiz.yourGrade")}
                                 </h3>
                                 {currentQuiz.completed ? (
                                     (() => {
@@ -168,7 +141,8 @@ export function Quiz() {
                                                         <X className="w-4 h-4 sm:w-5 sm:h-5" />
                                                     )}
                                                     <span>
-                                                        Score: {correctAnswers}/
+                                                        {t("quiz.score")}:{" "}
+                                                        {correctAnswers}/
                                                         {
                                                             currentQuiz.totalQuestions
                                                         }
@@ -189,8 +163,7 @@ export function Quiz() {
                                 ) : (
                                     <>
                                         <div className="text-sm text-gray-600">
-                                            You haven’t submitted this yet. We
-                                            keep your highest score.
+                                            {t("quiz.notSubmitted")}
                                         </div>
                                         <div className="mt-2 font-bold text-xl text-gray-400">
                                             --
@@ -200,7 +173,6 @@ export function Quiz() {
                             </div>
                         </div>
 
-                        {/* Navigation Buttons */}
                         <div className="flex justify-between mt-6 mx-6">
                             <Button
                                 onClick={handlePrevQuiz}
@@ -212,7 +184,7 @@ export function Quiz() {
                                 }`}
                             >
                                 <ChevronLeft className="w-5 h-5" />
-                                <span>Previous</span>
+                                <span>{t("quiz.previous")}</span>
                             </Button>
 
                             <Button
@@ -224,7 +196,7 @@ export function Quiz() {
                                         : "hover:bg-blue-700"
                                 }`}
                             >
-                                <span>Next</span>
+                                <span>{t("quiz.next")}</span>
                                 <ChevronRight className="w-5 h-5" />
                             </Button>
                         </div>

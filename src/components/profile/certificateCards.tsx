@@ -1,16 +1,21 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import type { CertificateInterface } from "@/types/course.types";
+import { useTranslation } from "react-i18next";
 
 interface CertificateCardsProps {
     certificates: CertificateInterface[];
 }
 
 export function CertificateCards({ certificates }: CertificateCardsProps) {
+    const { t } = useTranslation();
+
     if (!certificates || certificates.length === 0) {
         return (
             <div className="text-center py-8">
-                <p className="text-gray-500">No certificates enrolled yet.</p>
+                <p className="text-gray-500">
+                    {t("certificateCards.noCertificates")}
+                </p>
             </div>
         );
     }

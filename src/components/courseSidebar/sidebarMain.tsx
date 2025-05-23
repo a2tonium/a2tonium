@@ -17,6 +17,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { CertificateDialog } from "@/components/courseSidebar/certificateDialog";
 import { CourseDeployedInterface, QuizAnswers } from "@/types/course.types";
+import { useTranslation } from "react-i18next";
 
 export function SidebarMain({
     items,
@@ -36,7 +37,9 @@ export function SidebarMain({
     courseData: CourseDeployedInterface;
     grades: QuizAnswers[];
 }) {
+    const { t } = useTranslation();
     const isCertValid = grades.length === courseData.modules.length;
+
     return (
         <SidebarGroup>
             <SidebarMenu>
@@ -55,6 +58,7 @@ export function SidebarMain({
                                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                                 </SidebarMenuButton>
                             </CollapsibleTrigger>
+
                             <CollapsibleContent>
                                 <SidebarMenuSub>
                                     {item.items?.map((subItem) => (
@@ -69,7 +73,7 @@ export function SidebarMain({
                                 </SidebarMenuSub>
                             </CollapsibleContent>
 
-                            {/* Get Certificate Button with Dialog */}
+                            {/* Certificate Button */}
                             <div className="flex items-center justify-start mt-2 pl-2">
                                 <BookCheck className="w-4 h-4" />
                                 <CertificateDialog
@@ -77,7 +81,7 @@ export function SidebarMain({
                                     trigger={
                                         <Button
                                             type="button"
-                                            variant={"link"}
+                                            variant="link"
                                             className={`rounded-2xl gap-0 flex justify-center items-center p-1.5 ${
                                                 !isCertValid
                                                     ? "text-gray-500 cursor-not-allowed"
@@ -86,7 +90,9 @@ export function SidebarMain({
                                             disabled={!isCertValid}
                                         >
                                             <span className="font-semibold">
-                                                Get Certificate
+                                                {t(
+                                                    "courseSidebar.getCertificate"
+                                                )}
                                             </span>
                                             <ChevronRight
                                                 className="flex justify-center items-center"

@@ -12,8 +12,8 @@ import { useNavigate } from "react-router-dom";
 import { CourseDeployedInterface } from "@/types/course.types";
 import { CoursePromoteDialog } from "@/components/teachCard/coursePromoteDialog";
 import { CourseWithdrawDialog } from "@/components/teachCard/courseWithdrawDialog";
-
 import { ipfsToHttp } from "@/utils/ton.utils";
+import { useTranslation } from "react-i18next";
 
 interface TeachCardProps {
     course: CourseDeployedInterface;
@@ -22,6 +22,7 @@ interface TeachCardProps {
 }
 
 export function TeachCard({ course, courseAddress, cost }: TeachCardProps) {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const image = ipfsToHttp(course.image);
     const [isPromoteOpen, setPromoteOpen] = React.useState(false);
@@ -29,7 +30,6 @@ export function TeachCard({ course, courseAddress, cost }: TeachCardProps) {
 
     const handleCardClick = (e: React.MouseEvent) => {
         const target = e.target as HTMLElement;
-
         if (
             target.closest("button") ||
             target.closest("svg") ||
@@ -37,9 +37,9 @@ export function TeachCard({ course, courseAddress, cost }: TeachCardProps) {
         ) {
             return;
         }
-
         navigate(`/course/${courseAddress}`);
     };
+
     const handleEditCourse = (e: React.MouseEvent) => {
         e.stopPropagation();
         navigate(`/course/${courseAddress}/edit`);
@@ -50,7 +50,6 @@ export function TeachCard({ course, courseAddress, cost }: TeachCardProps) {
             className="h-auto bg-gray-100 cursor-pointer relative border-0 w-full max-w-4xl p-4 shadow-inner rounded-xl hover:shadow-hover-even transition-shadow duration-150"
             onClick={handleCardClick}
         >
-            {/* Меню справа */}
             <div className="absolute top-4 right-4">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -64,14 +63,13 @@ export function TeachCard({ course, courseAddress, cost }: TeachCardProps) {
                     <DropdownMenuContent align="end" className="w-40">
                         <DropdownMenuItem>
                             <button className="w-full text-left text-gray-800 hover:text-red-500">
-                                Удалить Курс
+                                {t("teachCard.delete")}
                             </button>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
 
-            {/* Основной контент */}
             <div className="flex items-center">
                 <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-md overflow-hidden bg-gray-200 flex-shrink-0">
                     <img
@@ -86,7 +84,7 @@ export function TeachCard({ course, courseAddress, cost }: TeachCardProps) {
                         {course.name}
                     </CardTitle>
                     <div className="line-clamp-4 text-sm sm:text-sm md:text-base lg:text-base font-light break-words">
-                        Price: {cost}
+                        {t("teachCard.price")}: {cost}
                     </div>
 
                     <div className="hidden sm:flex opacity-0 hover:opacity-100 transition-opacity duration-300">
@@ -96,7 +94,7 @@ export function TeachCard({ course, courseAddress, cost }: TeachCardProps) {
                             className="text-blue-500"
                             onClick={handleEditCourse}
                         >
-                            Edit Course
+                            {t("teachCard.edit")}
                         </Button>
                         <Button
                             variant="link"
@@ -107,9 +105,8 @@ export function TeachCard({ course, courseAddress, cost }: TeachCardProps) {
                                 setPromoteOpen(true);
                             }}
                         >
-                            Promote Course
+                            {t("teachCard.promote")}
                         </Button>
-
                         <Button
                             variant="link"
                             type="button"
@@ -119,7 +116,7 @@ export function TeachCard({ course, courseAddress, cost }: TeachCardProps) {
                                 setWithdrawOpen(true);
                             }}
                         >
-                            Withdraw Course
+                            {t("teachCard.withdraw")}
                         </Button>
                     </div>
                 </div>

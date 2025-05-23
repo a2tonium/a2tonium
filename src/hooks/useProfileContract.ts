@@ -28,14 +28,11 @@ export function useProfileContract() {
                 )
             )
         );
-        console.log("profileFactory", profileFactory?.address.toString());
-        console.log("PROFILE_CONTENT", PROFILE_CONTENT);
 
         if (!profileFactory) {
             console.error("Profile Factory contract not found");
             return null;
         }
-        console.log("sender", sender.address?.toString());
         await profileFactory.send(
             sender,
             {
@@ -47,27 +44,6 @@ export function useProfileContract() {
             }
         );
     };
-
-    //     const getProfileData = async () => {
-    //     if (!client || !ready) return [];
-    //     let data;
-
-    //     const profile = client?.open(
-    //         await Profile.fromInit(
-    //             Address.parse(
-    //                 "EQCriJIjnxh2NedMZUiEhV4DT4RIO6_FjQvP5kc3LsqvE7cx"
-    //             ),
-    //             1n
-    //         )
-    //     ) as OpenedContract<Profile>;
-    //     try {
-    //         data = (await profile.getGetNftData()).individual_content;
-    //     } catch (e) {
-    //         console.error("Error opening course contract", e);
-    //     }
-    //     console.log("data", data);
-    //     return data;
-    // };
 
     const updateProfileContract = async (
         sender: Sender,
@@ -81,9 +57,8 @@ export function useProfileContract() {
                 )
             )
         );
-        console.log("sender", sender.address!.toString());
         const profileAddr = await getProfileAddress(sender.address!.toString());
-        console.log("profileAddr", profileAddr);
+
         const profile = client?.open(
             Profile.fromAddress(Address.parse(profileAddr!))
         ) as OpenedContract<Profile>;

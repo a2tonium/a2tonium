@@ -3,9 +3,6 @@ import { useTonConnect } from "@/hooks/useTonConnect";
 import { listEnrolledCourses } from "@/services/course.service";
 import { EnrolledCoursePreview } from "@/types/course.types";
 
-/**
- * Hook to get enrolled course previews (address, title, image).
- */
 export function useEnrolledCoursesList() {
     const { address } = useTonConnect();
 

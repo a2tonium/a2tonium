@@ -19,7 +19,6 @@ export function useCourseDataIfEnrolledWithGrades(contractAddress?: string) {
                 grades: [] as unknown as QuizAnswers[],
             };
         const ownerCourseAddresses = await getOwnedCourseAddresses(userAddress);
-        console.log(ownerCourseAddresses);
         return await fetchCourseIfEnrolledWithGrades(
             userAddress,
             contractAddress,

@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { SocialLinksGroup } from "@/components/profile/socialLinksGroup";
 import { Avatar } from "@/components/ui/avatar";
 import { EditProfileDialog } from "@/components/profile/editProfileDialog";
+import { useTranslation } from "react-i18next";
 
 interface ProfileTableProps {
     isProfile?: boolean;
@@ -25,12 +26,13 @@ export function ProfileTable({
     profileData,
     isOwnerAddress,
 }: ProfileTableProps) {
+    const { t } = useTranslation();
     const isMobile = useIsMobile();
     const [copied, setCopied] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const isProfile = !!profileData;
     const userData: ProfileWithWalletDataInterface = {
-        name: profileData?.name || "Wallet",
+        name: profileData?.name || t("profileTable.wallet"),
         description: profileData?.description || "",
         image: profileData?.image || "",
         address: walletData?.address || "",
@@ -58,13 +60,12 @@ export function ProfileTable({
     return (
         <div className="py-4 px-8 bg-white rounded-3xl md:border-[6px] border-gray-200">
             <div className="flex flex-col-reverse md:flex-row justify-between items-start md:gap-8 gap-2">
-                {/* Left: Table */}
                 <div className="space-y-2 text-left w-full md:w-2/3">
                     <Table>
                         <TableBody className="border-0">
                             <TableRow className="border-0">
                                 <TableCell className="w-[50px] font-semibold p-0 pr-6 py-2">
-                                    <p>Name</p>
+                                    <p>{t("profileTable.name")}</p>
                                 </TableCell>
                                 <TableCell className="py-0">
                                     {userData?.name}
@@ -72,7 +73,7 @@ export function ProfileTable({
                             </TableRow>
                             <TableRow className="border-0">
                                 <TableCell className="font-semibold p-0 py-2">
-                                    <p>Address</p>
+                                    <p>{t("profileTable.address")}</p>
                                 </TableCell>
                                 <TableCell
                                     onClick={handleCopy}
@@ -92,7 +93,7 @@ export function ProfileTable({
                             </TableRow>
                             <TableRow className="border-0">
                                 <TableCell className="font-semibold p-0 py-2">
-                                    <p>Balance</p>
+                                    <p>{t("profileTable.balance")}</p>
                                 </TableCell>
                                 <TableCell className="py-0">
                                     {userData?.balance} TON
@@ -101,13 +102,11 @@ export function ProfileTable({
                         </TableBody>
                     </Table>
 
-                    {/* Description */}
                     {isProfile && userData?.description && (
                         <div className="mt-2 text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">
                             {userData.description}
                         </div>
                     )}
-                    {/* Social Links */}
                     {isProfile && socialLinks.length > 0 && (
                         <div className="">
                             <SocialLinksGroup links={socialLinks} />
@@ -115,7 +114,6 @@ export function ProfileTable({
                     )}
                 </div>
 
-                {/* Right: Avatar */}
                 {isProfile && userData?.image && (
                     <div className="md:flex md:flex-col md:justify-end items-center">
                         <div className="w-full flex md:justify-end">
@@ -130,7 +128,6 @@ export function ProfileTable({
                             </Avatar>
                         </div>
                         {isOwnerAddress && (
-                            /* Edit Profile Button */
                             <div>
                                 <Button
                                     type="button"
@@ -140,7 +137,9 @@ export function ProfileTable({
                                 hover:border-blue-500 hover:text-blue-500 transition-colors duration-200 rounded-2xl"
                                 >
                                     <span className="m-0 p-0 font-semibold text-xs sm:text-sm flex items-center gap-2">
-                                        <span>{"Edit Profile"}</span>
+                                        <span>
+                                            {t("profileTable.editProfile")}
+                                        </span>
                                         <User className="w-4 h-4" />
                                     </span>
                                 </Button>
@@ -155,7 +154,7 @@ export function ProfileTable({
                     </div>
                 )}
             </div>
-            {/* Create Profile Button */}
+
             {isOwnerAddress && !isProfile ? (
                 <div>
                     <Button
@@ -166,7 +165,7 @@ export function ProfileTable({
                                 hover:border-blue-500 hover:text-blue-500 transition-colors duration-200 rounded-2xl"
                     >
                         <span className="m-0 p-0 font-semibold text-xs sm:text-sm flex items-center gap-2">
-                            <span>{"Create Profile"}</span>
+                            <span>{t("profileTable.createProfile")}</span>
                             <User className="w-4 h-4" />
                         </span>
                     </Button>

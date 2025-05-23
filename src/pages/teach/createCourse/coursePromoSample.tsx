@@ -115,13 +115,13 @@ export function CoursePromoSample() {
                                     <LessonVideo
                                         video_id={courseData.video}
                                         opts={{
-                                            width: "100%", // Делаем видео адаптивным
-                                            height: "100%", // Делаем видео адаптивным
+                                            width: "100%",
+                                            height: "100%",
                                             playerVars: {
-                                                modestbranding: 1, // Убираем логотип YouTube
-                                                rel: 0, // Убираем рекомендации в конце видео
-                                                showinfo: 0, // Убираем заголовок видео
-                                                controls: 1, // Показываем только минимальные контроллы
+                                                modestbranding: 1,
+                                                rel: 0,
+                                                showinfo: 0,
+                                                controls: 1,
                                                 autoplay: 1,
                                             },
                                         }}
@@ -157,16 +157,6 @@ export function CoursePromoSample() {
                                     {courseData.attributes.requirements}
                                 </p>
                             </div>
-
-                            {/* How you will learn */}
-                            {/* <div>
-                            <h2 className="text-2xl font-normal">
-                                How you will learn
-                            </h2>
-                            <span className="mt-2 space-y-2">
-                                <p>{courseData.whatYouWillLearn}</p>
-                            </span>
-                        </div> */}
 
                             {/* Course content */}
                             <div id="course-content">
@@ -273,9 +263,6 @@ export function CoursePromoSample() {
                                             </strong>{" "}
                                             lessons
                                         </p>
-                                        {/* <p className="text-sm text-gray-700">
-                                    <strong>50 mins</strong> of video
-                                    </p> */}
                                         <p className="text-sm text-gray-700">
                                             <strong>
                                                 {courseData.modules.length}

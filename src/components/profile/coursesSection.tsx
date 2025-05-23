@@ -1,4 +1,4 @@
-import type { OwnerCoursePreview } from "@/types/course.types"; // Assuming this interface is defined in a types file
+import type { OwnerCoursePreview } from "@/types/course.types"; 
 import { CourseCards } from "@/components/profile/courseCards";
 
 interface CoursesSectionProps {

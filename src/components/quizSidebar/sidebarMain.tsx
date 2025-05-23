@@ -8,6 +8,7 @@ import {
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export function SidebarMain({
     quizzes,
@@ -20,12 +21,14 @@ export function SidebarMain({
         totalQuestions: number;
     }[];
 }) {
+    const { t } = useTranslation();
+
     return (
         <SidebarGroup>
             <SidebarGroupLabel className="text-base text-black hover:underline">
-                <Link to="../syllabus">Syllabus</Link>
+                <Link to="../syllabus">{t("quizSidebar.syllabus")}</Link>
             </SidebarGroupLabel>
-            <SidebarGroupLabel>Quizzes</SidebarGroupLabel>
+            <SidebarGroupLabel>{t("quizSidebar.quizzes")}</SidebarGroupLabel>
             <SidebarMenu>
                 <ScrollArea className="h-[700px]">
                     {quizzes.map((quiz) => (
@@ -34,7 +37,7 @@ export function SidebarMain({
                                 <Link
                                     to={`../quiz/${quiz.id}`}
                                     className="flex items-center w-full py-2 px-3 truncate"
-                                    replace // опционально: не засорять history
+                                    replace
                                 >
                                     <p className="line-clamp-1 break-words">
                                         {quiz.id}. {quiz.title}

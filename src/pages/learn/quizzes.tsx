@@ -8,11 +8,13 @@ import { CourseSidebar } from "@/components/courseSidebar/courseSidebar";
 import { QuizzesSkeleton } from "@/components/quizzes/quizzesSkeleton";
 import { ErrorPage } from "@/pages/error/error";
 import { useCourseDataIfEnrolledWithGrades } from "@/hooks/useCourseDataIfEnrolledWithGrades";
+import { useTranslation } from "react-i18next";
 
 export function Quizzes() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
-
     const { courseAddress } = useParams();
+
     const {
         data: course,
         error,
@@ -27,17 +29,17 @@ export function Quizzes() {
         if (error.message === "Access denied") {
             return (
                 <ErrorPage
-                    first={"Access Denied"}
-                    second={"You are not enrolled in this course."}
-                    third={"Please check your course list."}
+                    first={t("quizzes.accessDenied.title")}
+                    second={t("quizzes.accessDenied.message")}
+                    third={t("quizzes.accessDenied.retry")}
                 />
             );
         } else {
             return (
                 <ErrorPage
-                    first={"Courses Not Found"}
-                    second={"We couldn't find your courses."}
-                    third={"Please try again later."}
+                    first={t("quizzes.error.title")}
+                    second={t("quizzes.error.message")}
+                    third={t("quizzes.error.retry")}
                 />
             );
         }
@@ -63,17 +65,15 @@ export function Quizzes() {
     return (
         <SidebarProvider>
             <div className="flex w-full mx-auto bg-white rounded-[2vw] md:border-[6px] border-gray-200">
-                {/* Sidebar */}
                 <CourseSidebar
                     courseData={course.data!}
                     grades={course.grades}
                 />
                 <div className="max-w-4xl flex-grow mx-auto p-0 pt-6 md:pr-6 md:p-6">
-                    {/* Sidebar Trigger + Title */}
                     <div className="flex items-center gap-2 mb-4">
                         <SidebarTrigger className="block min-[1000px]:hidden pl-3" />
                         <h2 className="text-xl sm:text-2xl font-bold">
-                            Quizzes
+                            {t("quizzes.title")}
                         </h2>
                     </div>
 
@@ -81,7 +81,6 @@ export function Quizzes() {
 
                     <div className="w-full">
                         {allQuizzes.map((quiz, index) => {
-                            // Apply responsive border-radius styles
                             const borderRadiusClass =
                                 index === 0
                                     ? "rounded-none sm:rounded-t-lg"
@@ -95,14 +94,12 @@ export function Quizzes() {
                                     onClick={() => handleQuizClick(quiz.id)}
                                     className={`flex items-center p-2 sm:p-3 md:p-4 border cursor-pointer hover:bg-gray-100 transition ${borderRadiusClass}`}
                                 >
-                                    {/* Quiz Details */}
                                     <div className="ml-2 sm:ml-4 flex-1 min-w-0">
                                         <Label className="break-all sm:break-words text-xs cursor-pointer md:text-sm lg:text-base line-clamp-3 font-semibold">
                                             {index + 1}. {quiz.title}
                                         </Label>
                                     </div>
 
-                                    {/* Completion Status / Score */}
                                     <div className="pl-2 flex flex-col items-end">
                                         {quiz.completed ? (
                                             (() => {
@@ -122,26 +119,25 @@ export function Quizzes() {
                                                         {isPassed ? (
                                                             <Check className="w-4 h-4 sm:w-5 sm:h-5" />
                                                         ) : (
-                                                            <span className="text-lg leading-none">
-                                                                <X className="w-4 h-4 sm:w-5 sm:h-5"/>
-                                                            </span>
+                                                            <X className="w-4 h-4 sm:w-5 sm:h-5" />
                                                         )}
                                                         <span>
-                                                            Score: {quiz.score}
+                                                            {t("quizzes.score")}
+                                                            : {quiz.score}
                                                         </span>
                                                     </span>
                                                 );
                                             })()
                                         ) : (
                                             <span className="text-gray-400 text-xs sm:text-sm">
-                                                Not completed
+                                                {t("quizzes.notCompleted")}
                                             </span>
                                         )}
-                                        {/* Question Count */}
                                         <div className="flex justify-between items-center text-gray-500 text-xs sm:text-sm mt-1">
                                             <ListOrdered className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                                            <span className="">
-                                                {quiz.totalQuestions} Questions
+                                            <span>
+                                                {quiz.totalQuestions}{" "}
+                                                {t("quizzes.questions")}
                                             </span>
                                         </div>
                                     </div>

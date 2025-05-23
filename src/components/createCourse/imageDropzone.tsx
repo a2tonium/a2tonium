@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Image as ImageIcon, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import React, { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface ImageDropzoneProps {
     value?: string;
@@ -22,6 +23,7 @@ export const ImageDropzone = ({
     maxSizeMb = 5,
     aspectHint = "JPG/PNG/WebP only, max 5MB",
 }: ImageDropzoneProps) => {
+    const { t } = useTranslation();
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [hovered, setHovered] = useState(false);
     const [error, setError] = useState("");
@@ -31,12 +33,12 @@ export const ImageDropzone = ({
         const isValidSize = file.size <= maxSizeMb * 1024 * 1024;
 
         if (!isValidType) {
-            setError("Only JPG, PNG, and WebP images are allowed.");
+            setError(t("imageDropzone.error.invalidType")); // => "Only JPG, PNG, and WebP images are allowed."
             return false;
         }
 
         if (!isValidSize) {
-            setError(`Image must be less than ${maxSizeMb}MB.`);
+            setError(t("imageDropzone.error.tooLarge", { size: maxSizeMb })); // => "Image must be less than {{size}}MB."
             return false;
         }
 
@@ -105,14 +107,15 @@ export const ImageDropzone = ({
             ) : (
                 <div className="text-center">
                     <ImageIcon className="mx-auto text-gray-500" />
-                    <p className="text-gray-500">Upload Image</p>
+                    <p className="text-gray-500">{t("imageDropzone.upload")}</p>
                     <p
                         className={cn(
                             "text-xs mt-1",
                             error ? "text-red-500" : "text-gray-400"
                         )}
                     >
-                        {error || aspectHint}
+                        {error ||
+                            t("imageDropzone.aspectHint", { hint: aspectHint })}
                     </p>
                 </div>
             )}

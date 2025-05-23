@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ArrowDownWideNarrow } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface SortButtonProps {
     sortBy: string;
@@ -14,29 +15,37 @@ interface SortButtonProps {
 }
 
 export function SortButton({ sortBy, setSortBy }: SortButtonProps) {
+    const { t } = useTranslation();
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="flex gap-2 items-center font-semibold">
+                <Button
+                    variant="outline"
+                    className="flex gap-2 items-center font-semibold"
+                >
                     <ArrowDownWideNarrow />
-                    <span>Sort by: {sortBy}</span></Button>
+                    <span>
+                        {t("catalog.sortBy")}: {t(`catalog.sort.${sortBy}`)}
+                    </span>
+                </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className=" font-semibold">
+            <DropdownMenuContent align="end" className="font-semibold">
                 <DropdownMenuRadioGroup
                     value={sortBy}
                     onValueChange={setSortBy}
                 >
                     <DropdownMenuRadioItem value="featured">
-                        Featured
+                        {t("catalog.sort.featured")}
                     </DropdownMenuRadioItem>
                     <DropdownMenuRadioItem value="newest">
-                        Newest
+                        {t("catalog.sort.newest")}
                     </DropdownMenuRadioItem>
                     <DropdownMenuRadioItem value="low-to-high">
-                        Price: Low to High
+                        {t("catalog.sort.low-to-high")}
                     </DropdownMenuRadioItem>
                     <DropdownMenuRadioItem value="high-to-low">
-                        Price: High to Low
+                        {t("catalog.sort.high-to-low")}
                     </DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
             </DropdownMenuContent>

@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { CourseCard } from "@/components/catalogCard/courseCard";
 import { CourseCardSkeleton } from "@/components/catalogCard/courseCardSkeleton";
 import { useCatalogCourses } from "@/hooks/useCatalogCourses";
@@ -9,6 +10,7 @@ import { FilterType } from "@/types/course.types";
 import { filterAndSortCourses } from "@/utils/catalog.utils";
 
 export function Catalog() {
+    const { t } = useTranslation();
     const { data: visibleCourses, isLoading, error } = useCatalogCourses();
 
     const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
@@ -63,9 +65,9 @@ export function Catalog() {
     if (error && !visibleCourses) {
         return (
             <ErrorPage
-                first="Catalog Not Found"
-                second="We couldn't find catalog."
-                third="Please try again later."
+                first={t("catalog.error.title")}
+                second={t("catalog.error.message")}
+                third={t("catalog.error.retry")}
             />
         );
     }
@@ -75,7 +77,7 @@ export function Catalog() {
             <div className="max-w-7xl mx-auto space-y-8">
                 <div className="flex flex-col sm:flex-row md:items-center justify-between gap-4">
                     <h2 className="text-2xl font-bold text-gray-900">
-                        Online Courses
+                        {t("catalog.title")}
                     </h2>
                     <SortButton sortBy={sortBy} setSortBy={setSortBy} />
                 </div>
@@ -83,7 +85,7 @@ export function Catalog() {
                 <div className="flex flex-col lg:flex-row gap-6">
                     <div className="w-full lg:w-56 flex-shrink-0 space-y-4 lg:mt-2">
                         <h3 className="text-xl font-semibold text-gray-800">
-                            Filters
+                            {t("catalog.filters")}
                         </h3>
 
                         <FilterCourses
@@ -99,7 +101,7 @@ export function Catalog() {
                                 onClick={resetAllFilters}
                                 className="text-sm text-blue-600 hover:underline hover:text-blue-800 transition mb-2"
                             >
-                                Clear All Filters
+                                {t("catalog.clearFilters")}
                             </button>
                         )}
                     </div>
