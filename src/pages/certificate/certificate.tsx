@@ -52,7 +52,7 @@ export function Certificate() {
             <div className="flex flex-col lg:flex-row gap-6">
                 <div className="w-1/2">
                     <img
-                        src="/images/certificate/sample.png"
+                        src={certificate.image}
                         alt={t("certificate.alt")}
                         className="w-full rounded-xl object-cover"
                     />
@@ -90,7 +90,7 @@ export function Certificate() {
                         </span>
                         <div className="space-x-2">
                             <Link
-                                to={`/users/${certificate.ownerAddress}`}
+                                to={`/user/${certificate.ownerAddress}`}
                                 className="hover:underline font-[550]"
                             >
                                 {certificate.ownerAddress?.slice(0, 8)}...
@@ -115,7 +115,7 @@ export function Certificate() {
                         </span>
                         <div className="space-x-2">
                             <Link
-                                to={`/users/${certificate.certificateAddress}`}
+                                to={`/user/${certificate.certificateAddress}`}
                                 className="hover:underline font-[550]"
                             >
                                 {certificate.certificateAddress?.slice(0, 8)}...
