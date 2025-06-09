@@ -10,10 +10,15 @@ interface SocialLinksGroupProps {
 }
 
 export function SocialLinksGroup({ links }: SocialLinksGroupProps) {
+    const formatUrl = (value: string, type: string) => {
+        if (type === "Email") return `mailto:${value}`;
+        if (/^https?:\/\//i.test(value)) return value;
+        return `https://${value}`;
+    };
     return (
         <div className="flex gap-2 flex-wrap">
             {links.map((link, index) => {
-                const url = link.value;
+                const url = formatUrl(link.value, link.trait_type);
 
                 return (
                     <HoverCard key={index}>

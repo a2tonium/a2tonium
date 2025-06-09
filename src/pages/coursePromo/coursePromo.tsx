@@ -45,13 +45,13 @@ export function CoursePromo() {
     if (isLoading || !course) {
         return <CoursePromoSkeleton />;
     }
-
+    console.log("Course data:", course.cover_image?.trim());
     return (
         <div className="w-full bg-white sm:pt-4 md:pt-6 rounded-[2vw] md:border-[6px] border-gray-200">
             <div className="relative mx-auto h-[120px] sm:h-[160px] md:h-[200px] w-full sm:w-[96%] rounded-[2vw] overflow-hidden">
                 <img
                     className="absolute top-1/2 left-1/2 w-full h-full object-cover transform -translate-x-1/2 -translate-y-1/2"
-                    src={getLink(course.cover_image || course.image)}
+                    src={getLink(course.cover_image && course.cover_image.trim() !== "ipfs://" ? course.cover_image : "bafkreidl5rgcmin5pvwkp3uazeyouev6f3sqs5zcpdgxjxhololwj7rs3u")}
                     alt={t("promo.courseBackgroundAlt")}
                 />
             </div>

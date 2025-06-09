@@ -26,6 +26,7 @@ import { ProfileWithWalletDataInterface } from "@/types/profile.types";
 import { useProfileContract } from "@/hooks/useProfileContract";
 import { useTonConnect } from "@/hooks/useTonConnect";
 import { useTranslation } from "react-i18next";
+import { getLink } from "@/utils/ton.utils";
 
 interface EditProfileDialogProps {
     open: boolean;
@@ -172,9 +173,7 @@ export function EditProfileDialog({
                                     form.image.startsWith("data:image")
                                         ? form.image
                                         : form.image
-                                        ? `https://ipfs.io/ipfs/${form.image.substring(
-                                              7
-                                          )}`
+                                        ? getLink(form.image)
                                         : ""
                                 }
                                 onChange={(val) =>
@@ -183,7 +182,7 @@ export function EditProfileDialog({
                                         val.startsWith("data:image")
                                             ? val
                                             : val.replace(
-                                                  "https://ipfs.io/ipfs/",
+                                                  "https://moccasin-defeated-vicuna-32.mypinata.cloud/ipfs/",
                                                   ""
                                               )
                                     )

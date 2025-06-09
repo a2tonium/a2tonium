@@ -29,7 +29,7 @@ import { useTranslation } from "react-i18next";
 
 const SOCIAL_PREFIX_MAP: Record<string, string> = {
     Telegram: "t.me/",
-    Youtube: "www.youtube.com/user/",
+    Youtube: "www.youtube.com/",
     Instagram: "www.instagram.com/",
     X: "x.com/",
     Linkedin: "www.linkedin.com/in/",

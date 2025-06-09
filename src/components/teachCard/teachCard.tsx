@@ -54,7 +54,7 @@ export function TeachCard({ course, courseAddress, cost }: TeachCardProps) {
         ) {
             return;
         }
-        navigate(`/course/${courseAddress}/syllabus`);
+        navigate(`/course/${courseAddress}/promo`);
     };
 
     const handleEditCourse = (e: React.MouseEvent) => {

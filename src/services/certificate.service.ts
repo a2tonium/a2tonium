@@ -25,6 +25,8 @@ export async function listCertificates(
         while (attempts < MAX_FAILURES) {
             try {
                 const certAddress = Address.parse(nftItem.address).toString();
+                console.log(
+                    `Fetching certificate data for: ${certAddress}`)
                 const { collectionContent } = await getCertificateData(
                     certAddress
                 );
@@ -36,7 +38,7 @@ export async function listCertificates(
                     );
                     break;
                 }
-
+                console.log(collectionContent)
                 const res = await fetch(collectionContent);
 
                 if (res.status === 429) {

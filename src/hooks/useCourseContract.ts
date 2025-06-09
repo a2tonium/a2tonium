@@ -31,18 +31,30 @@ export function useCourseContract() {
     const getFirstUninitCourseContract = async () => {
         if (!client) return;
         let i = 0n;
-        let course;
+        let course: OpenedContract<Course> | undefined;
+
         for (; ; i++) {
-            course = client.open(
+            const candidate = client.open(
                 await Course.fromInit(Address.parse(address), i)
             ) as OpenedContract<Course>;
+
             try {
-                await client.open(course).getGetCourseData();
-            } catch (e) {
-                console.error("Error opening course contract", e);
-                break;
+                console.log("Checking course contract:", i);
+                await client.open(candidate).getGetCourseData();
+            } catch (e: Error | unknown) {
+                const errorMsg =
+                    typeof e === "object" && e !== null && "message" in e
+                        ? (e as { message: string }).message
+                        : "";
+                console.warn(`Course ${i} failed to open`, errorMsg);
+
+                if (errorMsg.includes("exit_code: -13")) {
+                    course = candidate;
+                    break;
+                }
             }
         }
+
         return course;
     };
 
@@ -219,19 +231,17 @@ export function useCourseContract() {
             return;
         }
 
-        await certificateContract.send(
-            sender,
-            {
-                value: toNano(0.2),
-            },
-            {
-                $$type: "Quiz",
-                quizId: quizId,
-                answers: beginCell()
-                    .storeStringTail(`${rating} | ${review}`)
-                    .endCell(),
-            }
-        );
+        const messageText = `Rating: ${rating} | Review: ${review}`;
+
+        await sender.send({
+            to: certificateContract!.address,
+            value: toNano("0.01"),
+            bounce: false,
+            body: beginCell()
+                .storeUint(0, 32)
+                .storeStringTail(messageText)
+                .endCell(),
+        });
     };
 
     const promoteCourseContract = async (
