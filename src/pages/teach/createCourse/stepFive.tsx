@@ -262,7 +262,7 @@ export function StepFive({
                     </Button>
                 </div>
 
-                <div className="flex justify-between text-gray-500 text-xs mt-4">
+                {/* <div className="flex justify-between text-gray-500 text-xs mt-4">
                     <span>
                         {t("stepFive.pinata.helpText")}
                         <a
@@ -272,7 +272,7 @@ export function StepFive({
                             {t("stepFive.pinata.helpLink")}
                         </a>
                     </span>
-                </div>
+                </div> */}
             </div>
         </div>
     );

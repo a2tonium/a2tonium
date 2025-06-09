@@ -5,14 +5,15 @@ import {
     PopoverContent,
 } from "@/components/ui/popover";
 import { useTranslation } from "react-i18next";
-import { Bolt, Sun, Moon, Monitor, Check } from "lucide-react";
+import { Bolt } from "lucide-react";
+// import { Bolt, Sun, Moon, Monitor, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { useTonConnect } from "@/hooks/useTonConnect";
 
 export const SettingsPopover: React.FC = () => {
     const { t, i18n } = useTranslation();
-    const [theme, setTheme] = useState<string>("system"); 
+    // const [theme, setTheme] = useState<string>("system"); 
     const [selectedLang, setSelectedLang] = useState<string>(
         i18n.language || "en"
     );
@@ -20,10 +21,10 @@ export const SettingsPopover: React.FC = () => {
     const { address, isConnected } = useTonConnect();
     const profileLink = `/user/${address}`;
 
-    const changeTheme = (newTheme: string) => {
-        setTheme(newTheme);
-        document.documentElement.setAttribute("data-theme", newTheme);
-    };
+    // const changeTheme = (newTheme: string) => {
+    //     setTheme(newTheme);
+    //     document.documentElement.setAttribute("data-theme", newTheme);
+    // };
 
     const changeLanguage = (lang: string) => {
         setSelectedLang(lang);
@@ -80,7 +81,7 @@ export const SettingsPopover: React.FC = () => {
                             </div>
                             <Separator className="md:hidden bg-gray-200" />
                         </div>
-                        <div className="">
+                        {/* <div className="">
                             <p className="pl-2 text-sm text-gray-800 mb-2">
                                 {t("theme")}
                             </p>
@@ -132,7 +133,7 @@ export const SettingsPopover: React.FC = () => {
                                     <Check className="w-4 h-4" />
                                 )}
                             </button>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 

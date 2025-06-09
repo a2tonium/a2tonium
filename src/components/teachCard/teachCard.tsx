@@ -28,7 +28,24 @@ export function TeachCard({ course, courseAddress, cost }: TeachCardProps) {
     const [isPromoteOpen, setPromoteOpen] = React.useState(false);
     const [isWithdrawOpen, setWithdrawOpen] = React.useState(false);
 
+    const dialogClosedRef = React.useRef(false);
+
+    React.useEffect(() => {
+        if (isPromoteOpen || isWithdrawOpen) {
+            dialogClosedRef.current = true;
+        } else {
+            const timeout = setTimeout(() => {
+                dialogClosedRef.current = false;
+            }, 300); // небольшая задержка после закрытия
+
+            return () => clearTimeout(timeout);
+        }
+    }, [isPromoteOpen, isWithdrawOpen]);
+
     const handleCardClick = (e: React.MouseEvent) => {
+        if (dialogClosedRef.current) {
+            return;
+        }
         const target = e.target as HTMLElement;
         if (
             target.closest("button") ||
@@ -50,21 +67,35 @@ export function TeachCard({ course, courseAddress, cost }: TeachCardProps) {
             className="h-auto bg-gray-100 cursor-pointer relative border-0 w-full max-w-4xl p-4 shadow-inner rounded-xl hover:shadow-hover-even transition-shadow duration-150"
             onClick={handleCardClick}
         >
-            <div className="absolute top-4 right-4">
+            <div className="absolute top-4 right-4 sm:hidden">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <button
-                            className="p-2 rounded-md hover:bg-gray-100"
+                            className="p-2 rounded-md hover:bg-gray-200"
                             onClick={(e) => e.stopPropagation()}
                         >
                             <EllipsisVertical className="w-5 h-5" />
                         </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-40">
-                        <DropdownMenuItem>
-                            <button className="w-full text-left text-gray-800 hover:text-red-500">
-                                {t("teachCard.delete")}
-                            </button>
+                        <DropdownMenuItem onClick={handleEditCourse}>
+                            {t("teachCard.edit")}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setPromoteOpen(true);
+                            }}
+                        >
+                            {t("teachCard.promote")}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setWithdrawOpen(true);
+                            }}
+                        >
+                            {t("teachCard.withdraw")}
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -86,7 +117,6 @@ export function TeachCard({ course, courseAddress, cost }: TeachCardProps) {
                     <div className="line-clamp-4 text-sm sm:text-sm md:text-base lg:text-base font-light break-words">
                         {t("teachCard.price")}: {cost}
                     </div>
-
                     <div className="hidden sm:flex opacity-0 hover:opacity-100 transition-opacity duration-300">
                         <Button
                             variant="link"
