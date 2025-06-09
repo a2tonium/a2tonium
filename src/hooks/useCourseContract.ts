@@ -222,6 +222,7 @@ export function useCourseContract() {
         rating: string,
         review: string
     ) => {
+        console.log(quizId)
         const certificateContract = client?.open(
             Certificate.fromAddress(Address.parse(certificateAddress))
         ) as OpenedContract<Certificate>;
